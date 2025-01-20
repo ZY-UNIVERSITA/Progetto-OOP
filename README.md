@@ -1,6 +1,6 @@
 # Relazione di Progetto: Gestore di password
 
-Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password, ispirata all’app Password di Apple.
+Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password.
 
 ## Analisi
 
@@ -51,8 +51,163 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
+Modello completo
+
 ```mermaid
 classDiagram
+
+%% ===================
+%% CLASSI PRINCIPALI
+%% ===================
+
+class AccountManager {
+    - CryptoManager cryptoManager
+    - FileManager fileManager
+    - SessionManager sessionManager
+    - ServiceManager serviceManager
+
+    + AccountManager(cryptoManager: CryptoManager, fileManager: FileManager, sessionManager: SessionManager, serviceManager: ServiceManager)
+    + login(username: string, password: char[]): boolean
+    + logout()
+    + register(username: string, password: char[])
+    + changePassword(oldPassword: char[], newPassword: char[])
+}
+
+class UserAccount {
+    - string username
+    - byte[] salt
+    - AlgorithmConfig derivationConfig
+    - KeySpec masterKey
+
+    + UserAccount(username: string, salt: byte[], derivationConfig: AlgorithmConfig, masterKey: KeySpec)
+    + getUsername(): string
+    + setUsername(username: string)
+    + getMasterKey(): KeySpec
+    + setMasterKey(masterKey: KeySpec)
+    + getSalt(): byte[]
+    + setSalt(salt: byte[])
+    + getDerivationConfig(): AlgorithmConfig
+    + setDerivationConfig(config: AlgorithmConfig)
+}
+
+class ServiceManager {
+    - List~Service~ services
+    - CryptoManager cryptoManager
+    - FileManager fileManager
+
+    + ServiceManager(cryptoManager: CryptoManager, fileManager: FileManager)
+    + addService(service: Service)
+    + removeService(serviceName: string)
+    + modifyService(serviceName: string, newService: Service)
+    + getServices(): List~Service~
+    + loadServices(key: KeySpec)
+    + saveServices(key: KeySpec)
+}
+
+class Service {
+    - string name
+    - string username
+    - string email
+    - byte[] encryptedPassword
+    - AlgorithmConfig encryptionConfig
+    - string info
+
+    + Service(name: string, username: string, email: string, encryptedPassword: byte[], encryptionConfig: AlgorithmConfig, info: string)
+    + getName(): string
+    + setName(name: string)
+    + getUsername(): string
+    + setUsername(username: string)
+    + getEncryptedPassword(): byte[]
+    + setEncryptedPassword(encryptedPassword: byte[])
+    + getEncryptionConfig(): AlgorithmConfig
+    + setEncryptionConfig(config: AlgorithmConfig)
+}
+
+class SessionManager {
+    - UserAccount currentUser
+
+    + SessionManager()
+    + getCurrentUser(): UserAccount
+    + setCurrentUser(user: UserAccount)
+    + clearSession()
+}
+
+class FileManager {
+    + FileManager()
+    + loadUserData(username: string): UserAccount
+    + saveUserData(userAccount: UserAccount)
+    + loadServicesFile(): byte[]
+    + saveServicesFile(encryptedData: byte[])
+}
+
+
+%% =====================
+%% GESTIONE ALGORITMI
+%% =====================
+
+class AlgorithmConfig {
+    - string algorithmType  %% Esempio: "DERIVATION", "ENCRYPTION", "HMAC" ...
+    - string algorithmName  %% Esempio: "Argon2", "AES-GCM" ...
+    - Map~string, string~ parameters
+
+    + AlgorithmConfig(algorithmType: string, algorithmName: string, parameters: Map~string, string~)
+    + getAlgorithmType(): string
+    + getAlgorithmName(): string
+    + getParameter(key: string): string
+    + setParameter(key: string, value: string)
+}
+
+class CryptoManager {
+    + CryptoManager()
+    + deriveMasterKey(password: char[], salt: byte[], derivationConfig: AlgorithmConfig): KeySpec
+    + encrypt(data: byte[], key: KeySpec, encryptionConfig: AlgorithmConfig): byte[]
+    + decrypt(data: byte[], key: KeySpec, encryptionConfig: AlgorithmConfig): byte[]
+}
+
+class KeyDerivationAlgorithm {
+    <<interface>>
+    + deriveKey(source: char[], salt: byte[], config: AlgorithmConfig): KeySpec
+    + deriveKey(source: KeySpec, salt: byte[], config: AlgorithmConfig): KeySpec
+}
+
+class EncryptionAlgorithm {
+    <<interface>>
+    + encrypt(data: byte[], key: KeySpec, config: AlgorithmConfig): byte[]
+    + decrypt(data: byte[], key: KeySpec, config: AlgorithmConfig): byte[]
+}
+
+%% =====================
+%% RELAZIONI TRA CLASSI
+%% =====================
+
+%% AccountManager usa i vari manager
+AccountManager --> CryptoManager : uses
+AccountManager --> FileManager : uses
+AccountManager --> SessionManager : uses
+AccountManager --> ServiceManager : uses
+
+%% AccountManager carica/crea l'UserAccount
+AccountManager --> UserAccount : load/create
+
+%% ServiceManager gestisce i Service e usa CryptoManager/FileManager
+ServiceManager *-- Service : composition
+ServiceManager --> CryptoManager : uses
+ServiceManager --> FileManager : uses
+
+%% SessionManager mantiene un riferimento ad un solo UserAccount
+SessionManager o-- UserAccount : holds
+
+%% FileManager carica/salva UserAccount e file dei servizi
+FileManager --> UserAccount : loads/saves
+FileManager --> Service : loads/saves
+
+%% UserAccount e Service possiedono la configurazione dell'algoritmo associata
+UserAccount --> AlgorithmConfig : "derivationConfig"
+Service --> AlgorithmConfig : "encryptionConfig"
+
+%% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
+CryptoManager --> KeyDerivationAlgorithm : uses
+CryptoManager --> EncryptionAlgorithm : uses
 
 ```
 
