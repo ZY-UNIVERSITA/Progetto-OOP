@@ -54,160 +54,259 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 Modello completo. Verrà migliorato mano a mano.
 
 ```mermaid
+
 classDiagram
 
-%% ===================
-%% CLASSI PRINCIPALI
-%% ===================
+    %% ===================
+    %% CLASSI PRINCIPALI (Model)
+    %% ===================
 
-class AccountManager {
-    - CryptoManager cryptoManager
-    - FileManager fileManager
-    - SessionManager sessionManager
-    - ServiceManager serviceManager
+    class AccountManager {
+        - CryptoManager cryptoManager
+        - FileManager fileManager
+        - SessionManager sessionManager
+        - ServiceManager serviceManager
 
-    + AccountManager(cryptoManager: CryptoManager, fileManager: FileManager, sessionManager: SessionManager, serviceManager: ServiceManager)
-    + login(username: string, password: char[]): boolean
-    + logout(): void
-    + register(username: string, password: char[]): void
-    + changePassword(oldPassword: char[], newPassword: char[]): boolean
-}
+        + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager)
+        + login(string username, char[] password) boolean
+        + logout() void
+        + register(string username, char[] password) void
+        + changePassword(char[] oldPassword, char[] newPassword) boolean
+    }
 
-class UserAccount {
-    - string username
-    - byte[] salt
-    - AlgorithmConfig derivationConfig
-    - KeySpec masterKey
+    class UserAccount {
+        - string username
+        - byte[] salt
+        - AlgorithmConfig derivationConfig
+        - KeySpec masterKey
 
-    + UserAccount(username: string, salt: byte[], derivationConfig: AlgorithmConfig, masterKey: KeySpec)
-    + getUsername(): string
-    + setUsername(username: string): void
-    + getMasterKey(): KeySpec
-    + setMasterKey(masterKey: KeySpec): void
-    + getSalt(): byte[]
-    + setSalt(salt: byte[]); void
-    + getDerivationConfig(): AlgorithmConfig
-    + setDerivationConfig(config: AlgorithmConfig): void
-}
+        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
+        + getUsername() string
+        + setUsername(string username) void
+        + getMasterKey() KeySpec
+        + setMasterKey(KeySpec masterKey) void
+        + getSalt() byte[]
+        + setSalt(byte[] salt) void
+        + getDerivationConfig() AlgorithmConfig
+        + setDerivationConfig(AlgorithmConfig config) void
+    }
 
-class ServiceManager {
-    - List~Service~ services
-    - CryptoManager cryptoManager
-    - FileManager fileManager
+    class ServiceManager {
+        - List~Service~ services
+        - CryptoManager cryptoManager
+        - FileManager fileManager
 
-    + ServiceManager(cryptoManager: CryptoManager, fileManager: FileManager)
-    + addService(service: Service): boolean
-    + removeService(serviceName: string): void
-    + modifyService(serviceName: string, newService: Service): void
-    + getServices(): List~Service~
-    + loadServices(key: KeySpec): void
-    + saveServices(key: KeySpec): void
-}
+        + ServiceManager(CryptoManager cryptoManager, FileManager fileManager)
+        + addService(Service service) boolean
+        + removeService(string serviceName) void
+        + modifyService(string serviceName, Service newService) void
+        + getServices() List~Service~
+        + loadServices(KeySpec key) void
+        + saveServices(KeySpec key) void
+    }
 
-class Service {
-    - string name
-    - string username
-    - string email
-    - byte[] encryptedPassword
-    - AlgorithmConfig encryptionConfig
-    - string info
+    class Service {
+        - string name
+        - string username
+        - string email
+        - byte[] encryptedPassword
+        - AlgorithmConfig encryptionConfig
+        - string info
 
-    + Service(name: string, username: string, email: string, encryptedPassword: byte[], encryptionConfig: AlgorithmConfig, info: string)
-    + getName(): string
-    + setName(name: string): void
-    + getUsername(): string
-    + setUsername(username: string): void
-    + getEncryptedPassword(): byte[]
-    + setEncryptedPassword(encryptedPassword: byte[]): void
-    + getEncryptionConfig(): AlgorithmConfig
-    + setEncryptionConfig(config: AlgorithmConfig): void
-}
+        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
+        + getName() string
+        + setName(string name) void
+        + getUsername() string
+        + setUsername(string username) void
+        + getEncryptedPassword() byte[]
+        + setEncryptedPassword(byte[] encryptedPassword) void
+        + getEncryptionConfig() AlgorithmConfig
+        + setEncryptionConfig(AlgorithmConfig config) void
+    }
 
-class SessionManager {
-    - UserAccount currentUser
+    class SessionManager {
+        - UserAccount currentUser
 
-    + SessionManager()
-    + getCurrentUser(): UserAccount
-    + setCurrentUser(user: UserAccount): void
-    + clearSession(): void
-}
+        + SessionManager()
+        + getCurrentUser() UserAccount
+        + setCurrentUser(UserAccount user) void
+        + clearSession() void
+    }
 
-class FileManager {
-    + FileManager()
-    + loadUserData(username: string): UserAccount
-    + saveUserData(userAccount: UserAccount): void
-    + loadServicesFile(): byte[]
-    + saveServicesFile(encryptedData: byte[]): void
-}
+    class FileManager {
+        + FileManager()
+        + loadUserData(string username) UserAccount
+        + saveUserData(UserAccount userAccount) void
+        + loadServicesFile() byte[]
+        + saveServicesFile(byte[] encryptedData) void
+    }
 
+    %% =====================
+    %% GESTIONE ALGORITMI
+    %% =====================
 
-%% =====================
-%% GESTIONE ALGORITMI
-%% =====================
+    class AlgorithmConfig {
+        - string algorithmType
+        - string algorithmName
+        - Map~string, string~ parameters
 
-class AlgorithmConfig {
-    - string algorithmType  %% Esempio: "DERIVATION", "ENCRYPTION", "HMAC" ...
-    - string algorithmName  %% Esempio: "Argon2", "AES-GCM" ...
-    - Map~string, string~ parameters
+        + AlgorithmConfig(string algorithmType, string algorithmName, Map~string, string~ parameters)
+        + getAlgorithmType() string
+        + getAlgorithmName() string
+        + getParameter(string key) string
+        + setParameter(string key, string value) void
+    }
 
-    + AlgorithmConfig(algorithmType: string, algorithmName: string, parameters: Map~string, string~)
-    + getAlgorithmType(): string
-    + getAlgorithmName(): string
-    + getParameter(key: string): string
-    + setParameter(key: string, value: string): void
-}
+    class CryptoManager {
+        + CryptoManager()
+        + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
+        + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
+        + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
+    }
 
-class CryptoManager {
-    + CryptoManager()
-    + deriveMasterKey(password: char[], salt: byte[], derivationConfig: AlgorithmConfig): KeySpec
-    + encrypt(data: byte[], key: KeySpec, encryptionConfig: AlgorithmConfig): byte[]
-    + decrypt(data: byte[], key: KeySpec, encryptionConfig: AlgorithmConfig): byte[]
-}
+    %% Interfacce per gestire algoritmi diversi
 
-class KeyDerivationAlgorithm {
-    <<interface>>
-    + deriveKey(source: char[], salt: byte[], config: AlgorithmConfig): KeySpec
-    + deriveKey(source: KeySpec, salt: byte[], config: AlgorithmConfig): KeySpec
-}
+    class KeyDerivationAlgorithm {
+        <<interface>>
+        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
+        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+    }
 
-class EncryptionAlgorithm {
-    <<interface>>
-    + encrypt(data: byte[], key: KeySpec, config: AlgorithmConfig): byte[]
-    + decrypt(data: byte[], key: KeySpec, config: AlgorithmConfig): byte[]
-}
+    class EncryptionAlgorithm {
+        <<interface>>
+        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+    }
 
-%% =====================
-%% RELAZIONI TRA CLASSI
-%% =====================
+    %% =====================
+    %% COMPONENTI MVC
+    %% =====================
 
-%% AccountManager usa i vari manager
-AccountManager --> CryptoManager : uses
-AccountManager --> FileManager : uses
-AccountManager --> SessionManager : uses
-AccountManager --> ServiceManager : uses
+    %% View (Rappresentate solo concettualmente, implementate nei file FXML)
+    class LoginView {
+        <<Concept>>
+        + initialize() void
+    }
 
-%% AccountManager carica/crea l'UserAccount
-AccountManager --> UserAccount : load/create
+    class MainView {
+        <<Concept>>
+        + initialize() void
+    }
 
-%% ServiceManager gestisce i Service e usa CryptoManager/FileManager
-ServiceManager *-- Service : composition
-ServiceManager --> CryptoManager : uses
-ServiceManager --> FileManager : uses
+    class RegisterView {
+        <<Concept>>
+        + initialize() void
+    }
 
-%% SessionManager mantiene un riferimento ad un solo UserAccount
-SessionManager o-- UserAccount : holds
+    class ServiceManagerView {
+        <<Concept>>
+        + initialize() void
+    }
 
-%% FileManager carica/salva UserAccount e file dei servizi
-FileManager --> UserAccount : loads/saves
-FileManager --> Service : loads/saves
+    %% Controller (Classi Java concrete)
+    class LoginController {
+        - AccountManager accountManager
+        - ViewNavigator viewNavigator
+        + setAccountManager(AccountManager accountManager)
+        + setViewNavigator(ViewNavigator viewNavigator)
+        + handleLogin() void
+        + handleRegister() void
+    }
 
-%% UserAccount e Service possiedono la configurazione dell'algoritmo associata
-UserAccount --> AlgorithmConfig : "derivationConfig"
-Service --> AlgorithmConfig : "encryptionConfig"
+    class MainController {
+        - SessionManager sessionManager
+        - ViewNavigator viewNavigator
+        + setSessionManager(SessionManager sessionManager)
+        + setViewNavigator(ViewNavigator viewNavigator)
+        + handleLogout() void
+    }
 
-%% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
-CryptoManager --> KeyDerivationAlgorithm : uses
-CryptoManager --> EncryptionAlgorithm : uses
+    class RegisterController {
+        - AccountManager accountManager
+        - ViewNavigator viewNavigator
+        + setAccountManager(AccountManager accountManager)
+        + setViewNavigator(ViewNavigator viewNavigator)
+        + handleRegister() void
+    }
+
+    class ServiceManagerController {
+        - ServiceManager serviceManager
+        - ViewNavigator viewNavigator
+        + setServiceManager(ServiceManager serviceManager)
+        + setViewNavigator(ViewNavigator viewNavigator)
+        + initialize() void
+        + loadServices() void
+        + handleAddService() void
+        + handleRemoveService() void
+        + handleModifyService() void
+    }
+
+    class ViewNavigator {
+        - Stage stage
+        - AccountManager accountManager
+        - SessionManager sessionManager
+        - ServiceManager serviceManager
+        + ViewNavigator(Stage stage, AccountManager accountManager, SessionManager sessionManager, ServiceManager serviceManager)
+        + showLoginView() void
+        + showMainView() void
+        + showRegisterView() void
+        + showServiceManagerView() void
+    }
+
+    %% =====================
+    %% RELAZIONI TRA CLASSI
+    %% =====================
+
+    %% AccountManager usa i vari manager
+    AccountManager --> CryptoManager : usa
+    AccountManager --> FileManager : usa
+    AccountManager --> SessionManager : usa
+    AccountManager --> ServiceManager : usa
+
+    %% AccountManager carica/crea l'UserAccount
+    AccountManager --> UserAccount : load/create
+
+    %% ServiceManager gestisce i Service e usa CryptoManager/FileManager
+    ServiceManager *-- Service : composizione
+    ServiceManager --> CryptoManager : usa
+    ServiceManager --> FileManager : usa
+
+    %% SessionManager mantiene un riferimento ad un solo UserAccount
+    SessionManager o-- UserAccount : contiene
+
+    %% FileManager carica/salva UserAccount e file dei servizi
+    FileManager --> UserAccount : carica/salva
+    FileManager --> Service : carica/salva
+
+    %% UserAccount e Service possiedono la configurazione dell'algoritmo associata
+    UserAccount --> AlgorithmConfig : derivationConfig
+    Service --> AlgorithmConfig : encryptionConfig
+
+    %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
+    CryptoManager --> KeyDerivationAlgorithm : usa
+    CryptoManager --> EncryptionAlgorithm : usa
+
+    %% Componenti MVC
+    LoginView ..> LoginController : controller
+    MainView ..> MainController : controller
+    RegisterView ..> RegisterController : controller
+    ServiceManagerView ..> ServiceManagerController : controller
+
+    LoginController ..> AccountManager : usa
+    MainController ..> SessionManager : usa
+    RegisterController ..> AccountManager : usa
+    ServiceManagerController ..> ServiceManager : usa
+
+    %% ViewNavigator
+    ViewNavigator --> LoginView
+    ViewNavigator --> MainView
+    ViewNavigator --> RegisterView
+    ViewNavigator --> ServiceManagerView
+    MainController ..> ViewNavigator : usa
+    LoginController ..> ViewNavigator : usa
+    RegisterController ..> ViewNavigator : usa
+    ServiceManagerController ..> ViewNavigator : usa
+
 
 ```
 
