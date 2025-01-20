@@ -1,6 +1,6 @@
 # Relazione di Progetto: Gestore di password
 
-Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password.
+Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle passwordi.
 
 ## Analisi
 
@@ -51,7 +51,7 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
-Modello completo
+Modello completo. Verrà migliorato mano a mano.
 
 ```mermaid
 classDiagram
@@ -68,9 +68,9 @@ class AccountManager {
 
     + AccountManager(cryptoManager: CryptoManager, fileManager: FileManager, sessionManager: SessionManager, serviceManager: ServiceManager)
     + login(username: string, password: char[]): boolean
-    + logout()
-    + register(username: string, password: char[])
-    + changePassword(oldPassword: char[], newPassword: char[])
+    + logout(): void
+    + register(username: string, password: char[]): void
+    + changePassword(oldPassword: char[], newPassword: char[]): boolean
 }
 
 class UserAccount {
@@ -81,13 +81,13 @@ class UserAccount {
 
     + UserAccount(username: string, salt: byte[], derivationConfig: AlgorithmConfig, masterKey: KeySpec)
     + getUsername(): string
-    + setUsername(username: string)
+    + setUsername(username: string): void
     + getMasterKey(): KeySpec
-    + setMasterKey(masterKey: KeySpec)
+    + setMasterKey(masterKey: KeySpec): void
     + getSalt(): byte[]
-    + setSalt(salt: byte[])
+    + setSalt(salt: byte[]); void
     + getDerivationConfig(): AlgorithmConfig
-    + setDerivationConfig(config: AlgorithmConfig)
+    + setDerivationConfig(config: AlgorithmConfig): void
 }
 
 class ServiceManager {
@@ -96,12 +96,12 @@ class ServiceManager {
     - FileManager fileManager
 
     + ServiceManager(cryptoManager: CryptoManager, fileManager: FileManager)
-    + addService(service: Service)
-    + removeService(serviceName: string)
-    + modifyService(serviceName: string, newService: Service)
+    + addService(service: Service): boolean
+    + removeService(serviceName: string): void
+    + modifyService(serviceName: string, newService: Service): void
     + getServices(): List~Service~
-    + loadServices(key: KeySpec)
-    + saveServices(key: KeySpec)
+    + loadServices(key: KeySpec): void
+    + saveServices(key: KeySpec): void
 }
 
 class Service {
@@ -114,13 +114,13 @@ class Service {
 
     + Service(name: string, username: string, email: string, encryptedPassword: byte[], encryptionConfig: AlgorithmConfig, info: string)
     + getName(): string
-    + setName(name: string)
+    + setName(name: string): void
     + getUsername(): string
-    + setUsername(username: string)
+    + setUsername(username: string): void
     + getEncryptedPassword(): byte[]
-    + setEncryptedPassword(encryptedPassword: byte[])
+    + setEncryptedPassword(encryptedPassword: byte[]): void
     + getEncryptionConfig(): AlgorithmConfig
-    + setEncryptionConfig(config: AlgorithmConfig)
+    + setEncryptionConfig(config: AlgorithmConfig): void
 }
 
 class SessionManager {
@@ -128,16 +128,16 @@ class SessionManager {
 
     + SessionManager()
     + getCurrentUser(): UserAccount
-    + setCurrentUser(user: UserAccount)
-    + clearSession()
+    + setCurrentUser(user: UserAccount): void
+    + clearSession(): void
 }
 
 class FileManager {
     + FileManager()
     + loadUserData(username: string): UserAccount
-    + saveUserData(userAccount: UserAccount)
+    + saveUserData(userAccount: UserAccount): void
     + loadServicesFile(): byte[]
-    + saveServicesFile(encryptedData: byte[])
+    + saveServicesFile(encryptedData: byte[]): void
 }
 
 
@@ -154,7 +154,7 @@ class AlgorithmConfig {
     + getAlgorithmType(): string
     + getAlgorithmName(): string
     + getParameter(key: string): string
-    + setParameter(key: string, value: string)
+    + setParameter(key: string, value: string): void
 }
 
 class CryptoManager {
