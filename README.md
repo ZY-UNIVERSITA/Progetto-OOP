@@ -73,13 +73,9 @@ classDiagram
 
     class UserAccount {
         + getUsername() string
-        + setUsername(string username) void
         + getMasterKey() KeySpec
-        + setMasterKey(KeySpec masterKey) void
         + getSalt() byte[]
-        + setSalt(byte[] salt) void
         + getDerivationConfig() AlgorithmConfig
-        + setDerivationConfig(AlgorithmConfig config) void
     }
 
     class ServiceManager {
@@ -87,19 +83,16 @@ classDiagram
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
         + getServices() List~Service~
+        + searchService(string searchTerm) List~Service~
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
     }
 
     class Service {
         + getName() string
-        + setName(string name) void
         + getUsername() string
-        + setUsername(string username) void
         + getEncryptedPassword() byte[]
-        + setEncryptedPassword(byte[] encryptedPassword) void
         + getEncryptionConfig() AlgorithmConfig
-        + setEncryptionConfig(AlgorithmConfig config) void
     }
 
     class SessionManager {
@@ -194,7 +187,6 @@ classDiagram
     %%     Argon2id
     %%     AES256GCM
     %% }
-
 
     %% =====================
     %% COMPONENTI MVC
