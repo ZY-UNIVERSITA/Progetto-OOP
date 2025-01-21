@@ -172,6 +172,15 @@ classDiagram
     }
 
     %% =====================
+    %% 2FA
+    %% =====================
+
+    class TwoFactorAuthManager {
+        + sendOTP(string username) string
+        + verifyOTP(string username, string otp) boolean
+    }
+
+    %% =====================
     %% ENUM
     %% =====================
 
@@ -260,6 +269,7 @@ classDiagram
     AccountManager --> SessionManager : usa
     AccountManager --> ServiceManager : usa
     AccountManager --> BackupManager : usa
+    AccountManager --> TwoFactorAuthManager : usa
 
     %% AccountManager carica/crea l'UserAccount
     AccountManager --> UserAccount : load/create
