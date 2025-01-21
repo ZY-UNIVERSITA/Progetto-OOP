@@ -51,7 +51,31 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
+Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
+Gli elementi principali sono:
+1. **Utente**  
+    Un utente rappresenta una persona che vuole gestire in modo sicuro le proprie credenziali per diversi servizi.
+    Ogni utente ha un identificativo univoco (es. nome utente o email) e una chiave segreta drivata da una password principale.
+2. **Servizio**  
+    Un servizio è una risorsa digitale per la quale l'utente dispone di credenziali di accesso.
+    Ogni servizio ha un nome e memorizza dati come username e password cifrata.
 
+3. **Autenticazione**  
+    Per accedere ai propri dati l'utente deve essere autenticato.
+    L'autenticazione consiste in una combinazione di credenziali memorizzate e, opzionalmente, in un sistema di 2FA.
+
+4. **Sicurezza**  
+    I dati memorizzati devono essere protetti attraverso meccanismi di crittografia.
+    Ogni servizio memorizza le credenziali cifrate con un meccanismo di derivazione da una chiave principale.
+
+5. **Backup**  
+    Gli utenti possono creare e ripristinare backup delle proprie credenziali in caso di perdita dei dati.
+    Il backup deve essere cifrato per garantire la sicurezza.
+
+6. **Autenticazione a Due Fattori**  
+    Oltre alla password principale, potrebbe essere richiesta autenticazione tramite un codice OTP.
+
+Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
 ```mermaid
 
