@@ -10,6 +10,8 @@ bin/
 
 .settings
 
+esempio
+
 # Compiled class file
 *.class
 
