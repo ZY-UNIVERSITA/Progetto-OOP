@@ -66,12 +66,15 @@ classDiagram
         - FileManager fileManager
         - SessionManager sessionManager
         - ServiceManager serviceManager
+        - BackupManager backupManager
 
-        + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager)
+        + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
         + login(string username, char[] password) boolean
         + logout() void
         + register(string username, char[] password) void
         + changePassword(char[] oldPassword, char[] newPassword) boolean
+        + createBackup() void
+        + restoreBackup(file backupFile) void
     }
 
     class UserAccount {
@@ -93,16 +96,14 @@ classDiagram
 
     class ServiceManager {
         - List~Service~ services
-        - CryptoManager cryptoManager
-        - FileManager fileManager
 
-        + ServiceManager(CryptoManager cryptoManager, FileManager fileManager)
+        + ServiceManager()
         + addService(Service service) boolean
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
         + getServices() List~Service~
-        + loadServices(KeySpec key) void
-        + saveServices(KeySpec key) void
+        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
+        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
     }
 
     class Service {
@@ -146,13 +147,13 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - string algorithmType
-        - string algorithmName
+        - AlgorithmType algorithmType
+        - AlgorithmName algorithmName
         - Map~string, string~ parameters
 
-        + AlgorithmConfig(string algorithmType, string algorithmName, Map~string, string~ parameters)
-        + getAlgorithmType() string
-        + getAlgorithmName() string
+        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
+        + getAlgorithmType() AlgorithmType
+        + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
         + setParameter(string key, string value) void
     }
@@ -162,6 +163,8 @@ classDiagram
         + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
+        + generatePassword(int length, boolean useSpecialChars, boolean useNumbers, boolean useUppercase, boolean useLowerCase) char[]
+        + generateSalt(int length) byte[]
     }
 
     %% Interfacce per gestire algoritmi diversi
@@ -177,6 +180,54 @@ classDiagram
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
     }
+
+    %% Implementazioni concrete degli algoritmi
+
+    class PBKDF2 {
+        <<implementation>>
+        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
+        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+    }
+
+    class Argon2id {
+        <<implementation>>
+        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
+        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+    }
+
+    class AES256GCM {
+        <<implementation>>
+        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+    }
+
+    %% =====================
+    %% BACKUP
+    %% =====================
+
+    class BackupManager {
+        + BackupManager(FileManager fileManager)
+        + createBackup(UserAccount userAccount, List~Service~ services) void
+        + restoreBackup(file backupFile, AccountManager accountManager) void
+    }
+
+    %% =====================
+    %% ENUM
+    %% =====================
+
+    %% class AlgorithmType {
+    %%     <<enum>>
+    %%     DERIVATION
+    %%     ENCRYPTION
+    %% }
+
+    %% class AlgorithmName {
+    %%     <<enum>>
+    %%     PBKDF2
+    %%     Argon2id
+    %%     AES256GCM
+    %% }
+
 
     %% =====================
     %% COMPONENTI MVC
@@ -262,14 +313,13 @@ classDiagram
     AccountManager --> FileManager : usa
     AccountManager --> SessionManager : usa
     AccountManager --> ServiceManager : usa
+    AccountManager --> BackupManager : usa
 
     %% AccountManager carica/crea l'UserAccount
     AccountManager --> UserAccount : load/create
 
-    %% ServiceManager gestisce i Service e usa CryptoManager/FileManager
+    %% ServiceManager gestisce i Service
     ServiceManager *-- Service : composizione
-    ServiceManager --> CryptoManager : usa
-    ServiceManager --> FileManager : usa
 
     %% SessionManager mantiene un riferimento ad un solo UserAccount
     SessionManager o-- UserAccount : contiene
@@ -285,6 +335,15 @@ classDiagram
     %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
     CryptoManager --> KeyDerivationAlgorithm : usa
     CryptoManager --> EncryptionAlgorithm : usa
+
+    %% Implementazioni concrete degli algoritmi
+    PBKDF2 --|> KeyDerivationAlgorithm: implements
+    Argon2id --|> KeyDerivationAlgorithm: implements
+    AES256GCM --|> EncryptionAlgorithm: implements
+    %% BackupManager
+    BackupManager --> FileManager : usa
+    BackupManager --> UserAccount : backup/restore
+    BackupManager --> Service : backup/restore
 
     %% Componenti MVC
     LoginView ..> LoginController : controller
@@ -306,7 +365,6 @@ classDiagram
     LoginController ..> ViewNavigator : usa
     RegisterController ..> ViewNavigator : usa
     ServiceManagerController ..> ViewNavigator : usa
-
 
 ```
 
