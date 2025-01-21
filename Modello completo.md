@@ -1,81 +1,4 @@
-# Relazione di Progetto: Gestore di password
-
-Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password.
-
-## Analisi
-
-L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli utenti.
-
-### Requisiti Funzionali
-
-- [RF 1]: Registrazione degli utenti:
-    1. Gli utenti devono poter creare un account fornendo uno username e una password.
-    2. Il sistema dovrà guidare l'utente nella scelta di una password sicura, garantendo che rispetti parametri specifici, come la presenza di lettere maiuscole, numeri e caratteri speciali.
-
-- [RF 2]: Autenticazione degli utenti:
-    1. L'accesso al sistema sarà possibile tramite una combinazione di username e password.
-    2. Il sistema dovrà verificare che la password inserita corrisponda a quella associata all’utente.
-
-- [RF 3]: Gestione delle credenziali salvate:
-    1. Gli utenti devono poter archiviare, visualizzare, modificare ed eliminare le credenziali associate ai vari servizi online.
-    2. Il sistema permetterà di aggiungere informazioni aggiuntive alle credenziali, come email e note.
-
-- [RF 4]: Sicurezza dei dati
-    1. I dati sensibili, come username e password, non saranno mai memorizzati in chiaro.
-    2. I dati saranno temporaneamente decriptati in memoria solo quando necessario.
-
-- [RF 5]: Funzionalità di ricerca _(opzionale)_.
-    1. Gli utenti devono poter cercare rapidamente le credenziali salvate per un servizio specifico utilizzando una barra di ricerca.
-
-- [RF 6]: Autenticazione a due fattori (2FA) _(opzionale)_.
-    1. Sarà offerta un’opzione per aggiungere un ulteriore livello di sicurezza, tramite autenticazione a due fattori.
-
-- [RF 7]: Generazione di password sicure _(opzionale)_.
-    1. Gli utenti potranno generare automaticamente password complesse e sicure.
-
-- [RF 8]: Backup e ripristino dei dati _(opzionale)_.
-    1. Il sistema offrirà la possibilità di creare backup dei dati in formato criptato e di ripristinarli in caso di necessità.
-
-### Requisiti Non Funzionali
-
-- [RNF 1]: _Sicurezza_. L'applicazione deve garantire un alto livello di sicurezza, proteggendo i dati sensibili degli utenti durante tutte le operazioni.
-
-- [RNF 2]: _Efficienza_. L'applicazione dovrà essere ottimizzata per funzionare su dispositivi con risorse limitate.
-
-- [RNF 3]: _Interfaccia user-friendly_. L’interfaccia grafica dovrà essere intuitiva e semplice da utilizzare, anche per utenti non esperti.
-
-- [RNF 4]: _Operatività offline_. L’applicazione funzionerà completamente offline, eliminando il rischio di esposizione dei dati tramite connessioni esterne.
-
-- [RNF 5]: _Open-source_. L'applicazione sarà open-source, consentendo agli utenti e agli sviluppatori di verificare il codice e personalizzarlo in base alle proprie esigenze.
-
-
-## Analisi e modello del Dominio
-
-Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
-Gli elementi principali sono:
-1. **Utente**  
-    Un utente rappresenta una persona che vuole gestire in modo sicuro le proprie credenziali per diversi servizi.
-    Ogni utente ha un identificativo univoco (es. nome utente o email) e una chiave segreta drivata da una password principale.
-2. **Servizio**  
-    Un servizio è una risorsa digitale per la quale l'utente dispone di credenziali di accesso.
-    Ogni servizio ha un nome e memorizza dati come username e password cifrata.
-
-3. **Autenticazione**  
-    Per accedere ai propri dati l'utente deve essere autenticato.
-    L'autenticazione consiste in una combinazione di credenziali memorizzate e, opzionalmente, in un sistema di 2FA.
-
-4. **Sicurezza**  
-    I dati memorizzati devono essere protetti attraverso meccanismi di crittografia.
-    Ogni servizio memorizza le credenziali cifrate con un meccanismo di derivazione da una chiave principale.
-
-5. **Backup**  
-    Gli utenti possono creare e ripristinare backup delle proprie credenziali in caso di perdita dei dati.
-    Il backup deve essere cifrato per garantire la sicurezza.
-
-6. **Autenticazione a Due Fattori**  
-    Oltre alla password principale, potrebbe essere richiesta autenticazione tramite un codice OTP.
-
-Gli elementi costitutivi sono sintetizzati nella seguente figura.
+Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
 ```mermaid
 
@@ -86,6 +9,12 @@ classDiagram
     %% ===================
 
     class AccountManager {
+        - CryptoManager cryptoManager
+        - FileManager fileManager
+        - SessionManager sessionManager
+        - ServiceManager serviceManager
+        - BackupManager backupManager
+
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
         + login(string username, char[] password) boolean
         + logout() void
@@ -96,13 +25,26 @@ classDiagram
     }
 
     class UserAccount {
+        - string username
+        - byte[] salt
+        - AlgorithmConfig derivationConfig
+        - KeySpec masterKey
+
+        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
         + getUsername() string
+        + setUsername(string username) void
         + getMasterKey() KeySpec
+        + setMasterKey(KeySpec masterKey) void
         + getSalt() byte[]
+        + setSalt(byte[] salt) void
         + getDerivationConfig() AlgorithmConfig
+        + setDerivationConfig(AlgorithmConfig config) void
     }
 
     class ServiceManager {
+        - List~Service~ services
+
+        + ServiceManager()
         + addService(Service service) boolean
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
@@ -113,19 +55,35 @@ classDiagram
     }
 
     class Service {
+        - string name
+        - string username
+        - string email
+        - byte[] encryptedPassword
+        - AlgorithmConfig encryptionConfig
+        - string info
+
+        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
         + getName() string
+        + setName(string name) void
         + getUsername() string
+        + setUsername(string username) void
         + getEncryptedPassword() byte[]
+        + setEncryptedPassword(byte[] encryptedPassword) void
         + getEncryptionConfig() AlgorithmConfig
+        + setEncryptionConfig(AlgorithmConfig config) void
     }
 
     class SessionManager {
+        - UserAccount currentUser
+
+        + SessionManager()
         + getCurrentUser() UserAccount
         + setCurrentUser(UserAccount user) void
         + clearSession() void
     }
 
     class FileManager {
+        + FileManager()
         + loadUserData(string username) UserAccount
         + saveUserData(UserAccount userAccount) void
         + loadServicesFile() byte[]
@@ -137,6 +95,11 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
+        - AlgorithmType algorithmType
+        - AlgorithmName algorithmName
+        - Map~string, string~ parameters
+
+        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
@@ -144,6 +107,7 @@ classDiagram
     }
 
     class CryptoManager {
+        + CryptoManager()
         + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
@@ -220,6 +184,7 @@ classDiagram
     %%     AES256GCM
     %% }
 
+
     %% =====================
     %% COMPONENTI MVC
     %% =====================
@@ -247,6 +212,8 @@ classDiagram
 
     %% Controller (Classi Java concrete)
     class LoginController {
+        - AccountManager accountManager
+        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogin() void
@@ -254,18 +221,24 @@ classDiagram
     }
 
     class MainController {
+        - SessionManager sessionManager
+        - ViewNavigator viewNavigator
         + setSessionManager(SessionManager sessionManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogout() void
     }
 
     class RegisterController {
+        - AccountManager accountManager
+        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleRegister() void
     }
 
     class ServiceManagerController {
+        - ServiceManager serviceManager
+        - ViewNavigator viewNavigator
         + setServiceManager(ServiceManager serviceManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + initialize() void
@@ -276,6 +249,11 @@ classDiagram
     }
 
     class ViewNavigator {
+        - Stage stage
+        - AccountManager accountManager
+        - SessionManager sessionManager
+        - ServiceManager serviceManager
+        + ViewNavigator(Stage stage, AccountManager accountManager, SessionManager sessionManager, ServiceManager serviceManager)
         + showLoginView() void
         + showMainView() void
         + showRegisterView() void
@@ -346,28 +324,3 @@ classDiagram
     ServiceManagerController ..> ViewNavigator : usa
 
 ```
-
-# Design
-
-
-## Architettura
-
-```mermaid
-classDiagram
-
-```
-
-## Design dettagliato
-
-# Sviluppo
-
-## Testing automatizzato
-
-## Note di sviluppo
-
-# Commenti finali
-
-## Autovalutazione e lavori futuri
-
-# Guida utente
-
