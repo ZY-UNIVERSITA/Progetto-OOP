@@ -51,7 +51,7 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
-Modello completo. Verrà migliorato mano a mano.
+Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
 ```mermaid
 
@@ -102,6 +102,7 @@ classDiagram
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
         + getServices() List~Service~
+        + searchService(string searchTerm) List~Service~
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
     }
@@ -212,6 +213,14 @@ classDiagram
     }
 
     %% =====================
+    %% 2FA
+    %% =====================
+    class TwoFactorAuthManager {
+        + sendOTP(string username) string
+        + verifyOTP(string username, string otp) boolean
+    }
+
+    %% =====================
     %% ENUM
     %% =====================
 
@@ -314,6 +323,7 @@ classDiagram
     AccountManager --> SessionManager : usa
     AccountManager --> ServiceManager : usa
     AccountManager --> BackupManager : usa
+    AccountManager --> TwoFactorAuthManager : usa
 
     %% AccountManager carica/crea l'UserAccount
     AccountManager --> UserAccount : load/create
