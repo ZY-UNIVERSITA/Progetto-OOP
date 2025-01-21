@@ -51,7 +51,31 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
-Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
+Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
+Gli elementi principali sono:
+1. **Utente**  
+    Un utente rappresenta una persona che vuole gestire in modo sicuro le proprie credenziali per diversi servizi.
+    Ogni utente ha un identificativo univoco (es. nome utente o email) e una chiave segreta drivata da una password principale.
+2. **Servizio**  
+    Un servizio è una risorsa digitale per la quale l'utente dispone di credenziali di accesso.
+    Ogni servizio ha un nome e memorizza dati come username e password cifrata.
+
+3. **Autenticazione**  
+    Per accedere ai propri dati l'utente deve essere autenticato.
+    L'autenticazione consiste in una combinazione di credenziali memorizzate e, opzionalmente, in un sistema di 2FA.
+
+4. **Sicurezza**  
+    I dati memorizzati devono essere protetti attraverso meccanismi di crittografia.
+    Ogni servizio memorizza le credenziali cifrate con un meccanismo di derivazione da una chiave principale.
+
+5. **Backup**  
+    Gli utenti possono creare e ripristinare backup delle proprie credenziali in caso di perdita dei dati.
+    Il backup deve essere cifrato per garantire la sicurezza.
+
+6. **Autenticazione a Due Fattori**  
+    Oltre alla password principale, potrebbe essere richiesta autenticazione tramite un codice OTP.
+
+Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
 ```mermaid
 
@@ -62,12 +86,6 @@ classDiagram
     %% ===================
 
     class AccountManager {
-        - CryptoManager cryptoManager
-        - FileManager fileManager
-        - SessionManager sessionManager
-        - ServiceManager serviceManager
-        - BackupManager backupManager
-
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
         + login(string username, char[] password) boolean
         + logout() void
@@ -78,26 +96,13 @@ classDiagram
     }
 
     class UserAccount {
-        - string username
-        - byte[] salt
-        - AlgorithmConfig derivationConfig
-        - KeySpec masterKey
-
-        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
         + getUsername() string
-        + setUsername(string username) void
         + getMasterKey() KeySpec
-        + setMasterKey(KeySpec masterKey) void
         + getSalt() byte[]
-        + setSalt(byte[] salt) void
         + getDerivationConfig() AlgorithmConfig
-        + setDerivationConfig(AlgorithmConfig config) void
     }
 
     class ServiceManager {
-        - List~Service~ services
-
-        + ServiceManager()
         + addService(Service service) boolean
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
@@ -108,35 +113,19 @@ classDiagram
     }
 
     class Service {
-        - string name
-        - string username
-        - string email
-        - byte[] encryptedPassword
-        - AlgorithmConfig encryptionConfig
-        - string info
-
-        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
         + getName() string
-        + setName(string name) void
         + getUsername() string
-        + setUsername(string username) void
         + getEncryptedPassword() byte[]
-        + setEncryptedPassword(byte[] encryptedPassword) void
         + getEncryptionConfig() AlgorithmConfig
-        + setEncryptionConfig(AlgorithmConfig config) void
     }
 
     class SessionManager {
-        - UserAccount currentUser
-
-        + SessionManager()
         + getCurrentUser() UserAccount
         + setCurrentUser(UserAccount user) void
         + clearSession() void
     }
 
     class FileManager {
-        + FileManager()
         + loadUserData(string username) UserAccount
         + saveUserData(UserAccount userAccount) void
         + loadServicesFile() byte[]
@@ -148,11 +137,6 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - AlgorithmType algorithmType
-        - AlgorithmName algorithmName
-        - Map~string, string~ parameters
-
-        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
@@ -160,7 +144,6 @@ classDiagram
     }
 
     class CryptoManager {
-        + CryptoManager()
         + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
@@ -237,7 +220,6 @@ classDiagram
     %%     AES256GCM
     %% }
 
-
     %% =====================
     %% COMPONENTI MVC
     %% =====================
@@ -265,8 +247,6 @@ classDiagram
 
     %% Controller (Classi Java concrete)
     class LoginController {
-        - AccountManager accountManager
-        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogin() void
@@ -274,24 +254,18 @@ classDiagram
     }
 
     class MainController {
-        - SessionManager sessionManager
-        - ViewNavigator viewNavigator
         + setSessionManager(SessionManager sessionManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogout() void
     }
 
     class RegisterController {
-        - AccountManager accountManager
-        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleRegister() void
     }
 
     class ServiceManagerController {
-        - ServiceManager serviceManager
-        - ViewNavigator viewNavigator
         + setServiceManager(ServiceManager serviceManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + initialize() void
@@ -302,11 +276,6 @@ classDiagram
     }
 
     class ViewNavigator {
-        - Stage stage
-        - AccountManager accountManager
-        - SessionManager sessionManager
-        - ServiceManager serviceManager
-        + ViewNavigator(Stage stage, AccountManager accountManager, SessionManager sessionManager, ServiceManager serviceManager)
         + showLoginView() void
         + showMainView() void
         + showRegisterView() void
