@@ -1,6 +1,6 @@
 # Relazione di Progetto: Gestore di password
 
-Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password, ispirata all’app Password di Apple.
+Questo progetto, sviluppato per il corso di PSS 2024/25, si propone di creare un'applicazione di gestione delle password.
 
 ## Analisi
 
@@ -77,10 +77,6 @@ classDiagram
 # Commenti finali
 
 ## Autovalutazione e lavori futuri
-
-## Difficoltà incontrate e commenti per i docenti
-
-**opzionale**
 
 # Guida utente
 
