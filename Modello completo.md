@@ -95,11 +95,11 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - AlgorithmType algorithmType
-        - AlgorithmName algorithmName
+        - String algorithmType
+        - String algorithmName
         - Map~string, string~ parameters
 
-        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
+        + AlgorithmConfig(String algorithmType, String algorithmName, Map~string, string~ parameters)
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
