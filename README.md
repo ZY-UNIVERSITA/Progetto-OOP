@@ -51,7 +51,7 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 ## Analisi e modello del Dominio
 
-Modello completo. Verrà migliorato mano a mano.
+
 
 ```mermaid
 
@@ -62,12 +62,6 @@ classDiagram
     %% ===================
 
     class AccountManager {
-        - CryptoManager cryptoManager
-        - FileManager fileManager
-        - SessionManager sessionManager
-        - ServiceManager serviceManager
-        - BackupManager backupManager
-
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
         + login(string username, char[] password) boolean
         + logout() void
@@ -78,12 +72,6 @@ classDiagram
     }
 
     class UserAccount {
-        - string username
-        - byte[] salt
-        - AlgorithmConfig derivationConfig
-        - KeySpec masterKey
-
-        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
         + getUsername() string
         + setUsername(string username) void
         + getMasterKey() KeySpec
@@ -95,9 +83,6 @@ classDiagram
     }
 
     class ServiceManager {
-        - List~Service~ services
-
-        + ServiceManager()
         + addService(Service service) boolean
         + removeService(string serviceName) void
         + modifyService(string serviceName, Service newService) void
@@ -107,14 +92,6 @@ classDiagram
     }
 
     class Service {
-        - string name
-        - string username
-        - string email
-        - byte[] encryptedPassword
-        - AlgorithmConfig encryptionConfig
-        - string info
-
-        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
         + getName() string
         + setName(string name) void
         + getUsername() string
@@ -126,16 +103,12 @@ classDiagram
     }
 
     class SessionManager {
-        - UserAccount currentUser
-
-        + SessionManager()
         + getCurrentUser() UserAccount
         + setCurrentUser(UserAccount user) void
         + clearSession() void
     }
 
     class FileManager {
-        + FileManager()
         + loadUserData(string username) UserAccount
         + saveUserData(UserAccount userAccount) void
         + loadServicesFile() byte[]
@@ -147,11 +120,6 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - AlgorithmType algorithmType
-        - AlgorithmName algorithmName
-        - Map~string, string~ parameters
-
-        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
@@ -159,7 +127,6 @@ classDiagram
     }
 
     class CryptoManager {
-        + CryptoManager()
         + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
@@ -256,8 +223,6 @@ classDiagram
 
     %% Controller (Classi Java concrete)
     class LoginController {
-        - AccountManager accountManager
-        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogin() void
@@ -265,24 +230,18 @@ classDiagram
     }
 
     class MainController {
-        - SessionManager sessionManager
-        - ViewNavigator viewNavigator
         + setSessionManager(SessionManager sessionManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleLogout() void
     }
 
     class RegisterController {
-        - AccountManager accountManager
-        - ViewNavigator viewNavigator
         + setAccountManager(AccountManager accountManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + handleRegister() void
     }
 
     class ServiceManagerController {
-        - ServiceManager serviceManager
-        - ViewNavigator viewNavigator
         + setServiceManager(ServiceManager serviceManager)
         + setViewNavigator(ViewNavigator viewNavigator)
         + initialize() void
@@ -293,11 +252,6 @@ classDiagram
     }
 
     class ViewNavigator {
-        - Stage stage
-        - AccountManager accountManager
-        - SessionManager sessionManager
-        - ServiceManager serviceManager
-        + ViewNavigator(Stage stage, AccountManager accountManager, SessionManager sessionManager, ServiceManager serviceManager)
         + showLoginView() void
         + showMainView() void
         + showRegisterView() void
