@@ -1,5 +1,8 @@
 Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
+Di base, tutte le classi hanno i set/get e equal/toString per i private field a meno che non venga specficato diversamente.
+
+
 ```mermaid
 
 classDiagram
@@ -31,14 +34,6 @@ classDiagram
         - KeySpec masterKey
 
         + UserAccount(String username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
-        + getUsername() String
-        + setUsername(String username) void
-        + getMasterKey() KeySpec
-        + setMasterKey(KeySpec masterKey) void
-        + getSalt() byte[]
-        + setSalt(byte[] salt) void
-        + getDerivationConfig() AlgorithmConfig
-        + setDerivationConfig(AlgorithmConfig config) void
     }
 
     class ServiceManager {
@@ -48,7 +43,6 @@ classDiagram
         + addService(Service service) boolean
         + removeService(String serviceName) void
         + modifyService(String serviceName, Service newService) void
-        + getServices() List~Service~
         + searchService(String searchTerm) List~Service~
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
@@ -63,22 +57,12 @@ classDiagram
         - String info
 
         + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, String info)
-        + getName() String
-        + setName(String name) void
-        + getUsername() String
-        + setUsername(String username) void
-        + getEncryptedPassword() byte[]
-        + setEncryptedPassword(byte[] encryptedPassword) void
-        + getEncryptionConfig() AlgorithmConfig
-        + setEncryptionConfig(AlgorithmConfig config) void
     }
 
     class SessionManager {
         - UserAccount currentUser
 
         + SessionManager()
-        + getCurrentUser() UserAccount
-        + setCurrentUser(UserAccount user) void
         + clearSession() void
     }
 
@@ -100,13 +84,9 @@ classDiagram
         - Map~String, String~ parameters
 
         + AlgorithmConfig(String algorithmType, String algorithmName, Map~String, String~ parameters)
-        + getAlgorithmType() AlgorithmType
-        + getAlgorithmName() AlgorithmName
-        + getParameter(String key) String
-        + setParameter(String key, String value) void
         + addNewParameter(String name, String value) void
         + removeParameterByName(String name) void
-        + getParameterByName(String name) String
+        + getParameterValueByName(String name) String
         + updateParameter(String name, String value) void
     }
 
