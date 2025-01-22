@@ -16,23 +16,23 @@ classDiagram
         - BackupManager backupManager
 
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
-        + login(string username, char[] password) boolean
+        + login(String username, char[] password) boolean
         + logout() void
-        + register(string username, char[] password) void
+        + register(String username, char[] password) void
         + changePassword(char[] oldPassword, char[] newPassword) boolean
         + createBackup() void
         + restoreBackup(file backupFile) void
     }
 
     class UserAccount {
-        - string username
+        - String username
         - byte[] salt
         - AlgorithmConfig derivationConfig
         - KeySpec masterKey
 
-        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
-        + getUsername() string
-        + setUsername(string username) void
+        + UserAccount(String username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
+        + getUsername() String
+        + setUsername(String username) void
         + getMasterKey() KeySpec
         + setMasterKey(KeySpec masterKey) void
         + getSalt() byte[]
@@ -46,27 +46,27 @@ classDiagram
 
         + ServiceManager()
         + addService(Service service) boolean
-        + removeService(string serviceName) void
-        + modifyService(string serviceName, Service newService) void
+        + removeService(String serviceName) void
+        + modifyService(String serviceName, Service newService) void
         + getServices() List~Service~
-        + searchService(string searchTerm) List~Service~
+        + searchService(String searchTerm) List~Service~
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
     }
 
     class Service {
-        - string name
-        - string username
-        - string email
+        - String name
+        - String username
+        - String email
         - byte[] encryptedPassword
         - AlgorithmConfig encryptionConfig
-        - string info
+        - String info
 
-        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
-        + getName() string
-        + setName(string name) void
-        + getUsername() string
-        + setUsername(string username) void
+        + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, String info)
+        + getName() String
+        + setName(String name) void
+        + getUsername() String
+        + setUsername(String username) void
         + getEncryptedPassword() byte[]
         + setEncryptedPassword(byte[] encryptedPassword) void
         + getEncryptionConfig() AlgorithmConfig
@@ -84,7 +84,7 @@ classDiagram
 
     class FileManager {
         + FileManager()
-        + loadUserData(string username) UserAccount
+        + loadUserData(String username) UserAccount
         + saveUserData(UserAccount userAccount) void
         + loadServicesFile() byte[]
         + saveServicesFile(byte[] encryptedData) void
@@ -97,13 +97,17 @@ classDiagram
     class AlgorithmConfig {
         - String algorithmType
         - String algorithmName
-        - Map~string, string~ parameters
+        - Map~String, String~ parameters
 
-        + AlgorithmConfig(String algorithmType, String algorithmName, Map~string, string~ parameters)
+        + AlgorithmConfig(String algorithmType, String algorithmName, Map~String, String~ parameters)
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
-        + getParameter(string key) string
-        + setParameter(string key, string value) void
+        + getParameter(String key) String
+        + setParameter(String key, String value) void
+        + addNewParameter(String name, String value) void
+        + removeParameterByName(String name) void
+        + getParameterByName(String name) String
+        + updateParameter(String name, String value) void
     }
 
     class CryptoManager {
@@ -163,8 +167,8 @@ classDiagram
     %% 2FA
     %% =====================
     class TwoFactorAuthManager {
-        + sendOTP(string username) string
-        + verifyOTP(string username, string otp) boolean
+        + sendOTP(String username) String
+        + verifyOTP(String username, String otp) boolean
     }
 
     %% =====================
