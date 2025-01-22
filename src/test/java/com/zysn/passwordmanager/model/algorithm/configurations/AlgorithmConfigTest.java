@@ -96,7 +96,7 @@ class AlgorithmConfigTest {
 
     @Test
     void testGetParameterValueByName() {
-        assertEquals("128", this.algorithmConfig.getParameterValueByParameterName("key_size"), "The value is not 128.");
+        assertEquals("128", this.algorithmConfig.getParameterValueByName("key_size"), "The value is not 128.");
     }
 
     @Test
