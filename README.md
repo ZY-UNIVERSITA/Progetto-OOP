@@ -140,7 +140,6 @@ classDiagram
         + getAlgorithmType() AlgorithmType
         + getAlgorithmName() AlgorithmName
         + getParameter(string key) string
-        + setParameter(string key, string value) void
     }
 
     class CryptoManager {
@@ -165,26 +164,6 @@ classDiagram
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
     }
 
-    %% Implementazioni concrete degli algoritmi
-
-    class PBKDF2 {
-        <<implementation>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
-    }
-
-    class Argon2id {
-        <<implementation>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
-    }
-
-    class AES256GCM {
-        <<implementation>>
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-    }
-
     %% =====================
     %% BACKUP
     %% =====================
@@ -202,23 +181,6 @@ classDiagram
         + sendOTP(string username) string
         + verifyOTP(string username, string otp) boolean
     }
-
-    %% =====================
-    %% ENUM
-    %% =====================
-
-    %% class AlgorithmType {
-    %%     <<enum>>
-    %%     DERIVATION
-    %%     ENCRYPTION
-    %% }
-
-    %% class AlgorithmName {
-    %%     <<enum>>
-    %%     PBKDF2
-    %%     Argon2id
-    %%     AES256GCM
-    %% }
 
     %% =====================
     %% COMPONENTI MVC
@@ -315,10 +277,6 @@ classDiagram
     CryptoManager --> KeyDerivationAlgorithm : usa
     CryptoManager --> EncryptionAlgorithm : usa
 
-    %% Implementazioni concrete degli algoritmi
-    PBKDF2 --|> KeyDerivationAlgorithm: implements
-    Argon2id --|> KeyDerivationAlgorithm: implements
-    AES256GCM --|> EncryptionAlgorithm: implements
     %% BackupManager
     BackupManager --> FileManager : usa
     BackupManager --> UserAccount : backup/restore
