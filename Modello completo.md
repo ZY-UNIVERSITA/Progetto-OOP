@@ -1,8 +1,5 @@
 Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
-Di base, tutte le classi hanno i set/get e equal/toString per i private field a meno che non venga specficato diversamente.
-
-
 ```mermaid
 
 classDiagram
@@ -19,21 +16,29 @@ classDiagram
         - BackupManager backupManager
 
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
-        + login(String username, char[] password) boolean
+        + login(string username, char[] password) boolean
         + logout() void
-        + register(String username, char[] password) void
+        + register(string username, char[] password) void
         + changePassword(char[] oldPassword, char[] newPassword) boolean
         + createBackup() void
         + restoreBackup(file backupFile) void
     }
 
     class UserAccount {
-        - String username
+        - string username
         - byte[] salt
         - AlgorithmConfig derivationConfig
         - KeySpec masterKey
 
-        + UserAccount(String username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
+        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
+        + getUsername() string
+        + setUsername(string username) void
+        + getMasterKey() KeySpec
+        + setMasterKey(KeySpec masterKey) void
+        + getSalt() byte[]
+        + setSalt(byte[] salt) void
+        + getDerivationConfig() AlgorithmConfig
+        + setDerivationConfig(AlgorithmConfig config) void
     }
 
     class ServiceManager {
@@ -41,34 +46,45 @@ classDiagram
 
         + ServiceManager()
         + addService(Service service) boolean
-        + removeService(String serviceName) void
-        + modifyService(String serviceName, Service newService) void
-        + searchService(String searchTerm) List~Service~
+        + removeService(string serviceName) void
+        + modifyService(string serviceName, Service newService) void
+        + getServices() List~Service~
+        + searchService(string searchTerm) List~Service~
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
     }
 
     class Service {
-        - String name
-        - String username
-        - String email
+        - string name
+        - string username
+        - string email
         - byte[] encryptedPassword
         - AlgorithmConfig encryptionConfig
-        - String info
+        - string info
 
-        + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, String info)
+        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
+        + getName() string
+        + setName(string name) void
+        + getUsername() string
+        + setUsername(string username) void
+        + getEncryptedPassword() byte[]
+        + setEncryptedPassword(byte[] encryptedPassword) void
+        + getEncryptionConfig() AlgorithmConfig
+        + setEncryptionConfig(AlgorithmConfig config) void
     }
 
     class SessionManager {
         - UserAccount currentUser
 
         + SessionManager()
+        + getCurrentUser() UserAccount
+        + setCurrentUser(UserAccount user) void
         + clearSession() void
     }
 
     class FileManager {
         + FileManager()
-        + loadUserData(String username) UserAccount
+        + loadUserData(string username) UserAccount
         + saveUserData(UserAccount userAccount) void
         + loadServicesFile() byte[]
         + saveServicesFile(byte[] encryptedData) void
@@ -79,15 +95,15 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - String algorithmType
-        - String algorithmName
-        - Map~String, String~ parameters
+        - AlgorithmType algorithmType
+        - AlgorithmName algorithmName
+        - Map~string, string~ parameters
 
-        + AlgorithmConfig(String algorithmType, String algorithmName, Map~String, String~ parameters)
-        + addNewParameter(String name, String value) void
-        + removeParameterByName(String name) void
-        + getParameterValueByName(String name) String
-        + updateParameter(String name, String value) void
+        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
+        + getAlgorithmType() AlgorithmType
+        + getAlgorithmName() AlgorithmName
+        + getParameter(string key) string
+        + setParameter(string key, string value) void
     }
 
     class CryptoManager {
@@ -111,6 +127,13 @@ classDiagram
         <<interface>>
         + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+    }
+
+    %% Factory per gli algoritmi 
+
+    class KeyDerivationAlgorithmFactory {
+        <<Factory>>
+        + createAlgorithm(String name) KeyDerivationAlgorithm
     }
 
     %% Implementazioni concrete degli algoritmi
@@ -147,8 +170,8 @@ classDiagram
     %% 2FA
     %% =====================
     class TwoFactorAuthManager {
-        + sendOTP(String username) String
-        + verifyOTP(String username, String otp) boolean
+        + sendOTP(string username) string
+        + verifyOTP(string username, string otp) boolean
     }
 
     %% =====================
@@ -276,6 +299,7 @@ classDiagram
     %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
     CryptoManager --> KeyDerivationAlgorithm : usa
     CryptoManager --> EncryptionAlgorithm : usa
+    CryptoManager --> KeyDerivationAlgorithmFactory: usa
 
     %% Implementazioni concrete degli algoritmi
     PBKDF2 --|> KeyDerivationAlgorithm: implements
