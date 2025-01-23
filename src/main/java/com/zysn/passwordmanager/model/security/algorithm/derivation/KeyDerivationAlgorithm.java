@@ -1,6 +1,6 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation;
 
-import java.security.spec.KeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 
@@ -15,7 +15,7 @@ public interface KeyDerivationAlgorithm {
      * @param source the source password or passphrase
      * @param salt the salt value to use in the key derivation process
      * @param algorithmConfig the configuration parameters for the key derivation algorithm
-     * @return a KeySpec representing the derived key
+     * @return a SecretKeySpec representing the derived key
      */
-    public KeySpec deriveKey(char[] source, byte[] salt, AlgorithmConfig algorithmConfig);
+    public SecretKeySpec deriveKey(char[] source, byte[] salt, AlgorithmConfig algorithmConfig);
 }
