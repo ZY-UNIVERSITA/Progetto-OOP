@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.algorithm.configurations;
+package com.zysn.passwordmanager.model.security.config;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
