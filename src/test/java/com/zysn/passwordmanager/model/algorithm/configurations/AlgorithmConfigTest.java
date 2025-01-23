@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+
 class AlgorithmConfigTest {
     private AlgorithmConfig algorithmConfig;
     private String algorithmType;
