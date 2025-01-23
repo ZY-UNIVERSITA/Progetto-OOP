@@ -129,6 +129,13 @@ classDiagram
         + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
     }
 
+    %% Factory per gli algoritmi 
+
+    class KeyDerivationAlgorithmFactory {
+        <<Factory>>
+        + createAlgorithm(String name) KeyDerivationAlgorithm
+    }
+
     %% Implementazioni concrete degli algoritmi
 
     class PBKDF2 {
@@ -292,6 +299,7 @@ classDiagram
     %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
     CryptoManager --> KeyDerivationAlgorithm : usa
     CryptoManager --> EncryptionAlgorithm : usa
+    CryptoManager --> KeyDerivationAlgorithmFactory: usa
 
     %% Implementazioni concrete degli algoritmi
     PBKDF2 --|> KeyDerivationAlgorithm: implements
