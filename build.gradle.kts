@@ -47,6 +47,9 @@ dependencies {
     // JUnit API and testing engine
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitVersion")
+
+    // Bouncy castle
+    implementation("org.bouncycastle:bcprov-jdk18on:1.80")
 }
 
 tasks.withType<Test> {
