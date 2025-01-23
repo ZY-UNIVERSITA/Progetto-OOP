@@ -1,8 +1,12 @@
 package com.zysn.passwordmanager.model.security.config;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * Algorithm configuration class for creating configuration for algorithm.
+ */
 public class AlgorithmConfig {
     private String algorithmType;
     private String algorithmName;
@@ -12,6 +16,10 @@ public class AlgorithmConfig {
         this.algorithmType = algorithmType;
         this.algorithmName = algorithmName;
         this.parameters = parameters;
+    }
+
+    public AlgorithmConfig(String algorithmType, String algorithmName) {
+        this(algorithmType, algorithmName, new HashMap<String, String>());
     }
 
     /**
