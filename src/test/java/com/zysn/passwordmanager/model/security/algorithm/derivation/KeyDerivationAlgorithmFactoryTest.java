@@ -13,9 +13,9 @@ public class KeyDerivationAlgorithmFactoryTest {
 
     @Test
     void testCreateAlgorithm() {
-        String algorithmName = "PBKDF2";
+        String algorithmName = "Argon2";
         KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationAlgorithmFactory.createAlgorithm(algorithmName);
 
-        assertTrue(keyDerivationAlgorithm instanceof PBKDF2, "The object is not an istance of 'PBKDF2'");
+        assertTrue(keyDerivationAlgorithm instanceof Argon2, "The object is not an istance of 'Argon2'");
     }
 }
