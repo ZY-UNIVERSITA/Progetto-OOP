@@ -2,11 +2,14 @@ package com.zysn.passwordmanager.model.account.entity;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 
 public class UserAccount {
     private String username;
     private AlgorithmConfig algorithmConfig;
+    
+    @JsonIgnore
     private SecretKeySpec masterKey;
     
     /* CONSTRUCTOR */
@@ -14,6 +17,10 @@ public class UserAccount {
         this.username = username;
         this.algorithmConfig = algorithmConfig;
         this.masterKey = masterKey;
+    }
+
+    public UserAccount() {
+
     }
 
     /* GETTER AND SETTER */
@@ -42,7 +49,6 @@ public class UserAccount {
     }
 
     /* EQUALS */
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -81,7 +87,6 @@ public class UserAccount {
     }
 
     /* TO STRING */
-
     @Override
     public String toString() {
         return "UserAccount [username=" + username + ", algorithmConfig=" + algorithmConfig + ", masterKey=" + masterKey
