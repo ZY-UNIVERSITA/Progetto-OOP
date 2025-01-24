@@ -21,8 +21,8 @@ public class KeyDerivationAlgorithmFactory {
      */
     public static KeyDerivationAlgorithm createAlgorithm(String name) {
         switch (name) {
-            case "PBKDF2":
-                return new PBKDF2();
+            // case "PBKDF2":
+            //     return new PBKDF2();
             case "Argon2":
                 return new Argon2();
             default:
