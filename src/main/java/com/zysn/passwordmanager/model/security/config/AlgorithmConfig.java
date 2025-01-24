@@ -1,5 +1,6 @@
 package com.zysn.passwordmanager.model.security.config;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -10,16 +11,22 @@ import java.util.NoSuchElementException;
 public class AlgorithmConfig {
     private String algorithmType;
     private String algorithmName;
+    private byte[] salt;
     private Map<String, String> parameters;
 
-    public AlgorithmConfig(String algorithmType, String algorithmName, Map<String, String> parameters) {
+    public AlgorithmConfig(String algorithmType, String algorithmName, byte[] salt, Map<String, String> parameters) {
         this.algorithmType = algorithmType;
         this.algorithmName = algorithmName;
+        this.salt = salt;
         this.parameters = parameters;
     }
 
     public AlgorithmConfig(String algorithmType, String algorithmName) {
-        this(algorithmType, algorithmName, new HashMap<String, String>());
+        this(algorithmType, algorithmName, null, new HashMap<String, String>());
+    }
+
+    public AlgorithmConfig() {
+        
     }
 
     /**
@@ -114,6 +121,14 @@ public class AlgorithmConfig {
         this.parameters = parameters;
     }
 
+    public byte[] getSalt() {
+        return salt;
+    }
+
+    public void setSalt(byte[] salt) {
+        this.salt = salt;
+    }    
+
     /* EQUALS */
     @Override
     public int hashCode() {
@@ -121,6 +136,7 @@ public class AlgorithmConfig {
         int result = 1;
         result = prime * result + ((algorithmType == null) ? 0 : algorithmType.hashCode());
         result = prime * result + ((algorithmName == null) ? 0 : algorithmName.hashCode());
+        result = prime * result + Arrays.hashCode(salt);
         result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
         return result;
     }
@@ -143,6 +159,8 @@ public class AlgorithmConfig {
             if (other.algorithmName != null)
                 return false;
         } else if (!algorithmName.equals(other.algorithmName))
+            return false;
+        if (!Arrays.equals(salt, other.salt))
             return false;
         if (parameters == null) {
             if (other.parameters != null)
