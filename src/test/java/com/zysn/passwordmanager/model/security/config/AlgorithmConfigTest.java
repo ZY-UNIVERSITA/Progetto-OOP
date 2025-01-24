@@ -24,7 +24,7 @@ class AlgorithmConfigTest {
         parameters.put("key_size", "128"); 
         parameters.put("round", "12"); 
 
-        algorithmConfig = new AlgorithmConfig(algorithmType, algorithName, parameters);
+        algorithmConfig = new AlgorithmConfig(algorithmType, algorithName, null, parameters);
     }
 
     @Test
