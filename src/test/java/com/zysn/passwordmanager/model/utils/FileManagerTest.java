@@ -48,6 +48,15 @@ public class FileManagerTest {
 
     @Test
     void testSaveUserData() {
+        String username = "mongodb";
+        this.userAccount = fileManager.loadUserData(username);
 
+        String newUsername = "mongodb2";
+        this.userAccount.setUsername(newUsername);
+
+        fileManager.saveUserData(this.userAccount);
+
+        UserAccount newUserAccount = fileManager.loadUserData(newUsername);
+        assertEquals(this.userAccount, newUserAccount, "The 2 accounts are not the same.");
     }
 }
