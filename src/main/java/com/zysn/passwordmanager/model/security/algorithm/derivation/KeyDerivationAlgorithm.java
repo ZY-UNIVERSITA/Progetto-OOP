@@ -17,5 +17,5 @@ public interface KeyDerivationAlgorithm {
      * @param algorithmConfig the configuration parameters for the key derivation algorithm
      * @return a SecretKeySpec representing the derived key
      */
-    public SecretKeySpec deriveKey(char[] source, byte[] salt, AlgorithmConfig algorithmConfig);
+    public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig);
 }

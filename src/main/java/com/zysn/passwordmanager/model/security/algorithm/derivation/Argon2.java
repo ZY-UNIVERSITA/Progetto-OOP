@@ -58,14 +58,14 @@ public class Argon2 implements KeyDerivationAlgorithm {
      * @return the derived key as a SecretKeySpec
      */
     @Override
-    public SecretKeySpec deriveKey(char[] source, byte[] salt, AlgorithmConfig algorithmConfig) {
+    public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
         int argonVersion = this.getArgonVersion(algorithmConfig);
 
         // Builder initialization
         Argon2Parameters.Builder builder = new Argon2Parameters.Builder(argonVersion);
 
         // Add salt
-        builder.withSalt(salt);
+        builder.withSalt(algorithmConfig.getSalt());
 
         // Add iterations
         builder.withIterations(Integer.valueOf(algorithmConfig.getParameterValueByName(ITERATIONS)));
