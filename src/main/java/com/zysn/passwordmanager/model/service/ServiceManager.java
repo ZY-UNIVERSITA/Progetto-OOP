@@ -2,7 +2,11 @@ package com.zysn.passwordmanager.model.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.security.spec.KeySpec;
+
+import javax.crypto.spec.SecretKeySpec;
+
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
+import com.zysn.passwordmanager.model.utils.FileManager;
 
 public class ServiceManager {
     
@@ -53,6 +57,6 @@ public class ServiceManager {
     }
 
     public void modifyService(String serviceName, Service newService) {}
-    public void loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
-    public void saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
+    public void loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
+    public void saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
 }
