@@ -1,5 +1,7 @@
 package com.zysn.passwordmanager.model.service;
 
+import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+
 /**
  * Represents a Service with credentials and additional information.
  */
