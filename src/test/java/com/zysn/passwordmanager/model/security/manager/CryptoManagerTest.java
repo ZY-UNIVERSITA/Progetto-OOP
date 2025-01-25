@@ -64,7 +64,9 @@ public class CryptoManagerTest {
         byte[] salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20, -8, -41,
                 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
 
-        SecretKeySpec masterKey = this.cryptoManager.deriveMasterKey(source, salt, algorithmConfig);
+        algorithmConfig.setSalt(salt);
+
+        SecretKeySpec masterKey = this.cryptoManager.deriveMasterKey(source, algorithmConfig);
         String key = "VR5cRn1Mb1IkMIu8ofpj5+LJMr1+GDQ3KM3nAkES2JTQ8Mt6uOh9igu+ezGkBiYMpQ2ZZuUL8EftATwyLkvjgOUd7Dh0numcoPXzlRm5DHDwC1XyOMJ/xXAQd4b8+0+zDq9SVL1GIAglXUioHjRGgQDGq9/f0hU3io24qJEcYCs=";
 
         assertEquals(key, Base64.getEncoder().encodeToString(masterKey.getEncoded()), "The key are not equal");
