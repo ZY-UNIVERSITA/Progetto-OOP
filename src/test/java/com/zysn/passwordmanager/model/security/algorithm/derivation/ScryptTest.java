@@ -2,19 +2,13 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-
 import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
-
-import javafx.scene.control.ListCell;
 
 public class ScryptTest {
     private KeyDerivationAlgorithm keyDerivationAlgorithm;

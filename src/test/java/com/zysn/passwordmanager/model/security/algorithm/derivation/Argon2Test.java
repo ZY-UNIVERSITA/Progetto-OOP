@@ -1,8 +1,6 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.HashMap;
 
 import javax.crypto.spec.SecretKeySpec;
