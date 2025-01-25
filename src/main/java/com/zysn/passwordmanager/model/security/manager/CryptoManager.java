@@ -7,6 +7,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.KeyDerivationAlgorithmFactory;
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.CryptoUtils;
 
 public class CryptoManager {
     private final static String KEY_DERIVATION_ALGORITHM_KEY = "Key Derivation Algorithm";
@@ -24,9 +25,14 @@ public class CryptoManager {
             throw new IllegalArgumentException("Algorith type is wrong.");
         }
 
-        KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationAlgorithmFactory.createAlgorithm(algorithmName);
+        SecretKeySpec masterKey = null;
 
-        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(password, algorithmConfig);
+        try {
+            KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationAlgorithmFactory.createAlgorithm(algorithmName);
+            masterKey = keyDerivationAlgorithm.deriveKey(password, algorithmConfig);
+        } finally {
+            CryptoUtils.cleanMemory(password);
+        }
 
         return masterKey;
     }
@@ -55,5 +61,4 @@ public class CryptoManager {
 
         return salt;
     } 
-
 }
