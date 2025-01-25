@@ -82,7 +82,7 @@ public class CryptoUtils {
     /**
      * Converts the specified char array to a byte array using custom encoding.
      *
-     * @param source the char array to be converted
+     * @param source      the char array to be converted
      * @param charsetName the name of the charset
      * @return the byte array, or null if the conversion fails
      */
