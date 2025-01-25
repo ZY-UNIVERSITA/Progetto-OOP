@@ -54,6 +54,13 @@ public class CryptoUtils {
         Arrays.fill(source, '\u0000');
     }
 
+    /**
+     * Clears the contents of the specified byte array by setting each element to
+     * zero.
+     *
+     * @param source the byte array to be cleared
+     * @throws IllegalArgumentException if the source array is null
+     */
     public static void cleanMemory(byte[] source) {
         if (source == null) {
             throw new IllegalArgumentException("Source cannot be null");
@@ -62,8 +69,25 @@ public class CryptoUtils {
         Arrays.fill(source, (byte) 0);
     }
 
+    /**
+     * Converts the specified char array to a byte array using UTF-8 encoding.
+     *
+     * @param source the char array to be converted
+     * @return the byte array, or null if the conversion fails
+     */
     public static byte[] charToByteConverter(char[] source) {
-        Charset charset = Charset.forName("UTF-8");
+        return charToByteConverter(source, "UTF-8");
+    }
+
+    /**
+     * Converts the specified char array to a byte array using custom encoding.
+     *
+     * @param source the char array to be converted
+     * @param charsetName the name of the charset
+     * @return the byte array, or null if the conversion fails
+     */
+    public static byte[] charToByteConverter(char[] source, String charsetName) {
+        Charset charset = Charset.forName(charsetName);
         CharsetEncoder encoder = charset.newEncoder();
 
         CharBuffer charBuffer = CharBuffer.wrap(source);
@@ -79,4 +103,5 @@ public class CryptoUtils {
             return null;
         }
     }
+
 }
