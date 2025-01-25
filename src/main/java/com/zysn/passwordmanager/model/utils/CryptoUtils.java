@@ -1,5 +1,10 @@
 package com.zysn.passwordmanager.model.utils;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.security.SecureRandom;
 
 import org.bouncycastle.util.Arrays;
@@ -49,4 +54,29 @@ public class CryptoUtils {
         Arrays.fill(source, '\u0000');
     }
 
+    public static void cleanMemory(byte[] source) {
+        if (source == null) {
+            throw new IllegalArgumentException("Source cannot be null");
+        }
+
+        Arrays.fill(source, (byte) 0);
+    }
+
+    public static byte[] charToByteConverter(char[] source) {
+        Charset charset = Charset.forName("UTF-8");
+        CharsetEncoder encoder = charset.newEncoder();
+
+        CharBuffer charBuffer = CharBuffer.wrap(source);
+
+        try {
+            ByteBuffer byteBuffer = encoder.encode(charBuffer);
+            byte[] byteArray = new byte[byteBuffer.remaining()];
+            byteBuffer.get(byteArray);
+
+            return byteArray;
+        } catch (CharacterCodingException e) {
+            System.err.println("Error trying to convert char[] into byte[].");
+            return null;
+        }
+    }
 }
