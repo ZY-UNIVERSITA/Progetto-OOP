@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.CryptoUtils;
 
 public class CryptoManagerTest {
     private CryptoManager cryptoManager;
@@ -85,11 +86,11 @@ public class CryptoManagerTest {
     @Test
     void testGenerateSalt() {
         int length = 32;
-        byte[] salt1 = this.cryptoManager.generateSalt(length);
+        byte[] salt1 = CryptoUtils.generateSalt(length);
 
         assertEquals(length, salt1.length, "The lenght of the array is not 32 but " + salt1.length);
 
-        byte[] salt2 = this.cryptoManager.generateSalt(length);
+        byte[] salt2 = CryptoUtils.generateSalt(length);
 
         assertFalse(Arrays.equals(salt1, salt2), "The 2 salt are equals.");
     }

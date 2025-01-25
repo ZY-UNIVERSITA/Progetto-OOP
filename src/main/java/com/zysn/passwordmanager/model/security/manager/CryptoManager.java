@@ -44,21 +44,4 @@ public class CryptoManager {
     public byte[] decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
         return null;
     }
-
-    public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
-        return null;
-    }
-
-    public byte[] generateSalt(int length) {
-        if (length <= 0) {
-            throw new IllegalArgumentException("The length of the salt cannot be 0 or less.");
-        }
-
-        byte[] salt = new byte[length];
-
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(salt);
-
-        return salt;
-    } 
 }
