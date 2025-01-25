@@ -3,6 +3,8 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashMap;
+
 import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +25,7 @@ public class Argon2Test {
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20, -8, -41,
                 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
 
-        algorithmConfig = new AlgorithmConfig("Key Derivation Algorithm", "Argon2");
+        algorithmConfig = new AlgorithmConfig("Key Derivation Algorithm", "Argon2", salt, new HashMap<>());
 
         String variantName = "variant";
         String variantValue = "argon2id";
@@ -49,7 +51,7 @@ public class Argon2Test {
 
     @Test
     void testDeriveKey() {
-        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(source, salt, algorithmConfig);
+        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(source, algorithmConfig);
 
         byte[] masterKeyByte = new byte[] { 85, 30, 92, 70, 125, 76, 111, 82, 36, 48, -117, -68, -95, -6, 99, -25, -30,
                 -55, 50, -67, 126, 24, 52, 55, 40, -51, -25, 2, 65, 18, -40, -108, -48, -16, -53, 122, -72, -24, 125,

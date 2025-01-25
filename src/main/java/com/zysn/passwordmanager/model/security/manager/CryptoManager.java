@@ -16,7 +16,7 @@ public class CryptoManager {
 
     }
 
-    public SecretKeySpec deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig algorithmConfig) {
+    public SecretKeySpec deriveMasterKey(char[] password, AlgorithmConfig algorithmConfig) {
         String algorithmType = algorithmConfig.getAlgorithmType();
         String algorithmName = algorithmConfig.getAlgorithmName();
 
@@ -26,7 +26,7 @@ public class CryptoManager {
 
         KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationAlgorithmFactory.createAlgorithm(algorithmName);
 
-        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(password, salt, algorithmConfig);
+        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(password, algorithmConfig);
 
         return masterKey;
     }
