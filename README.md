@@ -104,7 +104,7 @@ classDiagram
         + encrypt(data: byte[], key: KeySpec): byte[]
         + decrypt(data: byte[], key: KeySpec): byte[]
     }
-
+    
     class BackupManager {
         + createBackup(userAccount: UserAccount, services: List~Service~): void
         + restoreBackup(backupFile: File, userAccount: UserAccount): void
