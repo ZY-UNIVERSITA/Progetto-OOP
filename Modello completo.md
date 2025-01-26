@@ -1,6 +1,6 @@
-Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
+%% Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
-```mermaid
+%% ```mermaid
 
 classDiagram
 
@@ -15,62 +15,50 @@ classDiagram
         - ServiceManager serviceManager
         - BackupManager backupManager
 
+        + AccountManager()
         + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
-        + login(string username, char[] password) boolean
-        + logout() void
-        + register(string username, char[] password) void
+
+        + login(String username, char[] password) boolean
+        + logout() boolean
+        + register(String username, char[] password) boolean
         + changePassword(char[] oldPassword, char[] newPassword) boolean
-        + createBackup() void
-        + restoreBackup(file backupFile) void
+        + createBackup() boolean
+        + restoreBackup(file backupFile) boolean
     }
 
     class UserAccount {
-        - string username
-        - byte[] salt
+        - String username
         - AlgorithmConfig derivationConfig
-        - KeySpec masterKey
+        - SecretKeySpec masterKey
 
-        + UserAccount(string username, byte[] salt, AlgorithmConfig derivationConfig, KeySpec masterKey)
-        + getUsername() string
-        + setUsername(string username) void
-        + getMasterKey() KeySpec
-        + setMasterKey(KeySpec masterKey) void
-        + getSalt() byte[]
-        + setSalt(byte[] salt) void
-        + getDerivationConfig() AlgorithmConfig
-        + setDerivationConfig(AlgorithmConfig config) void
+        + UserAccount()
+        + UserAccount(String username, byte[] salt, AlgorithmConfig derivationConfig, SecretKeySpec masterKey)
     }
 
     class ServiceManager {
         - List~Service~ services
 
         + ServiceManager()
+
         + addService(Service service) boolean
-        + removeService(string serviceName) void
-        + modifyService(string serviceName, Service newService) void
+        + removeService(String serviceName) boolean
+        + modifyService(String serviceName, Service newService) boolean
         + getServices() List~Service~
-        + searchService(string searchTerm) List~Service~
-        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
-        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
+        + searchService(String searchTerm) List~Service~
+        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
+        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
     }
 
     class Service {
-        - string name
-        - string username
-        - string email
+        - String name
+        - String username
+        - String email
         - byte[] encryptedPassword
         - AlgorithmConfig encryptionConfig
-        - string info
+        - String info
 
-        + Service(string name, string username, string email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, string info)
-        + getName() string
-        + setName(string name) void
-        + getUsername() string
-        + setUsername(string username) void
-        + getEncryptedPassword() byte[]
-        + setEncryptedPassword(byte[] encryptedPassword) void
-        + getEncryptionConfig() AlgorithmConfig
-        + setEncryptionConfig(AlgorithmConfig config) void
+        + Service()
+        + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, String info)
     }
 
     class SessionManager {
@@ -84,10 +72,24 @@ classDiagram
 
     class FileManager {
         + FileManager()
-        + loadUserData(string username) UserAccount
-        + saveUserData(UserAccount userAccount) void
+
+        + loadUserData(String username) UserAccount
+        + saveUserData(UserAccount userAccount) boolean
         + loadServicesFile() byte[]
-        + saveServicesFile(byte[] encryptedData) void
+        + saveServicesFile(byte[] encryptedData) boolean
+    }
+
+    %% =====================
+    %% UTILS CLASS
+    %% =====================
+    class CryptoUtils {
+        - CryptoUtils()
+        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]$
+        + generateSalt(int length) byte[]$
+        + cleanMemory(char[] source) void$
+        + cleanMemory(byte[] source) void$
+        + charToByteConverter(char[] source) byte[]$
+        + charToByteConverter(char[] source, String charsetName) byte[]$
     }
 
     %% =====================
@@ -95,38 +97,41 @@ classDiagram
     %% =====================
 
     class AlgorithmConfig {
-        - AlgorithmType algorithmType
-        - AlgorithmName algorithmName
-        - Map~string, string~ parameters
+        - String algorithmType
+        - String algorithmName
+        - byte[] salt
+        - Map~String, String~ parameters
 
-        + AlgorithmConfig(AlgorithmType algorithmType, AlgorithmName algorithmName, Map~string, string~ parameters)
-        + getAlgorithmType() AlgorithmType
-        + getAlgorithmName() AlgorithmName
-        + getParameter(string key) string
-        + setParameter(string key, string value) void
+        + AlgorithmConfig()
+        + AlgorithmConfig(String algorithmType, String algorithmName)
+        + AlgorithmConfig(String algorithmType, String algorithmName, byte[] salt, Map~String, String~ parameters)
+
+        + addNewParameter(String name, String value) void
+        + removeParameterByName(String name) void
+        + getParameterValueByName(String name) String
+        + updateParameter(String name, String value) void
     }
 
     class CryptoManager {
         + CryptoManager()
-        + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
-        + generatePassword(int length, boolean useSpecialChars, boolean useNumbers, boolean useUppercase, boolean useLowerCase) char[]
-        + generateSalt(int length) byte[]
+
+        + deriveMasterKey(char[] password, AlgorithmConfig derivationConfig) SecretKeySpec
+        + encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig encryptionConfig) byte[]
+        + decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig encryptionConfig) byte[]
     }
 
     %% Interfacce per gestire algoritmi diversi
 
     class KeyDerivationAlgorithm {
         <<interface>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) SecretKeySpec
+        + deriveKey(SecretKeySpec source, byte[] salt, AlgorithmConfig config) SecretKeySpec
     }
 
     class EncryptionAlgorithm {
         <<interface>>
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+        + encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig config) byte[]
+        + decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig config) byte[]
     }
 
     %% Factory per gli algoritmi 
@@ -140,20 +145,27 @@ classDiagram
 
     class PBKDF2 {
         <<implementation>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+        + deriveKey(char[] source, AlgorithmConfig config) SecretKeySpec
+        + deriveKey(SecretKeySpec source, AlgorithmConfig config) SecretKeySpec
     }
 
     class Argon2id {
         <<implementation>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
+        - getArgonVersion(AlgorithmConfig algorithmConfig) int
+        + deriveKey(char[] source, AlgorithmConfig config) SecretKeySpec
+        + deriveKey(SecretKeySpec source, AlgorithmConfig config) SecretKeySpec
+    }
+
+    class Scrypt {
+        <<implementation>>
+        + deriveKey(char[] source, AlgorithmConfig config) SecretKeySpec
+        + deriveKey(SecretKeySpec source, AlgorithmConfig config) SecretKeySpec
     }
 
     class AES256GCM {
         <<implementation>>
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
+        + encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig config) byte[]
+        + decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig config) byte[]
     }
 
     %% =====================
@@ -170,8 +182,8 @@ classDiagram
     %% 2FA
     %% =====================
     class TwoFactorAuthManager {
-        + sendOTP(string username) string
-        + verifyOTP(string username, string otp) boolean
+        + sendOTP(String username) String
+        + verifyOTP(String username, String otp) boolean
     }
 
     %% =====================
@@ -272,15 +284,12 @@ classDiagram
     %% =====================
 
     %% AccountManager usa i vari manager
-    AccountManager --> CryptoManager : usa
-    AccountManager --> FileManager : usa
-    AccountManager --> SessionManager : usa
-    AccountManager --> ServiceManager : usa
-    AccountManager --> BackupManager : usa
+    AccountManager *-- CryptoManager : composition
+    AccountManager *-- FileManager : composition
+    AccountManager *-- ServiceManager : composition
+    AccountManager *-- SessionManager : composition
+    AccountManager *-- BackupManager : composition
     AccountManager --> TwoFactorAuthManager : usa
-
-    %% AccountManager carica/crea l'UserAccount
-    AccountManager --> UserAccount : load/create
 
     %% ServiceManager gestisce i Service
     ServiceManager *-- Service : composizione
@@ -289,22 +298,32 @@ classDiagram
     SessionManager o-- UserAccount : contiene
 
     %% FileManager carica/salva UserAccount e file dei servizi
-    FileManager --> UserAccount : carica/salva
-    FileManager --> Service : carica/salva
+    FileManager --> UserAccount : uses
 
-    %% UserAccount e Service possiedono la configurazione dell'algoritmo associata
-    UserAccount --> AlgorithmConfig : derivationConfig
+    %% UserAccount
+    UserAccount *-- AlgorithmConfig : composition
+
+    %% Service
     Service --> AlgorithmConfig : encryptionConfig
 
-    %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
-    CryptoManager --> KeyDerivationAlgorithm : usa
-    CryptoManager --> EncryptionAlgorithm : usa
-    CryptoManager --> KeyDerivationAlgorithmFactory: usa
+    %% CryptoManager
+    CryptoManager --> AlgorithmConfig : uses
+    CryptoManager --> KeyDerivationAlgorithm : uses
+    CryptoManager --> KeyDerivationAlgorithmFactory : uses
+    CryptoManager --> CryptoUtils : calls
+
+    %% CryptoUtils
+
+
+    %% KeyDerivationAlgorithm
+    KeyDerivationAlgorithm --> AlgorithmConfig : uses
 
     %% Implementazioni concrete degli algoritmi
-    PBKDF2 --|> KeyDerivationAlgorithm: implements
-    Argon2id --|> KeyDerivationAlgorithm: implements
-    AES256GCM --|> EncryptionAlgorithm: implements
+    PBKDF2 ..|> KeyDerivationAlgorithm: implements
+    Argon2id ..|> KeyDerivationAlgorithm: implements
+    Scrypt ..|> KeyDerivationAlgorithm: implements
+    AES256GCM ..|> EncryptionAlgorithm: implements
+
     %% BackupManager
     BackupManager --> FileManager : usa
     BackupManager --> UserAccount : backup/restore
