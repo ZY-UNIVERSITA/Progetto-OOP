@@ -53,27 +53,28 @@ L'applicazione mira a garantire una protezione avanzata dei dati sensibili degli
 
 Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
 Gli elementi principali sono:
-1. **Utente**  
+1. **Utente (UserAccount)**  
     Un utente rappresenta una persona che vuole gestire in modo sicuro le proprie credenziali per diversi servizi.
-    Ogni utente ha un identificativo univoco (es. nome utente o email) e una chiave segreta drivata da una password principale.
-2. **Servizio**  
+    Ogni utente ha un identificativo univoco (come nome utente o email), una password principale (utilizzata per derivare una chiave segreta), e un insieme di servizi a cui accede.
+
+2. **Servizio (Service)**  
     Un servizio è una risorsa digitale per la quale l'utente dispone di credenziali di accesso.
     Ogni servizio ha un nome e memorizza dati come username e password cifrata.
 
-3. **Autenticazione**  
+3. **Autenticazione (AccountManager)**  
     Per accedere ai propri dati l'utente deve essere autenticato.
-    L'autenticazione consiste in una combinazione di credenziali memorizzate e, opzionalmente, in un sistema di 2FA.
+    Può avvenire tramite una password principale e può essere rafforzata con un sistema di autenticazione a due fattori (2FA).
 
-4. **Sicurezza**  
-    I dati memorizzati devono essere protetti attraverso meccanismi di crittografia.
-    Ogni servizio memorizza le credenziali cifrate con un meccanismo di derivazione da una chiave principale.
+4. **Crittografia (CryptoManager)**  
+    I dati devono essere protetti attraverso meccanismi di crittografia.
+    Ogni servizio memorizza credenziali cifrate utilizzando una chiave derivata dalla password principale dell'utente.
 
-5. **Backup**  
-    Gli utenti possono creare e ripristinare backup delle proprie credenziali in caso di perdita dei dati.
-    Il backup deve essere cifrato per garantire la sicurezza.
+5. **Backup (BackupManager)**  
+    Gli utenti possono creare e ripristinare backup delle loro credenziali per evitare la perdita dei dati.
+    Il backup deve essere cifrato per mantenere la sicurezza.
 
-6. **Autenticazione a Due Fattori**  
-    Oltre alla password principale, potrebbe essere richiesta autenticazione tramite un codice OTP.
+6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
+    Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
 
 Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
@@ -81,229 +82,55 @@ Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
 classDiagram
 
-    %% ===================
-    %% CLASSI PRINCIPALI (Model)
-    %% ===================
-
     class AccountManager {
-        + AccountManager(cryptoManager, fileManager, sessionManager, serviceManager, backupManager)
-        + login(string username, char[] password) boolean
-        + logout() void
-        + register(string username, char[] password) void
-        + changePassword(char[] oldPassword, char[] newPassword) boolean
-        + createBackup() void
-        + restoreBackup(file backupFile) void
+        + login(username: string, password: char[]): boolean
+        + logout(): boolean
     }
 
     class UserAccount {
-        + getUsername() string
-        + getMasterKey() KeySpec
-        + getSalt() byte[]
-        + getDerivationConfig() AlgorithmConfig
-    }
-
-    class ServiceManager {
-        + addService(Service service) boolean
-        + removeService(string serviceName) void
-        + modifyService(string serviceName, Service newService) void
-        + getServices() List~Service~
-        + searchService(string searchTerm) List~Service~
-        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
-        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) void
+        + getUsername(): string
+        + getMasterKey(): KeySpec
+        + getSalt(): byte[]
     }
 
     class Service {
-        + getName() string
-        + getUsername() string
-        + getEncryptedPassword() byte[]
-        + getEncryptionConfig() AlgorithmConfig
-    }
-
-    class SessionManager {
-        + getCurrentUser() UserAccount
-        + setCurrentUser(UserAccount user) void
-        + clearSession() void
-    }
-
-    class FileManager {
-        + loadUserData(string username) UserAccount
-        + saveUserData(UserAccount userAccount) void
-        + loadServicesFile() byte[]
-        + saveServicesFile(byte[] encryptedData) void
-    }
-
-    %% =====================
-    %% GESTIONE ALGORITMI
-    %% =====================
-
-    class AlgorithmConfig {
-        + getAlgorithmType() AlgorithmType
-        + getAlgorithmName() AlgorithmName
-        + getParameter(string key) string
+        + getName(): string
+        + getUsername(): string
+        + getEncryptedPassword(): byte[]
     }
 
     class CryptoManager {
-        + deriveMasterKey(char[] password, byte[] salt, AlgorithmConfig derivationConfig) KeySpec
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig encryptionConfig) byte[]
-        + generatePassword(int length, boolean useSpecialChars, boolean useNumbers, boolean useUppercase, boolean useLowerCase) char[]
-        + generateSalt(int length) byte[]
+        + deriveMasterKey(password: string, salt: byte[]): KeySpec
+        + encrypt(data: byte[], key: KeySpec): byte[]
+        + decrypt(data: byte[], key: KeySpec): byte[]
     }
-
-    %% Interfacce per gestire algoritmi diversi
-
-    class KeyDerivationAlgorithm {
-        <<interface>>
-        + deriveKey(char[] source, byte[] salt, AlgorithmConfig config) KeySpec
-        + deriveKey(KeySpec source, byte[] salt, AlgorithmConfig config) KeySpec
-    }
-
-    class EncryptionAlgorithm {
-        <<interface>>
-        + encrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-        + decrypt(byte[] data, KeySpec key, AlgorithmConfig config) byte[]
-    }
-
-    %% =====================
-    %% BACKUP
-    %% =====================
-
+    
     class BackupManager {
-        + BackupManager(FileManager fileManager)
-        + createBackup(UserAccount userAccount, List~Service~ services) void
-        + restoreBackup(file backupFile, AccountManager accountManager) void
+        + createBackup(userAccount: UserAccount, services: List~Service~): void
+        + restoreBackup(backupFile: File, userAccount: UserAccount): void
     }
 
-    %% =====================
-    %% 2FA
-    %% =====================
     class TwoFactorAuthManager {
-        + sendOTP(string username) string
-        + verifyOTP(string username, string otp) boolean
+        + sendOTP(username: string): string
+        + verifyOTP(username: string, otp: string): boolean
     }
 
-    %% =====================
-    %% COMPONENTI MVC
-    %% =====================
-
-    %% View (Rappresentate solo concettualmente, implementate nei file FXML)
-    class LoginView {
-        <<Concept>>
-        + initialize() void
-    }
-
-    class MainView {
-        <<Concept>>
-        + initialize() void
-    }
-
-    class RegisterView {
-        <<Concept>>
-        + initialize() void
-    }
-
-    class ServiceManagerView {
-        <<Concept>>
-        + initialize() void
-    }
-
-    %% Controller (Classi Java concrete)
-    class LoginController {
-        + setAccountManager(AccountManager accountManager)
-        + setViewNavigator(ViewNavigator viewNavigator)
-        + handleLogin() void
-        + handleRegister() void
-    }
-
-    class MainController {
-        + setSessionManager(SessionManager sessionManager)
-        + setViewNavigator(ViewNavigator viewNavigator)
-        + handleLogout() void
-    }
-
-    class RegisterController {
-        + setAccountManager(AccountManager accountManager)
-        + setViewNavigator(ViewNavigator viewNavigator)
-        + handleRegister() void
-    }
-
-    class ServiceManagerController {
-        + setServiceManager(ServiceManager serviceManager)
-        + setViewNavigator(ViewNavigator viewNavigator)
-        + initialize() void
-        + loadServices() void
-        + handleAddService() void
-        + handleRemoveService() void
-        + handleModifyService() void
-    }
-
-    class ViewNavigator {
-        + showLoginView() void
-        + showMainView() void
-        + showRegisterView() void
-        + showServiceManagerView() void
-    }
-
-    %% =====================
-    %% RELAZIONI TRA CLASSI
-    %% =====================
-
-    %% AccountManager usa i vari manager
-    AccountManager --> CryptoManager : usa
-    AccountManager --> FileManager : usa
-    AccountManager --> SessionManager : usa
-    AccountManager --> ServiceManager : usa
-    AccountManager --> BackupManager : usa
-    AccountManager --> TwoFactorAuthManager : usa
-
-    %% AccountManager carica/crea l'UserAccount
-    AccountManager --> UserAccount : load/create
-
-    %% ServiceManager gestisce i Service
-    ServiceManager *-- Service : composizione
-
-    %% SessionManager mantiene un riferimento ad un solo UserAccount
-    SessionManager o-- UserAccount : contiene
-
-    %% FileManager carica/salva UserAccount e file dei servizi
-    FileManager --> UserAccount : carica/salva
-    FileManager --> Service : carica/salva
-
-    %% UserAccount e Service possiedono la configurazione dell'algoritmo associata
-    UserAccount --> AlgorithmConfig : derivationConfig
-    Service --> AlgorithmConfig : encryptionConfig
-
-    %% CryptoManager utilizza i parametri passati (config) e internamente crea un KeyDerivationAlgorithm o EncryptionAlgorithm
-    CryptoManager --> KeyDerivationAlgorithm : usa
-    CryptoManager --> EncryptionAlgorithm : usa
-
-    %% BackupManager
-    BackupManager --> FileManager : usa
-    BackupManager --> UserAccount : backup/restore
-    BackupManager --> Service : backup/restore
-
-    %% Componenti MVC
-    LoginView ..> LoginController : controller
-    MainView ..> MainController : controller
-    RegisterView ..> RegisterController : controller
-    ServiceManagerView ..> ServiceManagerController : controller
-
-    LoginController ..> AccountManager : usa
-    MainController ..> SessionManager : usa
-    RegisterController ..> AccountManager : usa
-    ServiceManagerController ..> ServiceManager : usa
-
-    %% ViewNavigator
-    ViewNavigator --> LoginView
-    ViewNavigator --> MainView
-    ViewNavigator --> RegisterView
-    ViewNavigator --> ServiceManagerView
-    MainController ..> ViewNavigator : usa
-    LoginController ..> ViewNavigator : usa
-    RegisterController ..> ViewNavigator : usa
-    ServiceManagerController ..> ViewNavigator : usa
+    AccountManager "1" --> "1" UserAccount : manages
+    UserAccount "1..*" *-- "1" Service : manages
+    UserAccount "1" --> "1" CryptoManager : uses
+    UserAccount "0..*" --> "1" BackupManager : creates/restore backup
+    UserAccount "1" --> "1" TwoFactorAuthManager : uses
+    Service "1" --> "1" CryptoManager : encrypts/decrypts
+    BackupManager "1" --> "0..*" UserAccount : backups/restore
+    BackupManager "1" --> "0..*" Service : backups/restore
 
 ```
+
+**Difficoltà Principali**  
+_Gestione sicura delle credenziali:_ Il problema principale è garantire che la memorizzazione e il recupero delle credenziali avvengano in modo sicuro, evitando accessi non autorizzati.  
+_Derivazione sicura della chiave principale:_ È essenziale scegliere algoritmi di derivazione delle chiavi robusti per proteggere i dati.  
+_Sicurezza nei backup:_ Deve essere garantito che i backup non compromettano la sicurezza delle credenziali.  
+_Autenticazione a due fattori:_ L'integrazione con un sistema 2FA deve essere gestita in modo efficace senza compromettere l'usabilità.
 
 # Design
 
