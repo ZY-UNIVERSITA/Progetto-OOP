@@ -27,6 +27,8 @@ public class KeyDerivationAlgorithmFactory {
                 return new Argon2();
             case "Scrypt":
                 return new Scrypt();
+            case "BCrypt":
+                return new BCrypt();
             default:
                 throw new IllegalArgumentException("The algorithm " + name + " has not been found.");
         }
