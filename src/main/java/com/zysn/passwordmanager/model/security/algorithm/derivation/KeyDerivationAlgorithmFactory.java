@@ -20,14 +20,14 @@ public class KeyDerivationAlgorithmFactory {
      * @throws IllegalArgumentException if the specified algorithm name is not found
      */
     public static KeyDerivationAlgorithm createAlgorithm(String name) {
-        switch (name) {
+        switch (name.toLowerCase()) {
             // case "PBKDF2":
             //     return new PBKDF2();
-            case "Argon2":
+            case "argon2":
                 return new Argon2();
-            case "Scrypt":
+            case "scrypt":
                 return new Scrypt();
-            case "BCrypt":
+            case "bcrypt":
                 return new BCrypt();
             default:
                 throw new IllegalArgumentException("The algorithm " + name + " has not been found.");
