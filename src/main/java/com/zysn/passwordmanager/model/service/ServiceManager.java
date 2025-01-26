@@ -56,7 +56,21 @@ public class ServiceManager {
         return res;
     }
 
-    public void modifyService(String serviceName, Service newService) {}
-    public void loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
-    public void saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {}
+    public boolean modifyService(String serviceName, Service newService) {
+        for (Service service : services) {
+            if (service.getName().equals(serviceName)) {
+                service.setName(newService.getName());
+                service.setUsername(newService.getUsername());
+                service.setEmail(newService.getEmail());
+                service.setPassword(newService.getPassword());
+                service.setEncryptionConfig(newService.getEncryptionConfig());
+                service.setInfo(newService.getInfo());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
+    public boolean saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
 }

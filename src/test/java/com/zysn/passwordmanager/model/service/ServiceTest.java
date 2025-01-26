@@ -58,7 +58,7 @@ public class ServiceTest {
 
     @Test
     void testToString() {
-        String expectedString = "Service [name=MyService, username=user123, email=user@example.com, info=Some info]";
+        String expectedString = "Service [name=Wokwi, username=user123, email=user@example.com, info=Some info]";
         assertEquals(expectedString, service.toString());
     }
 
