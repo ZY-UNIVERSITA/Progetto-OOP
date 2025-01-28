@@ -5,8 +5,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
 import org.bouncycastle.util.Arrays;
 
 public class CryptoUtils {
@@ -33,8 +33,12 @@ public class CryptoUtils {
 
         byte[] salt = new byte[length];
 
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(salt);
+        try {
+            SecureRandom random = SecureRandom.getInstanceStrong();
+            random.nextBytes(salt);
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Errore nella generazione del satl.");
+        }
 
         return salt;
     }
@@ -103,5 +107,4 @@ public class CryptoUtils {
             return null;
         }
     }
-
 }

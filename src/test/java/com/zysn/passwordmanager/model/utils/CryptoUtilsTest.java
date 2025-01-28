@@ -3,7 +3,6 @@ package com.zysn.passwordmanager.model.utils;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -40,12 +39,13 @@ public class CryptoUtilsTest {
         CryptoUtils.cleanMemory(stringInArrayOfChar);
 
         char[] charArrayToCompare = new char[stringInArrayOfChar.length];
-        
+
         for (int i = 0; i < charArrayToCompare.length; i++) {
             charArrayToCompare[i] = '\u0000';
         }
 
-        assertArrayEquals(charArrayToCompare, this.stringInArrayOfChar, "The method didn't fill the array with NULL character.");
+        assertArrayEquals(charArrayToCompare, this.stringInArrayOfChar,
+                "The method didn't fill the array with NULL character.");
     }
 
     @Test
@@ -53,7 +53,7 @@ public class CryptoUtilsTest {
         CryptoUtils.cleanMemory(stringInArrayOfByte);
 
         byte[] byteArrayToCompare = new byte[stringInArrayOfByte.length];
-        
+
         for (int i = 0; i < byteArrayToCompare.length; i++) {
             byteArrayToCompare[i] = (byte) 0;
         }

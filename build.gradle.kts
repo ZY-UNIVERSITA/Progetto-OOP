@@ -56,6 +56,19 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+
+    // TOTP library
+    // https://mvnrepository.com/artifact/com.github.bastiaanjansen/otp-java
+    implementation("com.github.bastiaanjansen:otp-java:2.1.0")
+
+    // QR CODE
+    // https://mvnrepository.com/artifact/com.google.zxing/core
+    implementation("com.google.zxing:core:3.5.3")
+    // https://mvnrepository.com/artifact/com.google.zxing/javase
+    implementation("com.google.zxing:javase:3.5.3")
+
+
+
 }
 
 tasks.withType<Test> {
