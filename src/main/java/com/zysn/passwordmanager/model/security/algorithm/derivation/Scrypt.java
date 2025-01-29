@@ -6,17 +6,14 @@ import org.bouncycastle.crypto.generators.SCrypt;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
  * This class implements the Scrypt Key Derivation Function (KDF) as defined by the KeyDerivationAlgorithm interface.
  * It generates a secret key using the Scrypt algorithm based on the provided source and configuration.
  */
 public class Scrypt implements KeyDerivationAlgorithm {
-    private static final String COST_FACTOR = "cost_factor";
-    private static final String BLOCK_SIZE = "block_size";
-    private static final String PARALLELISM = "parallelism";
-    private static final String KEY_SIZE = "key_size";
-
     /**
      * Derives a secret key using the Scrypt KDF.
      * 
@@ -26,10 +23,10 @@ public class Scrypt implements KeyDerivationAlgorithm {
      */
     @Override
     public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
-        int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(COST_FACTOR));
-        int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(BLOCK_SIZE));
-        int parallelism = Integer.valueOf(algorithmConfig.getParameterValueByName(PARALLELISM));
-        int keySize = Integer.valueOf(algorithmConfig.getParameterValueByName(KEY_SIZE));
+        int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST_FACTOR.getParameter()));
+        int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.BLOCK_SIZE.getParameter()));
+        int parallelism = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.PARALLELISM.getParameter()));
+        int keySize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.KEY_SIZE.getParameter())) / 8;
 
         byte[] salt = algorithmConfig.getSalt();
 
@@ -39,7 +36,7 @@ public class Scrypt implements KeyDerivationAlgorithm {
 
         try {
             byte[] keyBytes = SCrypt.generate(sourceBytes, salt, costFactor, blockSize, parallelism, keySize);
-            masterKey = new SecretKeySpec(keyBytes, "AES");
+            masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
         } finally {
             CryptoUtils.cleanMemory(sourceBytes);
         }

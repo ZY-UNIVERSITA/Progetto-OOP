@@ -6,6 +6,8 @@ import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
  * Argon2 is a class that implements the KeyDerivationAlgorithm interface
@@ -15,12 +17,6 @@ public class Argon2 implements KeyDerivationAlgorithm {
     private static final String ARGON2I = "argon2i";
     private static final String ARGON2D = "argon2d";
     private static final String ARGON2ID = "argon2id";
-    
-    private static final String VARIANT = "variant";
-    private static final String ITERATIONS = "iterations";
-    private static final String MEMORY_COST = "memory_cost";
-    private static final String PARALLELISM = "parallelism";
-    private static final String KEY_SIZE = "key_size";
     
     /**
      * Determines the Argon2 version based on the provided algorithm configuration.
@@ -32,7 +28,7 @@ public class Argon2 implements KeyDerivationAlgorithm {
     private int getArgonVersion(AlgorithmConfig algorithmConfig) {
         int argonVersion;
 
-        switch (algorithmConfig.getParameterValueByName(VARIANT)) {
+        switch (algorithmConfig.getParameterValueByName(AlgorithmParameters.VARIANT.getParameter())) {
             case ARGON2I:
                 argonVersion = Argon2Parameters.ARGON2_i;
                 break;
@@ -68,16 +64,17 @@ public class Argon2 implements KeyDerivationAlgorithm {
         builder.withSalt(algorithmConfig.getSalt());
 
         // Add iterations
-        builder.withIterations(Integer.valueOf(algorithmConfig.getParameterValueByName(ITERATIONS)));
+        builder.withIterations(Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.ITERATIONS.getParameter())));
 
         // Add memory cost
-        builder.withMemoryAsKB(Integer.valueOf(algorithmConfig.getParameterValueByName(MEMORY_COST)));
+        builder.withMemoryAsKB(Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.MEMORY_COST.getParameter())));
 
         // Add parallelism
-        builder.withParallelism(Integer.valueOf(algorithmConfig.getParameterValueByName(PARALLELISM)));
+        builder.withParallelism(Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.PARALLELISM.getParameter())));
 
         // Create a block of bytes of given size
-        byte[] keyBytes = new byte[Integer.valueOf(algorithmConfig.getParameterValueByName(KEY_SIZE))];
+        int key_size = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.KEY_SIZE.getParameter()));
+        byte[] keyBytes = new byte[key_size / 8];
 
         // Initializer generator
         Argon2BytesGenerator generator = new Argon2BytesGenerator();
@@ -87,7 +84,7 @@ public class Argon2 implements KeyDerivationAlgorithm {
         generator.generateBytes(source, keyBytes);
 
         // Save master key from byte[] to KeySpec
-        SecretKeySpec masterKey = new SecretKeySpec(keyBytes, "AES");
+        SecretKeySpec masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
 
         return masterKey;
     }

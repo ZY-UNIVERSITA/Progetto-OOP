@@ -19,7 +19,7 @@ public class BCryptTest {
 
     @BeforeEach
     void setup() {
-        keyDerivationAlgorithm = new BCrypt();
+        keyDerivationAlgorithm = new Bcrypt();
         source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102 };
 

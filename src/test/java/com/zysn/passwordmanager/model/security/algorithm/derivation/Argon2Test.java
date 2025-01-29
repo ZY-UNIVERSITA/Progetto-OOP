@@ -1,6 +1,8 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -51,15 +53,10 @@ public class Argon2Test {
     void testDeriveKey() {
         SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(source, algorithmConfig);
 
-        byte[] masterKeyByte = new byte[] { 85, 30, 92, 70, 125, 76, 111, 82, 36, 48, -117, -68, -95, -6, 99, -25, -30,
-                -55, 50, -67, 126, 24, 52, 55, 40, -51, -25, 2, 65, 18, -40, -108, -48, -16, -53, 122, -72, -24, 125,
-                -118, 11, -66, 123, 49, -92, 6, 38, 12, -91, 13, -103, 102, -27, 11, -16, 71, -19, 1, 60, 50, 46, 75,
-                -29, -128, -27, 29, -20, 56, 116, -98, -23, -100, -96, -11, -13, -107, 25, -71, 12, 112, -16, 11, 85,
-                -14, 56, -62, 127, -59, 112, 16, 119, -122, -4, -5, 79, -77, 14, -81, 82, 84, -67, 70, 32, 8, 37, 93,
-                72, -88, 30, 52, 70, -127, 0, -58, -85, -33, -33, -46, 21, 55, -118, -115, -72, -88, -111, 28, 96, 43 };
+        byte[] masterKeyByte = new byte[] { 92, 124, 24, -128, 14, -101, -19, -96, -49, -59, 10, -77, -111, -39, -9, -91 };
 
         assertArrayEquals(masterKeyByte, masterKey.getEncoded(),
-                "Obtained value is: " + masterKey.getEncoded() + " but the real value should be: " + masterKeyByte);
+                "Obtained value is: " + Arrays.toString(masterKey.getEncoded()) + " but the real value should be: " + masterKeyByte);
     }
 
 }
