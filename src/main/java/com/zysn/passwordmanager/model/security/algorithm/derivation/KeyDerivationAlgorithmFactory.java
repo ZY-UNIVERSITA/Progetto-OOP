@@ -4,7 +4,9 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation;
  * Factory class for creating instances of KeyDerivationAlgorithm.
  */
 public class KeyDerivationAlgorithmFactory {
-
+    private static final String ARGON2 = "argon2";
+    private static final String SCRYPT = "scrypt";
+    private static final String BCRYPT = "bcrypt";
     /**
      * Private constructor to prevent instantiation.
      */
@@ -23,12 +25,12 @@ public class KeyDerivationAlgorithmFactory {
         switch (name.toLowerCase()) {
             // case "PBKDF2":
             //     return new PBKDF2();
-            case "argon2":
+            case ARGON2:
                 return new Argon2();
-            case "scrypt":
+            case SCRYPT:
                 return new Scrypt();
-            case "bcrypt":
-                return new BCrypt();
+            case BCRYPT:
+                return new Bcrypt();
             default:
                 throw new IllegalArgumentException("The algorithm " + name + " has not been found.");
         }
