@@ -1,7 +1,12 @@
 package com.zysn.passwordmanager.model.security.config;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,5 +114,28 @@ class AlgorithmConfigTest {
     void testUpdateParameter() {
         this.algorithmConfig.updateParameter("key_size", "256");
         assertEquals("256", this.algorithmConfig.getParameters().get("key_size"), "The value is not '256'.");
+    }
+
+    @Test
+    void testRemoveConfigurations() {
+        byte[] salt = new byte[] { 1, 2, 3, 4, 5, 6 };
+        this.algorithmConfig.setSalt(salt);
+
+        byte[] zeroSalt = new byte[salt.length];
+        Arrays.fill(zeroSalt, (byte) 0);
+
+        assertNotNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is null.");
+        assertNotNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is null.");
+        assertNotNull(this.algorithmConfig.getParameters(), "The parameters are null.");
+        assertNotNull(this.algorithmConfig.getSalt(), "The salt name is null.");
+
+        this.algorithmConfig.clearConfigurations();
+
+        
+        assertNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is not null.");
+        assertNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is not null.");
+        assertTrue(this.algorithmConfig.getParameters().isEmpty(), "The parameters is not empty");
+        assertArrayEquals(zeroSalt, this.algorithmConfig.getSalt(), "The salt name is not empty.");
+
     }
 }

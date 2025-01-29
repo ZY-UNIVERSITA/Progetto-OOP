@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import com.zysn.passwordmanager.model.utils.CryptoUtils;
+
 /**
  * Algorithm configuration class for creating configuration for algorithm.
  */
@@ -26,7 +28,7 @@ public class AlgorithmConfig {
     }
 
     public AlgorithmConfig() {
-        
+
     }
 
     /**
@@ -53,8 +55,9 @@ public class AlgorithmConfig {
      * Removes a parameter from the set of parameters if it is present.
      *
      * @param name the name of the parameter to remove.
-     * @throws NoSuchElementException if the parameter with the specified name is not
-     *                               present.
+     * @throws NoSuchElementException if the parameter with the specified name is
+     *                                not
+     *                                present.
      */
     public void removeParameterByName(String name) {
         if (!this.getParameters().containsKey(name)) {
@@ -96,6 +99,19 @@ public class AlgorithmConfig {
         this.getParameters().replace(name, value);
     }
 
+    /**
+     * Removes the current cryptographic configurations.
+     * This method cleans the memory of the salt value,
+     * resets the algorithm name and type to null,
+     * and clears the parameters.
+     */
+    public void clearConfigurations() {
+        CryptoUtils.cleanMemory(this.getSalt());
+        this.setAlgorithmName(null);
+        this.setAlgorithmType(null);
+        this.getParameters().clear();
+    }
+
     /* GETTER SETTER */
     public String getAlgorithmType() {
         return algorithmType;
@@ -127,7 +143,7 @@ public class AlgorithmConfig {
 
     public void setSalt(byte[] salt) {
         this.salt = salt;
-    }    
+    }
 
     /* EQUALS */
     @Override
