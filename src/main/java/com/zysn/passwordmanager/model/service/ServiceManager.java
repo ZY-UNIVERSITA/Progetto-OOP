@@ -8,12 +8,39 @@ import javax.crypto.spec.SecretKeySpec;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.utils.FileManager;
 
+/**
+ * Singleton class that manages a list of services.
+ * Ensures that only one instance of ServiceManager exists throughout the application.
+ * Use {@link #getInstance()} to access the instance.
+ */
 public class ServiceManager {
-    
+    private static ServiceManager instance;
     private List<Service> services;
 
-    public ServiceManager() {
+    private ServiceManager() {
         this.services = new ArrayList<>();
+    }
+
+    /**
+     * Returns the single instance of ServiceManager.
+     * If the instance does not exist, it is created.
+     *
+     * @return the singleton instance of ServiceManager
+     */
+    public static ServiceManager getInstance() {
+        if (instance == null) {
+            instance = new ServiceManager();
+        }
+        return instance;
+    }
+
+    /**
+     * Resets the singleton instance for testing purposes.
+     * This method should only be used in unit tests.
+     * 
+     */
+    public static void resetInstance() {
+        instance = null;
     }
 
     /**
@@ -27,7 +54,7 @@ public class ServiceManager {
     /**
      * Add a new service.
      * @param service
-     * @return true if addition was successful, false otherwise
+     * @return {@code true} if addition was successful, {@code false} otherwise
      */
     public boolean addService(Service service) {
         return services.add(service);
@@ -36,7 +63,7 @@ public class ServiceManager {
     /**
      * Remove the specific service.
      * @param service the name of service to remove
-     * @return true if removal was successful, false otherwise
+     * @return {@code true} if removal was successful, {@code false} otherwise
      */
     public boolean removeService(String serviceName) {
         return services.removeIf(service -> service.getName().equals(serviceName));
@@ -57,6 +84,14 @@ public class ServiceManager {
         return res;
     }
 
+    /**
+     * Modifies the details of an existing service in the list of services,
+     * with the data from the provided Service object.
+     *
+     * @param serviceName the name of the service to modify
+     * @param newService the Service object containing the new details to update
+     * @return {@code true} if the service was found and modified, {@code false} if no service with the specified name was found
+     */
     public boolean modifyService(String serviceName, Service newService) {
         for (Service service : services) {
             if (service.getName().equals(serviceName)) {

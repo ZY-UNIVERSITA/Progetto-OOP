@@ -15,7 +15,8 @@ public class ServiceManagerTest {
 
     @BeforeEach
     void setUp() {
-        serviceManager = new ServiceManager();
+        ServiceManager.resetInstance();
+        serviceManager = ServiceManager.getInstance();
     }
 
     @Test
