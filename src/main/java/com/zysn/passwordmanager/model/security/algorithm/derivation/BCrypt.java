@@ -2,6 +2,8 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import org.bouncycastle.crypto.generators.BCrypt;
+
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
@@ -29,7 +31,7 @@ public class Bcrypt implements KeyDerivationAlgorithm {
         SecretKeySpec masterKey = null;
 
         try {
-            byte[] keyBytes = org.bouncycastle.crypto.generators.BCrypt.generate(sourceBytes, salt, cost);
+            byte[] keyBytes = BCrypt.generate(sourceBytes, salt, cost);
             masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
         } finally {
             CryptoUtils.cleanMemory(sourceBytes);
