@@ -36,9 +36,10 @@ public class ServiceManager {
     /**
      * Remove the specific service.
      * @param service the name of service to remove
+     * @return true if removal was successful, false otherwise
      */
-    public void removeService(String serviceName) {
-        services.removeIf(service -> service.getName().equals(serviceName));
+    public boolean removeService(String serviceName) {
+        return services.removeIf(service -> service.getName().equals(serviceName));
     }
     
     /**
@@ -49,7 +50,7 @@ public class ServiceManager {
     public List<Service> searchService(String searchTerm) {
         List<Service> res = new ArrayList<>();
         for (Service service : services) {
-            if (service.getName().contains(searchTerm)) {
+            if (service.getName().toLowerCase().contains(searchTerm.toLowerCase())) {
                 res.add(service);
             }
         }
@@ -73,4 +74,35 @@ public class ServiceManager {
 
     public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
     public boolean saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
+
+    @Override
+    public String toString() {
+        return "ServiceManager [services=" + services + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((services == null) ? 0 : services.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ServiceManager other = (ServiceManager) obj;
+        if (services == null) {
+            if (other.services != null)
+                return false;
+        } else if (!services.equals(other.services))
+            return false;
+        return true;
+    }
+    
 }
