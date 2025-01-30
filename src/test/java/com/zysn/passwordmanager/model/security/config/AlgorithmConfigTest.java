@@ -124,18 +124,23 @@ class AlgorithmConfigTest {
         byte[] zeroSalt = new byte[salt.length];
         Arrays.fill(zeroSalt, (byte) 0);
 
+        Map<String, String> params = this.algorithmConfig.getParameters();
+
         assertNotNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is null.");
         assertNotNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is null.");
         assertNotNull(this.algorithmConfig.getParameters(), "The parameters are null.");
         assertNotNull(this.algorithmConfig.getSalt(), "The salt name is null.");
 
-        this.algorithmConfig.clearConfigurations();
 
+        this.algorithmConfig.clearConfigurations();
         
         assertNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is not null.");
         assertNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is not null.");
-        assertTrue(this.algorithmConfig.getParameters().isEmpty(), "The parameters is not empty");
-        assertArrayEquals(zeroSalt, this.algorithmConfig.getSalt(), "The salt name is not empty.");
+        assertNull(this.algorithmConfig.getParameters(), "The parameters are not null");
+        assertNull(this.algorithmConfig.getSalt(), "The salt is null");
+
+        assertTrue(params.isEmpty(), "The parameters is not empty");
+        assertArrayEquals(zeroSalt, salt, "The salt name is not empty.");
 
     }
 }

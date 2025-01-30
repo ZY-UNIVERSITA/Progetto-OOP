@@ -106,10 +106,17 @@ public class AlgorithmConfig {
      * and clears the parameters.
      */
     public void clearConfigurations() {
+        // Clear and set null for salt
         CryptoUtils.cleanMemory(this.getSalt());
+        this.setSalt(null);
+
+        // Null for algorithm name and type
         this.setAlgorithmName(null);
         this.setAlgorithmType(null);
+
+        // Clear and set null for parameters
         this.getParameters().clear();
+        this.setParameters(null);
     }
 
     /* GETTER SETTER */
