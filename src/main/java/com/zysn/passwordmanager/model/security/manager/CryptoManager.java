@@ -2,9 +2,9 @@ package com.zysn.passwordmanager.model.security.manager;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.zysn.passwordmanager.model.security.algorithm.derivation.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.security.algorithm.derivation.KeyDerivationAlgorithmFactory;
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.patterns.KeyDerivationAlgorithmFactory;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
 
 public class CryptoManager {

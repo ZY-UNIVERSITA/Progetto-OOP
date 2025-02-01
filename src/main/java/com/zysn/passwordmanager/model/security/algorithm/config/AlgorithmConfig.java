@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.config;
+package com.zysn.passwordmanager.model.security.algorithm.config;
 
 import java.util.Arrays;
 import java.util.HashMap;

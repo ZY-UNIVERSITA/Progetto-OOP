@@ -1,11 +1,12 @@
-package com.zysn.passwordmanager.model.security.algorithm.derivation;
+package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 

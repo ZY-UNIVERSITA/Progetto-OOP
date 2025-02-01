@@ -1,4 +1,9 @@
-package com.zysn.passwordmanager.model.security.algorithm.derivation;
+package com.zysn.passwordmanager.model.security.algorithm.derivation.patterns;
+
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Argon2;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Bcrypt;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt;
 
 /**
  * Factory class for creating instances of KeyDerivationAlgorithm.

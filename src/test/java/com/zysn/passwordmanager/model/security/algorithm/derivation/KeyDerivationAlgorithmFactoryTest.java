@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Argon2;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.patterns.KeyDerivationAlgorithmFactory;
+
 public class KeyDerivationAlgorithmFactoryTest {
 
     @BeforeEach

@@ -1,10 +1,11 @@
-package com.zysn.passwordmanager.model.security.algorithm.derivation;
+package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.crypto.generators.SCrypt;
 
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;

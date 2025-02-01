@@ -9,7 +9,9 @@ import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt;
 
 public class ScryptTest {
     private KeyDerivationAlgorithm keyDerivationAlgorithm;

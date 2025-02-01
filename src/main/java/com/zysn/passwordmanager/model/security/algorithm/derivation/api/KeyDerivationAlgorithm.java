@@ -1,8 +1,8 @@
-package com.zysn.passwordmanager.model.security.algorithm.derivation;
+package com.zysn.passwordmanager.model.security.algorithm.derivation.api;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 
 /**
  * Interface representing a key derivation algorithm.
