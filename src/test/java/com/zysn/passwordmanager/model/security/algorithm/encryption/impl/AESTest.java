@@ -47,9 +47,12 @@ public class AESTest {
     void testEncrypt() {
         EncryptionAlgorithm encryptionAlgorithm = new AES();
 
+        byte[] correctEncryptedData = new byte[] { -62, -7, -106, -4, 35, -83, 29, -48, -122, 63, -21, -110, -109, 22, -78,
+            -118, -52, 13, -128, -99, 39, -114, -41, 68, -101, -16, 120, 99, 61, -8, 11, -93, -72, 109, 2, -19 };
+
         byte[] encryptedData = encryptionAlgorithm.encrypt(dataToEncrypt, masterKey, algorithmConfig);
 
-        assertArrayEquals(encryptedData, encryptedData, "The algorithm didn't create the right encrypted data.");
+        assertArrayEquals(correctEncryptedData, encryptedData, "The algorithm didn't create the right encrypted data.");
     }
 
     @Test
