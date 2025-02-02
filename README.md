@@ -131,11 +131,77 @@ _Autenticazione a due fattori:_ L'integrazione con un sistema 2FA deve essere ge
 
 # Design
 
-
 ## Architettura
+Il sistema è fatto da 3 componenti principali, che seguono il pattern architetturale Model-View-Controller (MVC):
+- **Model:** Comprende le classi principali che rappresentano il dominio dell'applicazione (gestione servizi, crittografia, backup, ecc.). Sono responsabili della gestione delle informazioni memorizzate e della logica del gestore. Il componente primario è `ServiceManager`, che si occupa della gestione di tutti i servizi.
+- **View:** Si occupa dell'interfaccia grafica e dell'interazione con l'utente. Le principali classi sono `LoginView`, `MainView` e `ServiceManagerView`, che rappresentano schermate diverse dell’applicazione. Ogni vista comunica con il rispettivo controller per gestire le operazioni richieste.
+- **Controller:** Funge da intermediario tra Model e View, leggendo le azioni dell'utente e aggiornando lo stato dell'app. `LoginController`, `MainController` e `ServiceManagerController` gestiscono la logica di interazione delle rispettive viste, facendo uso dei manager del Model.
+
+In particolare, quando si fa un login `LoginView` invoca `LoginController`, che utilizza `AccountManager` per verificare le credenziali. Se tutto va bene, `ViewNavigator` cambia la vista su `MainView`. `MainView` comunica con `MainController`, che utilizza `SessionManager` per mantenere lo stato dell’utente connesso. `ServiceManagerView` mostra i servizi disponibili e passa le richieste a `ServiceManagerController`, che esegue operazioni richieste su `ServiceManager`.
 
 ```mermaid
+
 classDiagram
+
+    %% Model
+    class AccountManager
+
+    class ServiceManager
+
+    class SessionManager
+
+    %% View
+    class LoginView {
+        <<Concept>>
+        + initialize() void
+    }
+
+    class MainView {
+        <<Concept>>
+        + initialize() void
+    }
+
+    class ServiceManagerView {
+        <<Concept>>
+        + initialize() void
+    }
+
+    %% Controller
+    class LoginController {
+        + handleLogin() void
+    }
+
+    class MainController {
+        + handleLogout() void
+    }
+
+    class ServiceManagerController {
+        + handleAddService() void
+        + handleRemoveService() void
+        + handleModifyService() void
+    }
+
+    class ViewNavigator {
+        + showLoginView() void
+        + showMainView() void
+        + showRegisterView() void
+        + showServiceManagerView() void
+    }
+
+    LoginView --> LoginController : controller
+    MainView --> MainController : controller
+    ServiceManagerView --> ServiceManagerController : controller
+
+    LoginController ..> AccountManager : usa
+    MainController ..> SessionManager : usa
+    ServiceManagerController ..> ServiceManager : usa
+
+    ViewNavigator --> LoginView
+    ViewNavigator --> MainView
+    ViewNavigator --> ServiceManagerView
+    LoginController ..> ViewNavigator : usa
+    MainController ..> ViewNavigator : usa
+    ServiceManagerController ..> ViewNavigator : usa
 
 ```
 
