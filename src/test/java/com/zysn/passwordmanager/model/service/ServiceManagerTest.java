@@ -4,10 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
+import com.zysn.passwordmanager.model.utils.FileManager;
 
 public class ServiceManagerTest {
 
@@ -84,12 +88,27 @@ public class ServiceManagerTest {
 
     @Test
     void testLoadServices() {
+        CryptoManager cryptoManager = new CryptoManager();
+        FileManager fileManager = new FileManager();
+        SecretKeySpec secretKey = new SecretKeySpec("mysecretkey12345".getBytes(), "AES");
 
+        boolean res = serviceManager.loadServices(secretKey, cryptoManager, fileManager);
+
+        assertTrue(res);
+        assertNotNull(serviceManager.getServices());
     }
 
     @Test
     void testSaveServices() {
+        CryptoManager cryptoManager = new CryptoManager();
+        FileManager fileManager = new FileManager();
+        SecretKeySpec secretKey = new SecretKeySpec("mysecretkey12345".getBytes(), "AES");
 
+        serviceManager.addService(new Service("Netflix", "user1", "user1@gmail.com", new byte[] {1, 2, 3}, null, "Streaming"));
+        serviceManager.addService(new Service("Spotify", "user3", "user3@gmail.com", new byte[] {7, 8, 9}, null, "Music"));
+
+        boolean result = serviceManager.saveServices(secretKey, cryptoManager, fileManager);
+
+        assertTrue(result);
     }
-
 }

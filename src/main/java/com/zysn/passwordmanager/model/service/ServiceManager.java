@@ -1,10 +1,14 @@
 package com.zysn.passwordmanager.model.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.utils.FileManager;
 
@@ -107,8 +111,58 @@ public class ServiceManager {
         return false;
     }
 
-    public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
-    public boolean saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) { return true; }
+    /**
+     * Loads the services from a file and decrypts them using the provided key.
+     * 
+     * @param key the secret key used for decryption
+     * @param cryptoManager the CryptoManager instance used for decryption
+     * @param fileManager the FileManager instance used to read the services file
+     * @return {@code true} if the services were successfully loaded and decrypted, {@code false} otherwise
+     */
+    public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {
+        byte[] encryptedData = fileManager.loadServicesFile("services.dat".toCharArray());
+        if (encryptedData == null) {
+            return false;
+        }
+
+        byte[] decryptedData = cryptoManager.decrypt(encryptedData, key, new AlgorithmConfig("AES", "CBC"));
+        if (decryptedData == null) {
+            return false;
+        }
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Service> loadedServices = objectMapper.readValue(decryptedData, new TypeReference<List<Service>>(){});
+            this.services = loadedServices;
+        } catch (IOException e) {
+            System.err.println("Error deserializing services data: " + e.getMessage());
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Saves the services to a file after encrypting the data.
+     * 
+     * @param key the secret key used for encryption
+     * @param cryptoManager the CryptoManager instance used for encryption
+     * @param fileManager the FileManager instance used to write the services file
+     * @return {@code true} if the services were successfully encrypted and saved, {@code false} otherwise
+     */
+    public boolean saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            byte[] encryptedData = objectMapper.writeValueAsBytes(services);
+            byte[] cipherText = cryptoManager.encrypt(encryptedData, key, new AlgorithmConfig("AES", "CBC"));
+            
+            return fileManager.saveServicesFile(cipherText);
+        } catch (IOException e) {
+            System.err.println("Error serializing services data: " + e.getMessage());
+            return false;
+        }
+    }
+    
 
     @Override
     public String toString() {
