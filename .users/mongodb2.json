@@ -1,0 +1,15 @@
+{
+  "username" : "mongodb2",
+  "algorithmConfig" : {
+    "algorithmType" : "Key Derivation Algorithm",
+    "algorithmName" : "argon2",
+    "salt" : "VR5cRn1Mb1IkMIu8ofpj5+LJMr1+GDQ3KM3nAkES2JTQ8Mt6uOh9igu+ezGkBiYMpQ2ZZuUL8EftATwyLkvjgOUd7Dh0numcoPXzlRm5DHDwC1XyOMJ/xXAQd4b8+0+zDq9SVL1GIAglXUioHjRGgQDGq9/f0hU3io24qJEcYCs=",
+    "parameters" : {
+      "memory_cost" : "65536",
+      "iterations" : "3",
+      "parallelism" : "1",
+      "key_size" : "256",
+      "variant" : "argon2id"
+    }
+  }
+}

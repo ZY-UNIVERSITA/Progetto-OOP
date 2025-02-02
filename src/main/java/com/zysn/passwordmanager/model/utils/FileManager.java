@@ -61,10 +61,36 @@ public class FileManager {
     }
 
     public byte[] loadServicesFile(char[] fileName) {
-        return null;
+        if (fileName == null) {
+            throw new IllegalArgumentException("File name cannot be null.");
+        }
+
+        String userDir = System.getProperty("user.dir");
+        Path filePath = Paths.get(userDir, ".services", new String(fileName));
+
+        try {
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            System.err.println("Error trying to read the services file: " + e.getMessage());
+            return null;
+        }
     }
 
-    public boolean saveServicesFile(char[] fileName) {
-        return false;
+    public boolean saveServicesFile(byte[] encryptedData) {
+        if (encryptedData == null) {
+            throw new IllegalArgumentException("Data cannot be null.");
+        }
+
+        String userDir = System.getProperty("user.dir");
+        Path filePath = Paths.get(userDir, ".services", "services.dat");
+
+        try {   
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, encryptedData);
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error trying to write the services file: " + e.getMessage());
+            return false;
+        }
     }
 }

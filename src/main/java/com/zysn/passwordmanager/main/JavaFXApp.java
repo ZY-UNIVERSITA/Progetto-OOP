@@ -33,7 +33,7 @@ public final class JavaFXApp extends Application {
         this.cryptoManager = new CryptoManager();
         this.fileManager = new FileManager();
         this.sessionManager = new SessionManager();
-        this.serviceManager = new ServiceManager();
+        this.serviceManager = ServiceManager.getInstance();
 
         try {
             // Create managers and the view navigator
