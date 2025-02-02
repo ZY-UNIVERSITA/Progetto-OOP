@@ -1,6 +1,6 @@
 %% Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
-%% ```mermaid
+```mermaid
 
 classDiagram
 
