@@ -36,6 +36,7 @@ classDiagram
     }
 
     class ServiceManager {
+        - PasswordGenerator passwordGenerator
         - List~Service~ services
 
         + ServiceManager()
@@ -45,6 +46,7 @@ classDiagram
         + modifyService(String serviceName, Service newService) boolean
         + getServices() List~Service~
         + searchService(String searchTerm) List~Service~
+        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
     }
@@ -84,12 +86,15 @@ classDiagram
     %% =====================
     class CryptoUtils {
         - CryptoUtils()
-        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]$
         + generateSalt(int length) byte[]$
         + cleanMemory(char[] source) void$
         + cleanMemory(byte[] source) void$
         + charToByteConverter(char[] source) byte[]$
         + charToByteConverter(char[] source, String charsetName) byte[]$
+    }
+
+    class PasswordGenerator {
+        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]$
     }
 
     %% =====================
@@ -293,6 +298,7 @@ classDiagram
 
     %% ServiceManager gestisce i Service
     ServiceManager *-- Service : composizione
+    ServiceManager --> PasswordGenerator : usa
 
     %% SessionManager mantiene un riferimento ad un solo UserAccount
     SessionManager o-- UserAccount : contiene
