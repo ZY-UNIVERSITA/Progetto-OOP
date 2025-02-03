@@ -41,12 +41,13 @@ classDiagram
 
         + ServiceManager()
 
+        + selectService(String serviceName) Service
         + addService(Service service) boolean
         + removeService(String serviceName) boolean
         + modifyService(String serviceName, Service newService) boolean
         + getServices() List~Service~
         + searchService(String searchTerm) List~Service~
-        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]
+        + generateAndAddPasswordToService(String serviceName, int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase)
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
     }
