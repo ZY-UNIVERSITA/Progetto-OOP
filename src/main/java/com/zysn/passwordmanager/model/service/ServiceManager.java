@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.utils.FileManager;
+import com.zysn.passwordmanager.model.utils.PasswordGenerator;
 
 /**
  * Singleton class that manages a list of services.
@@ -53,6 +54,20 @@ public class ServiceManager {
      */
     public List<Service> getServices() {
         return services;
+    }
+
+    /**
+     * Select service by its name.
+     * @param serviceName
+     * @return service
+     */
+    public Service selectService (String serviceName) {
+        for (Service ser : services) {
+            if (ser.getName().equals(serviceName)) {
+                return ser;
+            }
+        }
+        return null;
     }
 
     /**
@@ -107,6 +122,29 @@ public class ServiceManager {
                 service.setInfo(newService.getInfo());
                 return true;
             }
+        }
+        return false;
+    }
+
+    /**
+     * Generates a password based on the provided criteria and assigns it to a service.
+     * 
+     * @param serviceName The name of the service.
+     * @param length The desired length of the generated password.
+     * @param useSpecialChar Whether or not to include special characters.
+     * @param useNumbers Whether or not to include digits.
+     * @param useUpperCase Whether or not to include uppercase letters.
+     * @param useLowerCase Whether or not to include lowercase letters.
+     * @return {@code true} if the password was successfully generated and added to the service, {@code false} otherwise.
+     */
+    public boolean generateAndAddPasswordToService(String serviceName, int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
+        PasswordGenerator generator = new PasswordGenerator();
+        char[] generatedPassword = generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
+        
+        Service service = selectService(serviceName);
+        if (service != null) {
+            service.setPassword(new String(generatedPassword).getBytes());
+            return true;
         }
         return false;
     }
