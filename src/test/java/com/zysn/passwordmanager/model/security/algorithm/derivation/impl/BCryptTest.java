@@ -1,17 +1,14 @@
-package com.zysn.passwordmanager.model.security.algorithm.derivation;
+package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.util.HashMap;
-
-import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Bcrypt;
 
 public class BCryptTest {
     private KeyDerivationAlgorithm keyDerivationAlgorithm;
@@ -35,13 +32,12 @@ public class BCryptTest {
 
     @Test
     void testDeriveKey() {
-        SecretKeySpec masterKey = keyDerivationAlgorithm.deriveKey(source, algorithmConfig);
+        byte[] actualMasterKey = keyDerivationAlgorithm.deriveKey(source, algorithmConfig);
 
-        byte[] masterKeyByte = new byte[] { 
-        -43, -44, 54, 52, 108, -27, -46, -42, 123, -125, 84, 77, 54, -47, 37, 22,
+        byte[] expectedMasterKey = new byte[] {
+                -43, -44, 54, 52, 108, -27, -46, -42, 123, -125, 84, 77, 54, -47, 37, 22,
                 117, 104, 108, 32, -21, -114, -42, -91 };
 
-        assertArrayEquals(masterKeyByte, masterKey.getEncoded(),
-                "Obtained value is: " + masterKey.getEncoded() + " but the real value should be: " + masterKeyByte);
+        assertArrayEquals(expectedMasterKey, actualMasterKey, "The Master Key arrays do not match.");
     }
 }

@@ -1,13 +1,10 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.crypto.generators.BCrypt;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
@@ -19,25 +16,28 @@ public class Bcrypt implements KeyDerivationAlgorithm {
      *
      * @param source          the source character array used for key derivation
      * @param algorithmConfig the configuration parameters for the algorithm
-     * @return a SecretKeySpec representing the derived key
+     * @return an array of byte representing the derived key
      */
     @Override
-    public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+    public byte[] deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+        // Config cost
         int cost = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST.getParameter()));
 
         byte[] salt = algorithmConfig.getSalt();
 
+        // Convert password in char to bytes using UTF-8
         byte[] sourceBytes = CryptoUtils.charToByteConverter(source);
 
-        SecretKeySpec masterKey = null;
+        byte[] keyBytes = null;
 
         try {
-            byte[] keyBytes = BCrypt.generate(sourceBytes, salt, cost);
-            masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
+            keyBytes = BCrypt.generate(sourceBytes, salt, cost);
         } finally {
+            // Delete the converted password in bytes from the memory
             CryptoUtils.cleanMemory(sourceBytes);
         }
 
-        return masterKey;
+        // return masterKey;
+        return keyBytes;
     }
 }

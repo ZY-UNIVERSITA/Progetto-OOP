@@ -1,13 +1,10 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.crypto.generators.SCrypt;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
@@ -20,10 +17,11 @@ public class Scrypt implements KeyDerivationAlgorithm {
      * 
      * @param source the source password or passphrase to derive the key from.
      * @param algorithmConfig the configuration object containing algorithm parameters such as cost factor, block size, parallelism, key size, and salt.
-     * @return the derived secret key as a SecretKeySpec.
+     * @return the derived secret key as as an array of byte.
      */
     @Override
-    public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+    public byte[] deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+        // Configurations of the algorithm
         int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST_FACTOR.getParameter()));
         int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.BLOCK_SIZE.getParameter()));
         int parallelism = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.PARALLELISM.getParameter()));
@@ -31,17 +29,18 @@ public class Scrypt implements KeyDerivationAlgorithm {
 
         byte[] salt = algorithmConfig.getSalt();
 
+        // Convert password from char[] to byte[]s
         byte[] sourceBytes = CryptoUtils.charToByteConverter(source);
 
-        SecretKeySpec masterKey = null;
+        byte[] keyBytes = null;
 
         try {
-            byte[] keyBytes = SCrypt.generate(sourceBytes, salt, costFactor, blockSize, parallelism, keySize);
-            masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
+            keyBytes = SCrypt.generate(sourceBytes, salt, costFactor, blockSize, parallelism, keySize);
         } finally {
+            // Clean the converted password in bytes
             CryptoUtils.cleanMemory(sourceBytes);
         }
-
-        return masterKey;
+;
+        return keyBytes;
     }
 }

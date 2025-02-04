@@ -1,13 +1,10 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
-import javax.crypto.spec.SecretKeySpec;
-
 import org.bouncycastle.crypto.generators.Argon2BytesGenerator;
 import org.bouncycastle.crypto.params.Argon2Parameters;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
@@ -49,13 +46,12 @@ public class Argon2 implements KeyDerivationAlgorithm {
     /**
      * Derives a key using the Argon2 algorithm.
      *
-     * @param source the source data (password)
-     * @param salt the salt value
+     * @param source the source data
      * @param algorithmConfig the configuration of the algorithm
-     * @return the derived key as a SecretKeySpec
+     * @return the derived key as an array of byte
      */
     @Override
-    public SecretKeySpec deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+    public byte[] deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
         int argonVersion = this.getArgonVersion(algorithmConfig);
 
         // Builder initialization
@@ -84,9 +80,7 @@ public class Argon2 implements KeyDerivationAlgorithm {
         // Create the master key
         generator.generateBytes(source, keyBytes);
 
-        // Save master key from byte[] to KeySpec
-        SecretKeySpec masterKey = new SecretKeySpec(keyBytes, AlgorithmName.AES.getAlgorithName());
-
-        return masterKey;
+        // Return master key
+        return keyBytes;
     }
 }
