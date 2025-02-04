@@ -22,7 +22,7 @@ public class BCryptTest {
         source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102 };
 
-        algorithmConfig = new AlgorithmConfig("Key Derivation Algorithm", "Bcrypt", salt, new HashMap<>());
+        algorithmConfig = new AlgorithmConfig("Bcrypt", "Key Derivation Algorithm", salt, new HashMap<>());
 
         String iterationsName = "cost";
         String iterationsValue = "12";

@@ -22,7 +22,7 @@ public class ScryptTest {
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20, -8, -41,
                 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
 
-        algorithmConfig = new AlgorithmConfig("Key Derivation Algorithm", "Scrypt", salt, new HashMap<>());
+        algorithmConfig = new AlgorithmConfig("Scrypt", "Key Derivation Algorithm", salt, new HashMap<>());
 
         String iterationsName = "cost_factor";
         String iterationsValue = "16384";

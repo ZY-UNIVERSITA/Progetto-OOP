@@ -23,7 +23,7 @@ public class Argon2Test {
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20, -8, -41,
                 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
 
-        algorithmConfig = new AlgorithmConfig("Key Derivation Algorithm", "Argon2", salt, new HashMap<>());
+        algorithmConfig = new AlgorithmConfig("Argon2", "Key Derivation Algorithm", salt, new HashMap<>());
 
         String variantName = "variant";
         String variantValue = "argon2id";

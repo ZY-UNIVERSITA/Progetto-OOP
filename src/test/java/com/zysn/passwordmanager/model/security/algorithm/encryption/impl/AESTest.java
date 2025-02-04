@@ -42,7 +42,7 @@ public class AESTest {
         this.algorithmConfig = new AlgorithmConfig(algorithmName, algorithmType);
         this.algorithmConfig.setSalt(iv);
 
-        this.algorithmConfig.addNewParameter("aes_algorithm", "AES/GCM/NoPadding");
+        this.algorithmConfig.addNewParameter("variant", "AES/GCM/NoPadding");
     }
 
     @Test
