@@ -11,20 +11,20 @@ import com.zysn.passwordmanager.model.utils.CryptoUtils;
  * Algorithm configuration class for creating configuration for algorithm.
  */
 public class AlgorithmConfig {
-    private String algorithmType;
     private String algorithmName;
+    private String algorithmType;
     private byte[] salt;
     private Map<String, String> parameters;
 
-    public AlgorithmConfig(String algorithmType, String algorithmName, byte[] salt, Map<String, String> parameters) {
+    public AlgorithmConfig(String algorithmName, String algorithmType, byte[] salt, Map<String, String> parameters) {
         this.algorithmType = algorithmType;
         this.algorithmName = algorithmName;
         this.salt = salt;
         this.parameters = parameters;
     }
 
-    public AlgorithmConfig(String algorithmType, String algorithmName) {
-        this(algorithmType, algorithmName, null, new HashMap<String, String>());
+    public AlgorithmConfig(String algorithmName, String algorithmType) {
+        this(algorithmName, algorithmType, null, new HashMap<String, String>());
     }
 
     public AlgorithmConfig() {
@@ -56,8 +56,7 @@ public class AlgorithmConfig {
      *
      * @param name the name of the parameter to remove.
      * @throws NoSuchElementException if the parameter with the specified name is
-     *                                not
-     *                                present.
+     *                                not present.
      */
     public void removeParameterByName(String name) {
         if (!this.getParameters().containsKey(name)) {
@@ -65,22 +64,6 @@ public class AlgorithmConfig {
         }
 
         this.getParameters().remove(name);
-    }
-
-    /**
-     * Retrieves the value of a parameter by its name.
-     *
-     * @param name The name of the parameter to retrieve.
-     * @return The value of the parameter.
-     * @throws IllegalStateException if the parameter with the given name is not
-     *                               present.
-     */
-    public String getParameterValueByName(String name) {
-        if (!this.getParameters().containsKey(name)) {
-            throw new IllegalStateException("The parameter " + name + " is not present.");
-        }
-
-        return this.getParameters().get(name);
     }
 
     /**
@@ -97,6 +80,22 @@ public class AlgorithmConfig {
         }
 
         this.getParameters().replace(name, value);
+    }
+
+    /**
+     * Retrieves the value of a parameter by its name.
+     *
+     * @param name The name of the parameter to retrieve.
+     * @return The value of the parameter.
+     * @throws IllegalStateException if the parameter with the given name is not
+     *                               present.
+     */
+    public String getParameterValueByName(String name) {
+        if (!this.getParameters().containsKey(name)) {
+            throw new IllegalStateException("The parameter " + name + " is not present.");
+        }
+
+        return this.getParameters().get(name);
     }
 
     /**
@@ -121,15 +120,7 @@ public class AlgorithmConfig {
         this.setParameters(null);
     }
 
-    /* GETTER SETTER */
-    public String getAlgorithmType() {
-        return algorithmType;
-    }
-
-    public void setAlgorithmType(String algorithmType) {
-        this.algorithmType = algorithmType;
-    }
-
+    /* GETTER and SETTER */
     public String getAlgorithmName() {
         return algorithmName;
     }
@@ -138,12 +129,12 @@ public class AlgorithmConfig {
         this.algorithmName = algorithmName;
     }
 
-    public Map<String, String> getParameters() {
-        return parameters;
+    public String getAlgorithmType() {
+        return algorithmType;
     }
 
-    public void setParameters(Map<String, String> parameters) {
-        this.parameters = parameters;
+    public void setAlgorithmType(String algorithmType) {
+        this.algorithmType = algorithmType;
     }
 
     public byte[] getSalt() {
@@ -154,13 +145,21 @@ public class AlgorithmConfig {
         this.salt = salt;
     }
 
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+    
     /* EQUALS */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((algorithmType == null) ? 0 : algorithmType.hashCode());
         result = prime * result + ((algorithmName == null) ? 0 : algorithmName.hashCode());
+        result = prime * result + ((algorithmType == null) ? 0 : algorithmType.hashCode());
         result = prime * result + Arrays.hashCode(salt);
         result = prime * result + ((parameters == null) ? 0 : parameters.hashCode());
         return result;
@@ -175,15 +174,15 @@ public class AlgorithmConfig {
         if (getClass() != obj.getClass())
             return false;
         AlgorithmConfig other = (AlgorithmConfig) obj;
-        if (algorithmType == null) {
-            if (other.algorithmType != null)
-                return false;
-        } else if (!algorithmType.equals(other.algorithmType))
-            return false;
         if (algorithmName == null) {
             if (other.algorithmName != null)
                 return false;
         } else if (!algorithmName.equals(other.algorithmName))
+            return false;
+        if (algorithmType == null) {
+            if (other.algorithmType != null)
+                return false;
+        } else if (!algorithmType.equals(other.algorithmType))
             return false;
         if (!Arrays.equals(salt, other.salt))
             return false;
@@ -198,7 +197,7 @@ public class AlgorithmConfig {
     /* TO STRING */
     @Override
     public String toString() {
-        return "AlgorithmConfig [algorithmType=" + algorithmType + ", algorithmName=" + algorithmName + ", parameters="
-                + parameters + "]";
+        return "AlgorithmConfig [algorithmName=" + algorithmName + ", algorithmType=" + algorithmType + ", salt="
+                + Arrays.toString(salt) + ", parameters=" + parameters + "]";
     }
 }
