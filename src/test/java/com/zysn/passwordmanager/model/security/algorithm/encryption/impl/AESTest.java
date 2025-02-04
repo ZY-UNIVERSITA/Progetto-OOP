@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.encryption.patterns.EncryptionAlgorithmFactory;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
 
 public class AESTest {
@@ -31,8 +32,7 @@ public class AESTest {
         this.iv = new byte[] { 12, 121, -1, 25, 88, -54, 10, 55, -41, -41, 111, -100 };
 
         this.key = new byte[] { 105, 117, 98, 41, -112, -20, -32, 52, -17, 66, 49, 3, -67, -2, 54, -12, -121, -38, -27,
-                -45,
-                -1, -59, 36, -35, -53, -100, -111, -103, -91, 63, -78, -88 };
+                -45, -1, -59, 36, -35, -53, -100, -111, -103, -91, 63, -78, -88 };
 
         this.masterKey = new SecretKeySpec(key, "AES");
 
@@ -41,33 +41,40 @@ public class AESTest {
 
         this.algorithmConfig = new AlgorithmConfig(algorithmName, algorithmType);
         this.algorithmConfig.setSalt(iv);
+
+        this.algorithmConfig.addNewParameter("aes_algorithm", "AES/GCM/NoPadding");
     }
 
     @Test
     void testEncrypt() {
-        EncryptionAlgorithm encryptionAlgorithm = new AES();
+        EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithmFactory
+                .createAlgorithm(this.algorithmConfig.getAlgorithmName());
 
-        byte[] correctEncryptedData = new byte[] { -62, -7, -106, -4, 35, -83, 29, -48, -122, 63, -21, -110, -109, 22, -78,
-            -118, -52, 13, -128, -99, 39, -114, -41, 68, -101, -16, 120, 99, 61, -8, 11, -93, -72, 109, 2, -19 };
+        byte[] exptectedEncryptedData = new byte[] { -62, -7, -106, -4, 35, -83, 29, -48, -122, 63, -21, -110, -109, 22,
+                -78, -118, -52, 13, -128, -99, 39, -114, -41, 68, -101, -16, 120, 99, 61, -8, 11, -93, -72, 109, 2,
+                -19 };
 
-        byte[] encryptedData = encryptionAlgorithm.encrypt(dataToEncrypt, masterKey, algorithmConfig);
+        byte[] actualEncryptedData = encryptionAlgorithm.encrypt(dataToEncrypt, masterKey, algorithmConfig);
 
-        assertArrayEquals(correctEncryptedData, encryptedData, "The algorithm didn't create the right encrypted data.");
+        assertArrayEquals(exptectedEncryptedData, actualEncryptedData,
+                "The algorithm didn't create the right encrypted data.");
     }
 
     @Test
     void testDecrypt() {
         byte[] encryptedData = new byte[] { -62, -7, -106, -4, 35, -83, 29, -48, -122, 63, -21, -110, -109, 22, -78,
                 -118, -52, 13, -128, -99, 39, -114, -41, 68, -101, -16, 120, 99, 61, -8, 11, -93, -72, 109, 2, -19 };
-    
-        EncryptionAlgorithm encryptionAlgorithm = new AES();
+
+        EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithmFactory
+                .createAlgorithm(this.algorithmConfig.getAlgorithmName());
 
         byte[] decryptedData = encryptionAlgorithm.decrypt(encryptedData, masterKey, algorithmConfig);
 
-        char[] decryptedDataInChar = CryptoUtils.byteToCharConverter(decryptedData);
+        char[] actualDecryptedData = CryptoUtils.byteToCharConverter(decryptedData);
 
-        assertArrayEquals(dataInChar, decryptedDataInChar, "The algorithm didn't create the right decrypted data.");
-    
+        char[] expectedDecryptedData = this.dataInChar;
+
+        assertArrayEquals(expectedDecryptedData, actualDecryptedData,
+                "The algorithm didn't create the right decrypted data.");
     }
-
 }
