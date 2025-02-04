@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
+import com.zysn.passwordmanager.controller.scene.api.SceneController;
 import com.zysn.passwordmanager.model.account.manager.AccountManager;
 
 /**
