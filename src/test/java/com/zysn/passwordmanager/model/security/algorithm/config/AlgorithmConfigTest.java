@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.config;
+package com.zysn.passwordmanager.model.security.algorithm.config;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +13,6 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
-
 class AlgorithmConfigTest {
     private AlgorithmConfig algorithmConfig;
     private String algorithmType;
@@ -24,14 +22,14 @@ class AlgorithmConfigTest {
 
     @BeforeEach 
     void setup() {
-        algorithmType = "Key Derivation Algorithm";
         algorithName = "argon2"; 
+        algorithmType = "Key Derivation Algorithm";
 
         parameters = new HashMap<>(); 
         parameters.put("key_size", "128"); 
         parameters.put("round", "12"); 
 
-        algorithmConfig = new AlgorithmConfig(algorithmType, algorithName, null, parameters);
+        algorithmConfig = new AlgorithmConfig(algorithName, algorithmType, null, parameters);
     }
 
     @Test
@@ -132,7 +130,6 @@ class AlgorithmConfigTest {
         assertNotNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is null.");
         assertNotNull(this.algorithmConfig.getParameters(), "The parameters are null.");
         assertNotNull(this.algorithmConfig.getSalt(), "The salt name is null.");
-
 
         this.algorithmConfig.clearConfigurations();
         
