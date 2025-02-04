@@ -1,7 +1,12 @@
-package com.zysn.passwordmanager.model.security.config;
+package com.zysn.passwordmanager.model.security.algorithm.config;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,14 +22,14 @@ class AlgorithmConfigTest {
 
     @BeforeEach 
     void setup() {
-        algorithmType = "Key Derivation Algorithm";
         algorithName = "argon2"; 
+        algorithmType = "Key Derivation Algorithm";
 
         parameters = new HashMap<>(); 
         parameters.put("key_size", "128"); 
         parameters.put("round", "12"); 
 
-        algorithmConfig = new AlgorithmConfig(algorithmType, algorithName, null, parameters);
+        algorithmConfig = new AlgorithmConfig(algorithName, algorithmType, null, parameters);
     }
 
     @Test
@@ -109,5 +114,32 @@ class AlgorithmConfigTest {
     void testUpdateParameter() {
         this.algorithmConfig.updateParameter("key_size", "256");
         assertEquals("256", this.algorithmConfig.getParameters().get("key_size"), "The value is not '256'.");
+    }
+
+    @Test
+    void testRemoveConfigurations() {
+        byte[] salt = new byte[] { 1, 2, 3, 4, 5, 6 };
+        this.algorithmConfig.setSalt(salt);
+
+        byte[] zeroSalt = new byte[salt.length];
+        Arrays.fill(zeroSalt, (byte) 0);
+
+        Map<String, String> params = this.algorithmConfig.getParameters();
+
+        assertNotNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is null.");
+        assertNotNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is null.");
+        assertNotNull(this.algorithmConfig.getParameters(), "The parameters are null.");
+        assertNotNull(this.algorithmConfig.getSalt(), "The salt name is null.");
+
+        this.algorithmConfig.clearConfigurations();
+        
+        assertNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is not null.");
+        assertNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is not null.");
+        assertNull(this.algorithmConfig.getParameters(), "The parameters are not null");
+        assertNull(this.algorithmConfig.getSalt(), "The salt is null");
+
+        assertTrue(params.isEmpty(), "The parameters is not empty");
+        assertArrayEquals(zeroSalt, salt, "The salt name is not empty.");
+
     }
 }

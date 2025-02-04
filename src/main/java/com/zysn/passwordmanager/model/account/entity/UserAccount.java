@@ -3,15 +3,15 @@ package com.zysn.passwordmanager.model.account.entity;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 
 public class UserAccount {
     private String username;
     private AlgorithmConfig algorithmConfig;
-    
+
     @JsonIgnore
     private SecretKeySpec masterKey;
-    
+
     /* CONSTRUCTOR */
     public UserAccount(String username, AlgorithmConfig algorithmConfig, SecretKeySpec masterKey) {
         this.username = username;
@@ -21,6 +21,35 @@ public class UserAccount {
 
     public UserAccount() {
 
+    }
+
+    /**
+     * Removes the account by clearing the username, algorithm configurations, and
+     * master key.
+     * <p>
+     * This method performs the following actions:
+     * <ul>
+     * <li>Removes the username by setting it to {@code null}.</li>
+     * <li>Clears and removes all algorithm configurations.</li>
+     * <li>Removes the master key by setting it to {@code null}.</li>
+     * </ul>
+     */
+    public void removeAccount() {
+        // Remove username
+        if (this.getUsername() != null) {
+            this.setUsername(null);
+        }
+
+        // Remove algorithm configurations
+        if (this.getAlgorithmConfig() != null) {
+            this.getAlgorithmConfig().clearConfigurations();
+            this.setAlgorithmConfig(null);
+        }
+
+        // Remove key
+        if (this.getMasterKey() != null) {
+            this.setMasterKey(null);
+        }
     }
 
     /* GETTER AND SETTER */
@@ -91,5 +120,5 @@ public class UserAccount {
     public String toString() {
         return "UserAccount [username=" + username + ", algorithmConfig=" + algorithmConfig + ", masterKey=" + masterKey
                 + "]";
-    }    
+    }
 }
