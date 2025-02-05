@@ -1,6 +1,9 @@
 package com.zysn.passwordmanager.model.utils;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A utility class to generate random passwords.
@@ -30,39 +33,53 @@ public class PasswordGenerator {
      * @throws IllegalArgumentException if the password length is less than or equal to 11, 
      *         or if no character categories are selected.
      */
-    public char[] generatePassword (int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
-        if (length <= 11) {
+    public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
+
+        if (length < 12) {
             throw new IllegalArgumentException("Password length must be greater than 11.");
         }
 
+        SecureRandom random = new SecureRandom();
         StringBuilder chars = new StringBuilder();
+        List<Character> passwordChars = new ArrayList<>();
+        int category = 0;
 
         if (useSpecialChar) {
+            category++;
             chars.append(SPECIAL_CHAR);
+            passwordChars.add(SPECIAL_CHAR.charAt(random.nextInt(SPECIAL_CHAR.length())));
         }
         if (useNumbers) {
+            category++;
             chars.append(DIGITS);
+            passwordChars.add(DIGITS.charAt(random.nextInt(DIGITS.length())));
         }
         if (useUpperCase) {
+            category++;
             chars.append(UPPERCASE);
+            passwordChars.add(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
         }
         if (useLowerCase) {
+            category++;
             chars.append(LOWERCASE);
+            passwordChars.add(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
         }
 
-        if (chars.length() <= 1) {
+        if (category <= 1) {
             throw new IllegalArgumentException("You must select at least two character categories.");
         }
 
-        SecureRandom random = new SecureRandom();
-        
-        char[] password = new char[length];
-        
-        for (int i = 0; i < length; i++) {
-            int rand = random.nextInt(chars.length());
-            password[i] = chars.charAt(rand);
+        for (int i = passwordChars.size(); i < length; i++) {
+            passwordChars.add(chars.charAt(random.nextInt(chars.length())));
         }
-        
+
+        Collections.shuffle(passwordChars, random);
+
+        char[] password = new char[length];
+        for (int i = 0; i < length; i++) {
+            password[i] = passwordChars.get(i);
+        }
+
         return password;
     }
 }
