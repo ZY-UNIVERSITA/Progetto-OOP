@@ -3,14 +3,15 @@ package com.zysn.passwordmanager.model.utils;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CryptoUtilsTest {
-    private static final String CHARSET_NAME = "UTF-8";
-
     private char[] stringInArrayOfChar;
     private byte[] stringInArrayOfByte;
 
@@ -18,20 +19,6 @@ public class CryptoUtilsTest {
     void setup() {
         this.stringInArrayOfChar = "ABCDE012".toCharArray();
         stringInArrayOfByte = new byte[] { 65, 66, 67, 68, 69, 48, 49, 50 };
-    }
-
-    @Test
-    void testCharToByteConverter() {
-        byte[] arrayOfCharIntoArrayOfByte = CryptoUtils.charToByteConverter(this.stringInArrayOfChar, CHARSET_NAME);
-
-        assertArrayEquals(stringInArrayOfByte, arrayOfCharIntoArrayOfByte, "The 2 array of byte are not the same.");
-    }
-
-    @Test
-    void testCharToByteConverterWithoutCharsetName() {
-        byte[] arrayOfCharIntoArrayOfByte = CryptoUtils.charToByteConverter(this.stringInArrayOfChar);
-
-        assertArrayEquals(stringInArrayOfByte, arrayOfCharIntoArrayOfByte, "The 2 array of byte are not the same.");
     }
 
     @Test
@@ -62,11 +49,6 @@ public class CryptoUtilsTest {
     }
 
     @Test
-    void testGeneratePassword() {
-
-    }
-
-    @Test
     void testGenerateSalt() {
         int length = 32;
         byte[] salt1 = CryptoUtils.generateSalt(length);
@@ -76,5 +58,15 @@ public class CryptoUtilsTest {
         byte[] salt2 = CryptoUtils.generateSalt(length);
 
         assertFalse(Arrays.equals(salt1, salt2), "The 2 salt are equals.");
+    }
+
+    @Test
+    void testGenerateSecureRandomNotUsablePassword() {
+        int minimumLength = 63;
+        char[] actualPassword = CryptoUtils.generateSecureRandomNotUsablePassword(minimumLength);
+
+        assertNotNull(actualPassword, "The password is not null.");
+
+        assertTrue(actualPassword.length >= minimumLength, "The password is shorter than the minimum length.");
     }
 }

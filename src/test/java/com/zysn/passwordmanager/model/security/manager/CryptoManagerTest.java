@@ -3,18 +3,16 @@ package com.zysn.passwordmanager.model.security.manager;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.security.Security;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.digest.Crypt;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
-import com.zysn.passwordmanager.model.utils.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.EncodingUtils;
 
 public class CryptoManagerTest {
     private CryptoManager cryptoManager;
@@ -75,7 +73,7 @@ public class CryptoManagerTest {
 
     @Test
     void testEncrypt() {
-        byte[] sourceInByte = CryptoUtils.charToByteConverter(this.source);
+        byte[] sourceInByte = EncodingUtils.charToByteConverter(this.source);
 
         byte[] masterKey = new byte[] { -34, -54, -51, 47, -105, 66, 24, -101, -14, 63, -105, -103, 63, 81, -97,
                 75, 29, -6, 61, -95, -11, 1, -107, -1, -107, 52, -72, -22, -95, 119, -84, -66 };
@@ -130,7 +128,7 @@ public class CryptoManagerTest {
 
         byte[] ecryptedText = this.cryptoManager.decrypt(encryptedText, new SecretKeySpec(masterKey, algorithmName), algorithmConfig);
 
-        char[] actualDecryptedText = CryptoUtils.byteToCharConverter(ecryptedText);
+        char[] actualDecryptedText = EncodingUtils.byteToCharConverter(ecryptedText);
 
         assertArrayEquals(this.source, actualDecryptedText, "The decryption didn't give an output that it is expected.");
     }

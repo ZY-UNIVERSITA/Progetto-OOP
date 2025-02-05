@@ -5,6 +5,7 @@ import org.bouncycastle.crypto.generators.BCrypt;
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.utils.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**
@@ -26,7 +27,7 @@ public class Bcrypt implements KeyDerivationAlgorithm {
         byte[] salt = algorithmConfig.getSalt();
 
         // Convert password in char to bytes using UTF-8
-        byte[] sourceBytes = CryptoUtils.charToByteConverter(source);
+        byte[] sourceBytes = EncodingUtils.charToByteConverter(source);
 
         byte[] keyBytes = null;
 

@@ -9,7 +9,15 @@ import com.zysn.passwordmanager.model.security.algorithm.encryption.api.Encrypti
 import com.zysn.passwordmanager.model.security.algorithm.encryption.patterns.EncryptionAlgorithmFactory;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmTypeEnum;
 
+/**
+ * The CryptoManager class provides methods for key derivation, encryption, and
+ * decryption.
+ */
 public class CryptoManager {
+
+    /**
+     * Default constructor for the CryptoManager class.
+     */
     public CryptoManager() {
 
     }
@@ -43,6 +51,16 @@ public class CryptoManager {
         return masterKey;
     }
 
+    /**
+     * Encrypts the given data using the specified key and algorithm configuration.
+     *
+     * @param data            the data to be encrypted
+     * @param key             the secret key used for encryption
+     * @param algorithmConfig the algorithm configuration specifying the encryption
+     *                        algorithm
+     * @return the encrypted data
+     * @throws IllegalArgumentException if the algorithm type is incorrect
+     */
     public byte[] encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
         if (data == null || key == null || algorithmConfig == null) {
             throw new IllegalArgumentException("Arguments cannot be null.");
@@ -62,6 +80,16 @@ public class CryptoManager {
         return encryptedData;
     }
 
+    /**
+     * Decrypts the given data using the specified key and algorithm configuration.
+     *
+     * @param data            the data to be decrypted
+     * @param key             the secret key used for decryption
+     * @param algorithmConfig the algorithm configuration specifying the decryption
+     *                        algorithm
+     * @return the decrypted data
+     * @throws IllegalArgumentException if the algorithm type is incorrect
+     */
     public byte[] decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
         if (data == null || key == null || algorithmConfig == null) {
             throw new IllegalArgumentException("Arguments cannot be null.");

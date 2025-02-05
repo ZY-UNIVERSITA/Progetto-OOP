@@ -8,12 +8,36 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.GCMParameterSpec;
 
+/**
+ * This class provides methods for encrypting and decrypting data using the AES
+ * algorithm.
+ *
+ * <p>
+ * The AES class implements the EncryptionAlgorithm interface and provides
+ * functionality
+ * for encrypting and decrypting byte arrays using the AES algorithm with GCM
+ * mode and
+ * configurable parameters. The class uses the Bouncy Castle provider for
+ * cryptographic operations.
+ * </p>
+ */
 public class AES implements EncryptionAlgorithm {
     public AES() {
 
     }
 
-    // Metodo per cifrare un messaggio
+    /**
+     * Encrypts the given data using the AES algorithm with GCM mode and the
+     * specified configuration.
+     *
+     * @param data            the byte array containing the data to be encrypted
+     * @param key             the SecretKeySpec object containing the key for
+     *                        encryption
+     * @param algorithmConfig the AlgorithmConfig object containing the algorithm
+     *                        configuration parameters
+     * @return a byte array containing the encrypted data
+     * @throws IllegalArgumentException if any configuration parameters are invalid
+     */
     public byte[] encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
         byte[] encryptedText = null;
 
@@ -36,7 +60,18 @@ public class AES implements EncryptionAlgorithm {
         return encryptedText;
     }
 
-    // Metodo per decifrare un messaggio
+    /**
+     * Decrypts the given data using the AES algorithm with GCM mode and the
+     * specified configuration.
+     *
+     * @param data            the byte array containing the data to be decrypted
+     * @param key             the SecretKeySpec object containing the key for
+     *                        decryption
+     * @param algorithmConfig the AlgorithmConfig object containing the algorithm
+     *                        configuration parameters
+     * @return a byte array containing the decrypted data
+     * @throws IllegalArgumentException if any configuration parameters are invalid
+     */
     public byte[] decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
         byte[] decryptedText = null;
 
@@ -59,4 +94,5 @@ public class AES implements EncryptionAlgorithm {
 
         return decryptedText;
     }
+
 }
