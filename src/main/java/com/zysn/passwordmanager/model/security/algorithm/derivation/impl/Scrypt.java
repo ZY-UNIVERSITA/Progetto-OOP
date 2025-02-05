@@ -4,8 +4,8 @@ import org.bouncycastle.crypto.generators.SCrypt;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.utils.CryptoUtils;
-import com.zysn.passwordmanager.model.utils.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 
 /**

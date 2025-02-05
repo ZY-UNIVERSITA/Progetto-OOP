@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
-import com.zysn.passwordmanager.model.utils.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 public class CryptoManagerTest {
     private CryptoManager cryptoManager;

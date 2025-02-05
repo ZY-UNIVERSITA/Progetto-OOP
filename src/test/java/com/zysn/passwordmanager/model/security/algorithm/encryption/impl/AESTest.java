@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.patterns.EncryptionAlgorithmFactory;
-import com.zysn.passwordmanager.model.utils.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 public class AESTest {
     private String originalData = "Prova di criptazione";

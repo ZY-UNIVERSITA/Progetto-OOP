@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils;
+package com.zysn.passwordmanager.model.utils.crypto;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

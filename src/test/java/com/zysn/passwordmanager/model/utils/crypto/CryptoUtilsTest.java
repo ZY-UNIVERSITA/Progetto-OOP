@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils;
+package com.zysn.passwordmanager.model.utils.crypto;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;

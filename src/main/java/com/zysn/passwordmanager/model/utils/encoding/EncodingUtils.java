@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils;
+package com.zysn.passwordmanager.model.utils.encoding;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
