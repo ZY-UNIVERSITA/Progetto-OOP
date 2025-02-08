@@ -38,10 +38,12 @@ public class KeyStoreConfigTest {
                 121, 112, 116, 105, 111, 110, 75, 101, 121, 34, 58, 34, 65, 81, 73, 68, 34, 44, 34, 115, 97, 108, 116,
                 87, 105, 116, 104, 80, 97, 115, 115, 119, 111, 114, 100, 68, 101, 114, 105, 118, 101, 100, 34, 58, 110,
                 117, 108, 108, 44, 34, 115, 97, 108, 116, 87, 105, 116, 104, 84, 111, 116, 112, 69, 110, 99, 114, 121,
-                112, 116, 105, 111, 110, 75, 101, 121, 34, 58, 110, 117, 108, 108, 125 };
+                112, 116, 105, 111, 110, 75, 101, 121, 34, 58, 110, 117, 108, 108, 44, 34, 115, 101, 114, 118, 105, 99,
+                101, 68, 101, 99, 114, 121, 112, 116, 105, 111, 110, 83, 97, 108, 116, 34, 58, 110, 117, 108, 108,
+                125 };
 
         byte[] actualSerializedArray = this.keyStoreConfig.serializeObject();
 
-        assertArrayEquals(expectedSerializedArray, actualSerializedArray);
+        assertArrayEquals(expectedSerializedArray, actualSerializedArray, "The serialized object is not the same as expected.");
     }
 }

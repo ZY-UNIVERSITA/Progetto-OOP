@@ -35,6 +35,8 @@ public class KeyStoreConfig {
     @JsonIgnore
     private byte[] totpKey;
 
+    private byte[] serviceDecryptionSalt;
+
     /**
      * Default constructor for KeyStoreConfig.
      */
@@ -79,6 +81,11 @@ public class KeyStoreConfig {
             CryptoUtils.cleanMemory(totpKey);
             this.setTotpKey(null);
         }
+
+        if (this.getServiceDecryptionSalt() != null) {
+            CryptoUtils.cleanMemory(serviceDecryptionSalt);
+            this.setServiceDecryptionSalt(null);
+        }
     }
 
     /* GETTER and SETTER */
@@ -101,6 +108,10 @@ public class KeyStoreConfig {
     public byte[] getTotpKey() {
         return totpKey;
     }
+    
+    public byte[] getServiceDecryptionSalt() {
+        return serviceDecryptionSalt;
+    }
 
     public void setKeyStoreEncryptionKey(byte[] keyStoreEncryptionKey) {
         this.keyStoreEncryptionKey = keyStoreEncryptionKey;
@@ -120,7 +131,9 @@ public class KeyStoreConfig {
 
     public void setTotpKey(byte[] totpKey) {
         this.totpKey = totpKey;
-    }    
+    }
 
-    
+    public void setServiceDecryptionSalt(byte[] serviceDecryptionSalt) {
+        this.serviceDecryptionSalt = serviceDecryptionSalt;
+    }    
 }
