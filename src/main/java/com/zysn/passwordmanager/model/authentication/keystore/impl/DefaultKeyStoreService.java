@@ -101,7 +101,8 @@ public class DefaultKeyStoreService implements KeyStoreService {
     public boolean generateSalt() {
         int saltLength = CryptoLength.MINIMUM_PASSWORD_LENGTH.getParameter();
         return this.generateSecureUsablePassword(saltLength, this.getKeyStoreConfig()::setSaltWithPasswordDerived)
-                && this.generateSecureUsablePassword(saltLength, this.getKeyStoreConfig()::setSaltWithTotpEncryptionKey);
+                && this.generateSecureUsablePassword(saltLength, this.getKeyStoreConfig()::setSaltWithTotpEncryptionKey)
+                && this.generateSecureUsablePassword(saltLength*2, this.getKeyStoreConfig()::setServiceDecryptionSalt);
     }
 
     /**

@@ -38,8 +38,10 @@ public class DefaultKeyStoreServiceTest {
 
         assertNotNull(this.keyStoreConfig.getSaltWithPasswordDerived(), "The salt has not been generated.");
         assertNotNull(this.keyStoreConfig.getSaltWithTotpEncryptionKey(), "The salt has not been generated.");
+        assertNotNull(this.keyStoreConfig.getServiceDecryptionSalt(), "The salt has not been generated.");
         assertTrue(this.keyStoreConfig.getSaltWithPasswordDerived().length >= saltLength, "The key length is not at least 16.");
         assertTrue(this.keyStoreConfig.getSaltWithTotpEncryptionKey().length >= saltLength, "The key length isn not at least 16.");
+        assertTrue(this.keyStoreConfig.getServiceDecryptionSalt().length >= saltLength, "The key length isn not at least 16.");
     }
 
     @Test

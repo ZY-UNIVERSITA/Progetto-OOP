@@ -28,6 +28,6 @@ public class EncryptionAlgorithmFactoryTest {
 
         assertThrows(IllegalArgumentException.class, () -> {
             EncryptionAlgorithmFactory.createAlgorithm(algorithmName);
-        });
+        }, "The method doesn't throw an exception.");
     }
 }
