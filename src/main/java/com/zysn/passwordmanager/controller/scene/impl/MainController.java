@@ -22,59 +22,45 @@ public class MainController extends SceneControllerBase {
     private TextField searchField;
 
     @FXML
-    private ListView<Service> servicesListView;
+    private ListView<String> servicesListView;
 
     @FXML
     private Button addServiceButton;
 
-    private ObservableList<Service> services = FXCollections.observableArrayList();
+    ServiceManager serviceManager = ServiceManager.getInstance();
+    private ObservableList<String> serviceNames = FXCollections.observableArrayList();
 
 
     @FXML
     public void initialize() {
 
-        ServiceManager serviceManager = ServiceManager.getInstance();
-        services.addAll(serviceManager.getServices());
+        for (Service s : serviceManager.getServices()) {
+            serviceNames.add(s.getName());
+        }
+        servicesListView.setItems(serviceNames);
 
-        servicesListView.setItems(services);
-
-        servicesListView.setCellFactory(new Callback<ListView<Service>, ListCell<Service>>() {
-            @Override
-            public ListCell<Service> call(ListView<Service> param) {
-                return new ListCell<Service>() {
-                    @Override
-                    protected void updateItem(Service item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null) {
-                            setText(item.getName());
-                        } else {
-                            setText(null);
-                        }
-                    }
-                };
-            }
-        });
-
-        servicesListView.setOnMouseClicked(event -> {
-            Service selectedService = servicesListView.getSelectionModel().getSelectedItem();
-            if (selectedService != null) {
-                handleServiceClick(selectedService);
-            }
-        });
+        servicesListView.setOnMouseClicked(event -> handleServiceClick());
     }
 
-    private void handleServiceClick(Service service) {
-        this.getViewNavigator().navigateTo("/layouts/ServiceManager.fxml", "Service");
+    private void handleServiceClick() {
+
+        String selectedService = servicesListView.getSelectionModel().getSelectedItem();
+            if (selectedService != null) {
+                Service service = serviceManager.selectService(selectedService);
+                if (service != null) {
+                    this.getViewNavigator().navigateTo("/layouts/ServiceManager.fxml", "Service", service);
+                }
+            }
     }
 
     @FXML
     private void handleSearch(KeyEvent event) {
-
-        String searchText = searchField.getText().toLowerCase();
-        ObservableList<Service> filteredList = FXCollections.observableArrayList();
-
-        filteredList = ServiceManager.searchService(searchText);
-
+        
+        String searchText = searchField.getText();
+        ObservableList<String> filteredList = FXCollections.observableArrayList();
+        for (Service service : serviceManager.searchService(searchText)) {
+            filteredList.add(service.getName());
+        }
         servicesListView.setItems(filteredList);
     }
 
