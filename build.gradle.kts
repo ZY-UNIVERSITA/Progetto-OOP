@@ -57,6 +57,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
 
+    // Apache Commons Codec
+    implementation("commons-codec:commons-codec:1.15") 
+
     // TOTP library
     // https://mvnrepository.com/artifact/com.github.bastiaanjansen/otp-java
     implementation("com.github.bastiaanjansen:otp-java:2.1.0")
