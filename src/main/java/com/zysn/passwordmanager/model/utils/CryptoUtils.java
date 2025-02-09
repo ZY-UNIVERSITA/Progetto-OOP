@@ -4,7 +4,9 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.bouncycastle.util.Arrays;
@@ -33,8 +35,12 @@ public class CryptoUtils {
 
         byte[] salt = new byte[length];
 
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(salt);
+        try {
+            SecureRandom random = SecureRandom.getInstanceStrong();
+            random.nextBytes(salt);
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Errore nella generazione del satl.");
+        }
 
         return salt;
     }
@@ -92,16 +98,56 @@ public class CryptoUtils {
 
         CharBuffer charBuffer = CharBuffer.wrap(source);
 
+        byte[] byteArray = null;
+
         try {
             ByteBuffer byteBuffer = encoder.encode(charBuffer);
-            byte[] byteArray = new byte[byteBuffer.remaining()];
+            byteArray = new byte[byteBuffer.remaining()];
             byteBuffer.get(byteArray);
 
-            return byteArray;
         } catch (CharacterCodingException e) {
             System.err.println("Error trying to convert char[] into byte[].");
-            return null;
         }
+
+        return byteArray;
+    }
+
+    /**
+     * Converts a byte array to a character array using the default charset (UTF-8).
+     *
+     * @param source the byte array to be converted
+     * @return the resulting character array
+     */
+    public static char[] byteToCharConverter(byte[] source) {
+        return byteToCharConverter(source, "UTF-8");
+    }
+
+    /**
+     * Converts a byte array to a character array using the specified charset.
+     *
+     * @param source      the byte array to be converted
+     * @param charsetName the name of the charset to be used for conversion
+     * @return the resulting character array
+     * @throws IllegalArgumentException if the specified charset is not supported
+     */
+    public static char[] byteToCharConverter(byte[] source, String charsetName) {
+        Charset charset = Charset.forName(charsetName);
+        CharsetDecoder decoder = charset.newDecoder();
+
+        ByteBuffer byteBuffer = ByteBuffer.wrap(source);
+
+        char[] charArray = null;
+
+        try {
+            CharBuffer charBuffer = decoder.decode(byteBuffer);
+            charArray = new char[charBuffer.remaining()];
+            charBuffer.get(charArray);
+
+        } catch (CharacterCodingException e) {
+            System.err.println("Error trying to convert byte[] into char[].");
+        }
+
+        return charArray;
     }
 
 }
