@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.algorithm.encryption.patterns;
+package com.zysn.passwordmanager.model.security.algorithm.encryption.factory;
 
 import com.zysn.passwordmanager.model.enums.AlgorithmName;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
@@ -35,7 +35,7 @@ public class EncryptionAlgorithmFactory {
         }
 
         switch (algorithmName) {
-            case AlgorithmName.AES:
+            case AES:
                 return new AES();
             default:
                 throw new IllegalArgumentException("The algorithm " + name + " has not been found.");

@@ -38,25 +38,25 @@ public class AES implements EncryptionAlgorithm {
      * @return a byte array containing the encrypted data
      * @throws IllegalArgumentException if any configuration parameters are invalid
      */
-    public byte[] encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
+    public byte[] encrypt(final byte[] data, final SecretKeySpec key, final AlgorithmConfig algorithmConfig) {
         byte[] encryptedText = null;
 
         try {
             // Istanzia l'algoritmo AES con la modalità e il padding scelto usando come
             // provider Bouncy Castle
-            String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
-            String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
-            String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
+            final String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
+            final String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
+            final String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
 
             final Cipher cipher = Cipher.getInstance(aesVersion, "BC");
 
             // Crea le specifiche per GCM e inizializza il cipher
-            int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
+            final int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
             final GCMParameterSpec spec = new GCMParameterSpec(gcmTagLength, algorithmConfig.getSalt());
             cipher.init(Cipher.ENCRYPT_MODE, key, spec);
 
             encryptedText = cipher.doFinal(data);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("The encryption of the source generated an error.");
         }
 
@@ -75,26 +75,26 @@ public class AES implements EncryptionAlgorithm {
      * @return a byte array containing the decrypted data
      * @throws IllegalArgumentException if any configuration parameters are invalid
      */
-    public byte[] decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
+    public byte[] decrypt(final byte[] data, final SecretKeySpec key, final AlgorithmConfig algorithmConfig) {
         byte[] decryptedText = null;
 
         try {
             // Istanzia l'algoritmo AES con la modalità e il padding scelto usando come
             // provider Bouncy Castle
-            String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
-            String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
-            String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
+            final String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
+            final String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
+            final String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
             
             final Cipher cipher = Cipher.getInstance(aesVersion, "BC");
 
             // Crea le specifiche per GCM e inizializza il cipher
-            int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
+            final int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
             final GCMParameterSpec spec = new GCMParameterSpec(gcmTagLength, algorithmConfig.getSalt());
             cipher.init(Cipher.DECRYPT_MODE, key, spec);
 
             // Decifra il testo
             decryptedText = cipher.doFinal(data);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println("The decryption of the source generated an error.");
         }
 
