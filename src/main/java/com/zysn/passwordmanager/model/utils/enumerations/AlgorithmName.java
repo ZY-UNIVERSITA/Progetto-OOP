@@ -3,9 +3,9 @@ package com.zysn.passwordmanager.model.utils.enumerations;
 public enum AlgorithmName {
     AES("AES"),
 
-    ARGON2("argon2"),
-    BCRYPT("bcrypt"),
-    SCRYPT("scrypt"),
+    ARGON2("Argon2"),
+    BCRYPT("Bcrypt"),
+    SCRYPT("Scrypt"),
 
     ARGON2I("argon2i"),
     ARGON2D("argon2d"),

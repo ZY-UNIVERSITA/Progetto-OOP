@@ -2,14 +2,22 @@ package com.zysn.passwordmanager.model.security.manager;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.enums.AlgorithmType;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.security.algorithm.derivation.patterns.KeyDerivationAlgorithmFactory;
-import com.zysn.passwordmanager.model.utils.CryptoUtils;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.factory.KeyDerivationFactory;
+import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
+import com.zysn.passwordmanager.model.security.algorithm.encryption.factory.EncryptionAlgorithmFactory;
 
+/**
+ * The CryptoManager class provides methods for key derivation, encryption, and
+ * decryption.
+ */
 public class CryptoManager {
-    private final static String KEY_DERIVATION_ALGORITHM_KEY = "Key Derivation Algorithm";
 
+    /**
+     * Default constructor for the CryptoManager class.
+     */
     public CryptoManager() {
 
     }
@@ -23,32 +31,81 @@ public class CryptoManager {
      * @return the derived master key
      * @throws IllegalArgumentException if the algorithm type is incorrect
      */
-    public SecretKeySpec deriveMasterKey(char[] password, AlgorithmConfig algorithmConfig) {
-        String algorithmType = algorithmConfig.getAlgorithmType();
-        String algorithmName = algorithmConfig.getAlgorithmName();
-
-        if (algorithmType != KEY_DERIVATION_ALGORITHM_KEY) {
-            throw new IllegalArgumentException("Algorithm type is wrong.");
+    public byte[] deriveMasterKey(final byte[] password, final AlgorithmConfig algorithmConfig) {
+        if (algorithmConfig == null || password == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
         }
 
-        SecretKeySpec masterKey = null;
+        final String algorithmName = algorithmConfig.getAlgorithmName();
+        final String algorithmType = algorithmConfig.getAlgorithmType();
 
-        try {
-            KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationAlgorithmFactory
-                    .createAlgorithm(algorithmName);
-            masterKey = keyDerivationAlgorithm.deriveKey(password, algorithmConfig);
-        } finally {
-            CryptoUtils.cleanMemory(password);
+        if (!algorithmType.equalsIgnoreCase(AlgorithmType.KEY_DERIVATION_ALGORITHM.getParameter())) {
+            throw new IllegalStateException("The algorithm type is not compatible with this method.");
         }
+
+        final KeyDerivationAlgorithm keyDerivationAlgorithm = KeyDerivationFactory
+                .createAlgorithm(algorithmName);
+
+        final byte[] masterKey = keyDerivationAlgorithm.deriveKey(password, algorithmConfig);
 
         return masterKey;
     }
 
-    public byte[] encrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
-        return null;
+    /**
+     * Encrypts the given data using the specified key and algorithm configuration.
+     *
+     * @param data            the data to be encrypted
+     * @param key             the secret key used for encryption
+     * @param algorithmConfig the algorithm configuration specifying the encryption
+     *                        algorithm
+     * @return the encrypted data
+     * @throws IllegalArgumentException if the algorithm type is incorrect
+     */
+    public byte[] encrypt(final byte[] data, final SecretKeySpec key, final AlgorithmConfig algorithmConfig) {
+        if (data == null || key == null || algorithmConfig == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
+
+        final String algorithmType = algorithmConfig.getAlgorithmType();
+        final String algorithmName = algorithmConfig.getAlgorithmName();
+
+        if (!algorithmType.equalsIgnoreCase(AlgorithmType.ENCRYPTION_ALGORITHM.getParameter())) {
+            throw new IllegalStateException("The algorithm type is not compatible with this method.");
+        }
+
+        final EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithmFactory.createAlgorithm(algorithmName);
+
+        final byte[] encryptedData = encryptionAlgorithm.encrypt(data, key, algorithmConfig);
+
+        return encryptedData;
     }
 
-    public byte[] decrypt(byte[] data, SecretKeySpec key, AlgorithmConfig algorithmConfig) {
-        return null;
+    /**
+     * Decrypts the given data using the specified key and algorithm configuration.
+     *
+     * @param data            the data to be decrypted
+     * @param key             the secret key used for decryption
+     * @param algorithmConfig the algorithm configuration specifying the decryption
+     *                        algorithm
+     * @return the decrypted data
+     * @throws IllegalArgumentException if the algorithm type is incorrect
+     */
+    public byte[] decrypt(final byte[] data, final SecretKeySpec key, final AlgorithmConfig algorithmConfig) {
+        if (data == null || key == null || algorithmConfig == null) {
+            throw new IllegalArgumentException("Arguments cannot be null.");
+        }
+
+        final String algorithmType = algorithmConfig.getAlgorithmType();
+        final String algorithmName = algorithmConfig.getAlgorithmName();
+
+        if (!algorithmType.equalsIgnoreCase(AlgorithmType.ENCRYPTION_ALGORITHM.getParameter())) {
+            throw new IllegalStateException("The algorithm type is not compatible with this method.");
+        }
+
+        final EncryptionAlgorithm encryptionAlgorithm = EncryptionAlgorithmFactory.createAlgorithm(algorithmName);
+
+        final byte[] decryptedData = encryptionAlgorithm.decrypt(data, key, algorithmConfig);
+
+        return decryptedData;
     }
 }
