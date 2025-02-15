@@ -3,7 +3,6 @@ package com.zysn.passwordmanager.model.security.manager;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.security.Security;
-import java.util.HashMap;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -11,13 +10,19 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
-import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
 
 public class CryptoManagerTest {
     private CryptoManager cryptoManager;
-    private char[] source;
+    private byte[] source;
     private AlgorithmConfig algorithmConfig;
+    private byte[] salt;
+
+    private byte[] expectedMasterKey;
+    private byte[] iv;
+
+    private byte[] expectedEncryptedSource;
 
     @BeforeEach
     void setup() {
@@ -26,110 +31,56 @@ public class CryptoManagerTest {
         this.cryptoManager = new CryptoManager();
         this.algorithmConfig = new AlgorithmConfig();
 
-        this.source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        this.source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".getBytes();
+
+        this.salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20,
+                -8, -41, 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
+
+        this.expectedMasterKey = new byte[] { 48, 21, 102, 23, -20, 126, -101, 75, -110, 40, -39, -127, 14, 81, 67, -40,
+                9, -81, -104, 28, -24, 46, -88, -19, 6, 119, 42, 125, -22, 66, -110, 20 };
+
+        this.iv = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96 };
+
+        this.expectedEncryptedSource = new byte[] { 4, -50, -58, -88, -56, -96, 47, 105, 85, -86, -127, 83, -101, 71,
+                116, -122, -48, -127, -54, -3, 96, -28, 16, -1, -109, -86, -55, 98, 30, -54, -92, -8, 23, -59, -91, -40,
+                74, 17, 24, 106, 0, -60, 42, 28, 69, -14, -9, -99, 57, -119, 20, 27 };
     }
 
     @Test
     void testDeriveMasterKey() {
-        String algorithmName = "Argon2";
-        String algorithmType = "Key Derivation Algorithm";
+        final String algorithmName = "Argon2";
 
-        this.algorithmConfig.setAlgorithmName(algorithmName);
-        this.algorithmConfig.setAlgorithmType(algorithmType);
-        this.algorithmConfig.setParameters(new HashMap<String, String>());
+        this.algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig(algorithmName, this.salt, null);
 
-        String variantName = "variant";
-        String variantValue = "argon2id";
-        algorithmConfig.addNewParameter(variantName, variantValue);
+        final byte[] actualMasterKey = this.cryptoManager.deriveMasterKey(source, algorithmConfig);
 
-        String iterationsName = "iterations";
-        String iterationsValue = "3";
-        algorithmConfig.addNewParameter(iterationsName, iterationsValue);
-
-        String memoryCostName = "memory_cost";
-        String memoryCostValue = "8192";
-        algorithmConfig.addNewParameter(memoryCostName, memoryCostValue);
-
-        String parallelismName = "parallelism";
-        String parallelismValue = "1";
-        algorithmConfig.addNewParameter(parallelismName, parallelismValue);
-
-        String keySizeName = "key_size";
-        String keySizeValue = "256";
-        algorithmConfig.addNewParameter(keySizeName, keySizeValue);
-
-        byte[] salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20,
-                -8, -41, 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
-
-        algorithmConfig.setSalt(salt);
-
-        byte[] expectedMasterKey = new byte[] { -34, -54, -51, 47, -105, 66, 24, -101, -14, 63, -105, -103, 63, 81, -97,
-                75, 29, -6, 61, -95, -11, 1, -107, -1, -107, 52, -72, -22, -95, 119, -84, -66 };
-
-        byte[] actualMasterKey = this.cryptoManager.deriveMasterKey(source, algorithmConfig);
-
-        assertArrayEquals(expectedMasterKey, actualMasterKey, "The obtained key is not the same.");
+        assertArrayEquals(expectedMasterKey, actualMasterKey,
+                "The obtained key is not the same as expected.");
     }
 
     @Test
     void testEncrypt() {
-        byte[] sourceInByte = EncodingUtils.charToByteConverter(this.source);
+        final String algorithmName = "AES";
 
-        byte[] masterKey = new byte[] { -34, -54, -51, 47, -105, 66, 24, -101, -14, 63, -105, -103, 63, 81, -97,
-                75, 29, -6, 61, -95, -11, 1, -107, -1, -107, 52, -72, -22, -95, 119, -84, -66 };
+        this.algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig(algorithmName, iv, null);
 
-        byte[] iv = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96 };
-
-        this.algorithmConfig.setSalt(iv);
-
-        String algorithmName = "AES";
-        String algorithmType = "Encryption Algorithm";
-
-        this.algorithmConfig.setAlgorithmName(algorithmName);
-        this.algorithmConfig.setAlgorithmType(algorithmType);
-        this.algorithmConfig.setParameters(new HashMap<String, String>());
-
-        String aesAlgorithmType = "AES/GCM/NoPadding";
-        this.algorithmConfig.addNewParameter("variant", aesAlgorithmType);
-
-        byte[] actualEncryptedText = this.cryptoManager.encrypt(sourceInByte, new SecretKeySpec(masterKey, "AES"),
+        final byte[] actualEncryptedText = this.cryptoManager.encrypt(source, new SecretKeySpec(expectedMasterKey, "AES"),
                 algorithmConfig);
 
-        byte[] expectedEncryptedText = new byte[] { -3, -38, 24, 85, 91, 114, -21, -40, -82, -19, -106, -86, -52, 31,
-                43, -123, 6, 107, -51, -70, -88, 33, 49, 34, 7, 41, 27, -4, -96, 16, 42, -118, -97, -27, 26, -71, 92,
-                -83, 83, 113, -83, -38, 26, -112, -8, 49, -37, 10, 23, -121, -35, -5 };
-
-        assertArrayEquals(expectedEncryptedText, actualEncryptedText,
+        assertArrayEquals(this.expectedEncryptedSource, actualEncryptedText,
                 "The encryption didn't give the expected output.");
     }
 
     @Test
     void testDecrypt() {
-        byte[] masterKey = new byte[] { -34, -54, -51, 47, -105, 66, 24, -101, -14, 63, -105, -103, 63, 81, -97,
-                75, 29, -6, 61, -95, -11, 1, -107, -1, -107, 52, -72, -22, -95, 119, -84, -66 };
+        final String algorithmName = "AES";
 
-        byte[] iv = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96 };
+        this.algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig(algorithmName, iv, null);
 
-        this.algorithmConfig.setSalt(iv);
+        final byte[] decryptedText = this.cryptoManager.decrypt(expectedEncryptedSource,
+                new SecretKeySpec(expectedMasterKey, algorithmName),
+                algorithmConfig);
 
-        String algorithmName = "AES";
-        String algorithmType = "Encryption Algorithm";
-
-        this.algorithmConfig.setAlgorithmName(algorithmName);
-        this.algorithmConfig.setAlgorithmType(algorithmType);
-        this.algorithmConfig.setParameters(new HashMap<String, String>());
-
-        String aesAlgorithmType = "AES/GCM/NoPadding";
-        this.algorithmConfig.addNewParameter("variant", aesAlgorithmType);
-
-        byte[] encryptedText = new byte[] { -3, -38, 24, 85, 91, 114, -21, -40, -82, -19, -106, -86, -52, 31,
-            43, -123, 6, 107, -51, -70, -88, 33, 49, 34, 7, 41, 27, -4, -96, 16, 42, -118, -97, -27, 26, -71, 92,
-            -83, 83, 113, -83, -38, 26, -112, -8, 49, -37, 10, 23, -121, -35, -5 };
-
-        byte[] ecryptedText = this.cryptoManager.decrypt(encryptedText, new SecretKeySpec(masterKey, algorithmName), algorithmConfig);
-
-        char[] actualDecryptedText = EncodingUtils.byteToCharConverter(ecryptedText);
-
-        assertArrayEquals(this.source, actualDecryptedText, "The decryption didn't give an output that it is expected.");
+        assertArrayEquals(this.source, decryptedText, "The decryption didn't give an output that it is expected.");
     }
 }
