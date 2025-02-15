@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.totptemp.impl;
+package com.zysn.passwordmanager.model.security.totp.impl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.bastiaanjansen.otp.TOTPGenerator;
-import com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication;
-
 import javafx.scene.image.WritableImage;
 
 public class DefaultTotpAuthenticationTest {
