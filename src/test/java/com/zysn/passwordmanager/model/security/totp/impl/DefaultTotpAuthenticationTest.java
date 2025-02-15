@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.bastiaanjansen.otp.TOTPGenerator;
-import com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication;
-
 import javafx.scene.image.WritableImage;
 
 public class DefaultTotpAuthenticationTest {
