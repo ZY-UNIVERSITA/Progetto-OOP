@@ -2,7 +2,7 @@ package com.zysn.passwordmanager.model.security.algorithm.encryption.api;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 
 /**
  * This interface defines the methods for encryption and decryption using a specified algorithm.

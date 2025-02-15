@@ -1,6 +1,6 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.api;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 
 /**
  * Interface representing a key derivation algorithm.

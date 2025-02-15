@@ -1,7 +1,7 @@
 package com.zysn.passwordmanager.model.security.algorithm.encryption.impl;
 
 import com.zysn.passwordmanager.model.enums.AesAlgorithm;
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
 
 import javax.crypto.Cipher;

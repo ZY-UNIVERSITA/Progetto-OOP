@@ -3,7 +3,7 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 import com.zysn.passwordmanager.model.enums.AlgorithmParameters;
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 
 /**

@@ -5,7 +5,7 @@ import org.bouncycastle.crypto.params.Argon2Parameters;
 
 import com.zysn.passwordmanager.model.enums.AlgorithmName;
 import com.zysn.passwordmanager.model.enums.AlgorithmParameters;
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 
 /**

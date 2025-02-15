@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.algorithm.config;
+package com.zysn.passwordmanager.model.security.algorithm.config.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,15 +16,24 @@ public class AlgorithmConfig {
     private byte[] salt;
     private Map<String, String> parameters;
 
-    public AlgorithmConfig(String algorithmName, String algorithmType, byte[] salt, Map<String, String> parameters) {
+    public AlgorithmConfig(final String algorithmName, final String algorithmType, final byte[] salt, final Map<String, String> parameters) {
         this.algorithmType = algorithmType;
         this.algorithmName = algorithmName;
         this.salt = salt;
         this.parameters = parameters;
     }
 
-    public AlgorithmConfig(String algorithmName, String algorithmType) {
-        this(algorithmName, algorithmType, null, new HashMap<String, String>());
+    public AlgorithmConfig(final String algorithmName, final String algorithmType, final byte[] salt) {
+        this(algorithmName, algorithmType, salt, new HashMap<>());
+    }
+
+    public AlgorithmConfig(final String algorithmName, final String algorithmType) {
+        this(algorithmName, algorithmType, null);
+    }
+
+    public AlgorithmConfig(final DefaultAlgorithmConfigBuilder algorithmConfigBuilder) {
+        this(algorithmConfigBuilder.algorithmName, algorithmConfigBuilder.algorithmType, algorithmConfigBuilder.salt,
+                algorithmConfigBuilder.parameters);
     }
 
     public AlgorithmConfig() {
@@ -39,7 +48,7 @@ public class AlgorithmConfig {
      * @throws IllegalArgumentException if name and/or value are null.
      * @throws IllegalStateException    if the parameter is already present.
      */
-    public void addNewParameter(String name, String value) {
+    public void addNewParameter(final String name, final String value) {
         if (name == null || value == null) {
             throw new IllegalArgumentException("Name or value cannot be null.");
         }
@@ -58,7 +67,7 @@ public class AlgorithmConfig {
      * @throws NoSuchElementException if the parameter with the specified name is
      *                                not present.
      */
-    public void removeParameterByName(String name) {
+    public void removeParameterByName(final String name) {
         if (!this.getParameters().containsKey(name)) {
             throw new NoSuchElementException("The parameter " + name + " is not present.");
         }
@@ -74,7 +83,7 @@ public class AlgorithmConfig {
      * @throws IllegalStateException if the parameter with the specified name is not
      *                               present
      */
-    public void updateParameter(String name, String value) {
+    public void updateParameter(final String name, final String value) {
         if (!this.getParameters().containsKey(name)) {
             throw new NoSuchElementException("The parameter " + name + " is not present.");
         }
@@ -90,7 +99,7 @@ public class AlgorithmConfig {
      * @throws IllegalStateException if the parameter with the given name is not
      *                               present.
      */
-    public String getParameterValueByName(String name) {
+    public String getParameterValueByName(final String name) {
         if (!this.getParameters().containsKey(name)) {
             throw new IllegalStateException("The parameter " + name + " is not present.");
         }
@@ -125,7 +134,7 @@ public class AlgorithmConfig {
         return algorithmName;
     }
 
-    public void setAlgorithmName(String algorithmName) {
+    public void setAlgorithmName(final String algorithmName) {
         this.algorithmName = algorithmName;
     }
 
@@ -133,7 +142,7 @@ public class AlgorithmConfig {
         return algorithmType;
     }
 
-    public void setAlgorithmType(String algorithmType) {
+    public void setAlgorithmType(final String algorithmType) {
         this.algorithmType = algorithmType;
     }
 
@@ -141,7 +150,7 @@ public class AlgorithmConfig {
         return salt;
     }
 
-    public void setSalt(byte[] salt) {
+    public void setSalt(final byte[] salt) {
         this.salt = salt;
     }
 
@@ -149,10 +158,10 @@ public class AlgorithmConfig {
         return parameters;
     }
 
-    public void setParameters(Map<String, String> parameters) {
+    public void setParameters(final Map<String, String> parameters) {
         this.parameters = parameters;
     }
-    
+
     /* EQUALS */
     @Override
     public int hashCode() {
@@ -166,14 +175,14 @@ public class AlgorithmConfig {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        AlgorithmConfig other = (AlgorithmConfig) obj;
+        final AlgorithmConfig other = (AlgorithmConfig) obj;
         if (algorithmName == null) {
             if (other.algorithmName != null)
                 return false;
