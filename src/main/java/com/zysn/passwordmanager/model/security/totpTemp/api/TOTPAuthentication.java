@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.totp.api;
+package com.zysn.passwordmanager.model.security.totpTemp.api;
 
 import javafx.scene.image.WritableImage;
 

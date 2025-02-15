@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.totp.impl;
+package com.zysn.passwordmanager.model.security.totpTemp.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -11,7 +11,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.zysn.passwordmanager.model.enums.ShaHashLength;
-import com.zysn.passwordmanager.model.security.totp.api.TOTPAuthentication;
+import com.zysn.passwordmanager.model.security.totpTemp.api.TOTPAuthentication;
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.crypto.api.MustBeDestroyed;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
