@@ -4,6 +4,7 @@ import com.zysn.passwordmanager.model.enums.AlgorithmName;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Argon2;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Bcrypt;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.HKDF;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt;
 
 /**
@@ -15,7 +16,8 @@ public class KeyDerivationFactory {
      *
      * @param name the name of the key derivation algorithm
      * @return an instance of the specified KeyDerivationAlgorithm
-     * @throws IllegalArgumentException if the specified algorithm name is not found, is null or empty
+     * @throws IllegalArgumentException if the specified algorithm name is not
+     *                                  found, is null or empty
      */
     public static KeyDerivationAlgorithm createAlgorithm(final String name) {
         // Validates the parameter
@@ -38,6 +40,8 @@ public class KeyDerivationFactory {
                 return new Scrypt();
             case AlgorithmName.BCRYPT:
                 return new Bcrypt();
+            case AlgorithmName.HKDF:
+                return new HKDF();
             default:
                 throw new IllegalArgumentException("Error: The algorithm " + name + " has not been found.");
         }

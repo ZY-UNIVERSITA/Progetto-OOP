@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Argon2;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Bcrypt;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.HKDF;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt;
 
 public class KeyDerivationFactoryTest {
@@ -16,6 +17,7 @@ public class KeyDerivationFactoryTest {
     private static final String ARGON2 = "ARGON2";
     private static final String SCRYPT = "SCRYPT";
     private static final String BCRYPT = "BCRYPT";
+    private static final String HKDF = "HKDF";
     private static final String INVALID = "INVALID";
     private static final String NULL_NAME = null;
     private static final String EMPTY_NAME = "";
@@ -39,6 +41,13 @@ public class KeyDerivationFactoryTest {
         KeyDerivationAlgorithm algorithm = KeyDerivationFactory.createAlgorithm(BCRYPT);
         assertNotNull(algorithm, "The algorithm is null.");
         assertTrue(algorithm instanceof Bcrypt, "The algorithm is not an instance of Bcrypt.");
+    }
+
+    @Test
+    public void testCreateAlgorithmHKDF() {
+        KeyDerivationAlgorithm algorithm = KeyDerivationFactory.createAlgorithm(HKDF);
+        assertNotNull(algorithm, "The algorithm is null.");
+        assertTrue(algorithm instanceof HKDF, "The algorithm is not an instance of HKDF.");
     }
 
     @Test

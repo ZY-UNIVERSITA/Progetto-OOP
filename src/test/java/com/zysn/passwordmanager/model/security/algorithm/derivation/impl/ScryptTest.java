@@ -1,6 +1,7 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,14 +12,16 @@ import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDeriv
 
 public class ScryptTest {
     private KeyDerivationAlgorithm keyDerivationAlgorithm;
-    private char[] source;
+    private byte[] source;
     private byte[] salt;
     private AlgorithmConfig algorithmConfig;
+
+    private byte[] expectedMasterKey;
 
     @BeforeEach
     void setup() {
         keyDerivationAlgorithm = new Scrypt();
-        source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        source = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".getBytes();
         salt = new byte[] { 72, 92, -108, -126, 80, 92, 114, -96, 13, -93, 69, 96, -89, -25, 34, -102, 77, -20, -8, -41,
                 92, 87, 17, 35, 75, -11, -87, -87, -54, 22, 110, 8 };
 
@@ -40,15 +43,15 @@ public class ScryptTest {
         String keySizeValue = "128";
         algorithmConfig.addNewParameter(keySizeName, keySizeValue);
 
+        expectedMasterKey = new byte[] { -107, 29, 119, 84, -17, 116, 114, 121, -127, -37, 72, 111, -77, -106,
+                -110, -1 };
     }
 
     @Test
     void testDeriveKey() {
         byte[] actualMasterKey = keyDerivationAlgorithm.deriveKey(source, algorithmConfig);
 
-        byte[] expectedMasterKey = new byte[] { -107, 29, 119, 84, -17, 116, 114, 121, -127, -37, 72, 111, -77, -106,
-                -110, -1 };
-
+        assertNotNull(actualMasterKey, "The Master Key is null.");
         assertArrayEquals(expectedMasterKey, actualMasterKey, "The Master Key arrays do not match.");
     }
 }

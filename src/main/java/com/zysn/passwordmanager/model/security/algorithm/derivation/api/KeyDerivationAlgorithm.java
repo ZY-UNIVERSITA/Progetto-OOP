@@ -14,5 +14,5 @@ public interface KeyDerivationAlgorithm {
      * @param algorithmConfig the configuration parameters for the key derivation algorithm
      * @return an array of bytes representing the derived key
      */
-    public byte[] deriveKey(char[] source, AlgorithmConfig algorithmConfig);
+    public byte[] deriveKey(byte[] source, AlgorithmConfig algorithmConfig);
 }

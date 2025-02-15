@@ -1,8 +1,8 @@
 package com.zysn.passwordmanager.model.security.algorithm.encryption.patterns;
 
+import com.zysn.passwordmanager.model.enums.AlgorithmName;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.impl.AES;
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 
 public class EncryptionAlgorithmFactory {
     /**

@@ -1,8 +1,8 @@
 package com.zysn.passwordmanager.model.security.algorithm.encryption.impl;
 
+import com.zysn.passwordmanager.model.enums.AesAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
-import com.zysn.passwordmanager.model.utils.enumerations.AesEnum;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -44,11 +44,14 @@ public class AES implements EncryptionAlgorithm {
         try {
             // Istanzia l'algoritmo AES con la modalità e il padding scelto usando come
             // provider Bouncy Castle
-            String aesVersion = algorithmConfig.getParameterValueByName(AesEnum.AES_ALGORITHM.getParameter());
+            String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
+            String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
+            String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
+
             final Cipher cipher = Cipher.getInstance(aesVersion, "BC");
 
             // Crea le specifiche per GCM e inizializza il cipher
-            int gcmTagLength = Integer.valueOf(AesEnum.GCM_TAG_LENGTH.getParameter());
+            int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
             final GCMParameterSpec spec = new GCMParameterSpec(gcmTagLength, algorithmConfig.getSalt());
             cipher.init(Cipher.ENCRYPT_MODE, key, spec);
 
@@ -78,11 +81,14 @@ public class AES implements EncryptionAlgorithm {
         try {
             // Istanzia l'algoritmo AES con la modalità e il padding scelto usando come
             // provider Bouncy Castle
-            String aesVersion = algorithmConfig.getParameterValueByName(AesEnum.AES_ALGORITHM.getParameter());
+            String aesMode = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_MODE.getParameter());
+            String aesPadding = algorithmConfig.getParameterValueByName(AesAlgorithm.AES_PADDING.getParameter());
+            String aesVersion = String.join("/", algorithmConfig.getAlgorithmName(), aesMode, aesPadding);
+            
             final Cipher cipher = Cipher.getInstance(aesVersion, "BC");
 
             // Crea le specifiche per GCM e inizializza il cipher
-            int gcmTagLength = Integer.valueOf(AesEnum.GCM_TAG_LENGTH.getParameter());
+            int gcmTagLength = Integer.valueOf(AesAlgorithm.GCM_TAG_LENGTH.getParameter());
             final GCMParameterSpec spec = new GCMParameterSpec(gcmTagLength, algorithmConfig.getSalt());
             cipher.init(Cipher.DECRYPT_MODE, key, spec);
 
