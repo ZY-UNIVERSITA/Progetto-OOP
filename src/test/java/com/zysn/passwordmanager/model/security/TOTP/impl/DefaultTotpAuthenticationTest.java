@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.TOTP.impl;
+package com.zysn.passwordmanager.model.security.totp.impl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
