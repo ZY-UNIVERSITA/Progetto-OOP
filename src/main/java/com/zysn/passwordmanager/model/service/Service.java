@@ -1,6 +1,6 @@
 package com.zysn.passwordmanager.model.service;
 
-import com.zysn.passwordmanager.model.security.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
 
 /**
  * Represents a Service with credentials and additional information.
@@ -13,6 +13,10 @@ public class Service {
     private byte[] encryptedPassword;
     private AlgorithmConfig encryptionConfig;
     private String info;
+
+    public Service () {
+
+    }
 
     public Service (String name, String username, String email, byte[] password, AlgorithmConfig encrypConf, String info) {
         this.name = name;
@@ -101,6 +105,64 @@ public class Service {
      */
     public void setEncryptionConfig (AlgorithmConfig algorConf) {
         this.encryptionConfig = algorConf;
+    }
+
+    /**
+     * Gets the additional information of Service.
+     * @return the info
+     */
+    public String getInfo () {
+        return this.info;
+    }
+
+    /**
+     * Add an additional information to Service.
+     * @param info the info of service
+     */
+    public void setInfo (String info) {
+        this.info = info;
+    }
+
+    @Override
+    public String toString() {
+        return "Service [name=" + name + ", username=" + username + ", email=" + email + ", info=" + info + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Service other = (Service) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        return true;
     }
     
 }
