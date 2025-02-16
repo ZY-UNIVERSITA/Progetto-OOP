@@ -3,7 +3,7 @@ package com.zysn.passwordmanager.model.account.entity;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 
 public class UserAccount {
     private String username;

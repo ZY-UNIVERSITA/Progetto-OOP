@@ -19,7 +19,7 @@ import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreServic
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.PathsEnum;
-import com.zysn.passwordmanager.model.utils.file.FileManager;
+import com.zysn.passwordmanager.model.utils.FileManager;
 
 /**
  * The DefaultKeyStoreManager class is responsible for managing the key store operations.

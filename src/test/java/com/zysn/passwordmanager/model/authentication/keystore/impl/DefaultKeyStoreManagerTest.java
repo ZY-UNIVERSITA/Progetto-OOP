@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
 import com.zysn.passwordmanager.model.utils.enumerations.PathsEnum;
-import com.zysn.passwordmanager.model.utils.file.FileManager;
+import com.zysn.passwordmanager.model.utils.FileManager;
 
 public class DefaultKeyStoreManagerTest {
     private KeyStoreManager keyStoreManager;

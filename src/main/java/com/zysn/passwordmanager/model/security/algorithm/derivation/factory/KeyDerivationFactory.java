@@ -1,6 +1,6 @@
 package com.zysn.passwordmanager.model.security.algorithm.derivation.factory;
 
-import com.zysn.passwordmanager.model.enums.AlgorithmName;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Argon2;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Bcrypt;
