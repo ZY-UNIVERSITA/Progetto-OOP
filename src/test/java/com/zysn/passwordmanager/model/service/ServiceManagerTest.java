@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
-import com.zysn.passwordmanager.model.utils.FileManager;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
 public class ServiceManagerTest {
 

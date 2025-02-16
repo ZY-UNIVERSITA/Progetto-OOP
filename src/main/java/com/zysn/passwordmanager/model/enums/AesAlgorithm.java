@@ -1,7 +1,8 @@
-package com.zysn.passwordmanager.model.utils.enumerations;
+package com.zysn.passwordmanager.model.enums;
 
-public enum AesEnum {
-    AES_ALGORITHM("variant"),
+public enum AesAlgorithm {
+    AES_MODE("mode"),
+    AES_PADDING("padding"),
     GCM_IV_LENGTH("12"),
     GCM_TAG_LENGTH("128"),
     
@@ -9,7 +10,7 @@ public enum AesEnum {
 
     private final String parameter;
 
-    AesEnum(String parameter) {
+    AesAlgorithm(String parameter) {
         this.parameter = parameter;
     }
 

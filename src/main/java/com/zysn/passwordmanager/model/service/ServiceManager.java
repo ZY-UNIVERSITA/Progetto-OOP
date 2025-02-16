@@ -10,8 +10,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
-import com.zysn.passwordmanager.model.utils.FileManager;
 import com.zysn.passwordmanager.model.utils.PasswordGenerator;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
 /**
  * Singleton class that manages a list of services.
@@ -158,7 +158,7 @@ public class ServiceManager {
      * @return {@code true} if the services were successfully loaded and decrypted, {@code false} otherwise
      */
     public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {
-        byte[] encryptedData = fileManager.loadServicesFile("services.dat".toCharArray());
+        byte[] encryptedData = fileManager.loadData("services.dat");
         if (encryptedData == null) {
             return false;
         }
@@ -194,7 +194,9 @@ public class ServiceManager {
             byte[] encryptedData = objectMapper.writeValueAsBytes(services);
             byte[] cipherText = cryptoManager.encrypt(encryptedData, key, new AlgorithmConfig("AES", "CBC"));
             
-            return fileManager.saveServicesFile(cipherText);
+            fileManager.saveData("service.data", cipherText);
+
+            return true;
         } catch (IOException e) {
             System.err.println("Error serializing services data: " + e.getMessage());
             return false;

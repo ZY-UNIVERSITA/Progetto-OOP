@@ -16,10 +16,10 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreService;
-import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.enums.PathsConstant;
+import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-import com.zysn.passwordmanager.model.utils.enumerations.PathsEnum;
-import com.zysn.passwordmanager.model.utils.FileManager;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
 /**
  * The DefaultKeyStoreManager class is responsible for managing the key store operations.
@@ -142,7 +142,7 @@ public class DefaultKeyStoreManager implements KeyStoreManager {
      */
     @Override
     public void loadKeyStore(String username) {
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsEnum.KEY_STORE.getParameter(),
+        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
                 username.concat(".bcfks"));
 
         char[] keyStorePassword = EncodingUtils
@@ -166,7 +166,7 @@ public class DefaultKeyStoreManager implements KeyStoreManager {
      */
     @Override
     public void saveKeyStore(String username) {
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsEnum.KEY_STORE.getParameter(),
+        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
                 username.concat(".bcfks"));
 
         this.fileManager.createFolder(keyStoreFilePath);
