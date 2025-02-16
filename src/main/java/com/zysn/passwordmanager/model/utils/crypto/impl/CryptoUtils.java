@@ -1,8 +1,10 @@
-package com.zysn.passwordmanager.model.utils.crypto;
+package com.zysn.passwordmanager.model.utils.crypto.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+
+import com.zysn.passwordmanager.model.enums.CryptoLength;
 
 /**
  * Utility class for cryptographic operations, including generating salts,
@@ -17,10 +19,6 @@ import java.util.Arrays;
  * </p>
  */
 public class CryptoUtils {
-    private CryptoUtils() {
-
-    }
-
     /**
      * Generates a random salt of the specified length.
      *
@@ -28,17 +26,17 @@ public class CryptoUtils {
      * @return a byte array containing the generated salt
      * @throws IllegalArgumentException if the length is 0 or less
      */
-    public static byte[] generateSalt(int length) {
+    public static byte[] generateSalt(final int length) {
         if (length <= 0) {
             throw new IllegalArgumentException("The length of the salt cannot be 0 or less.");
         }
 
-        byte[] salt = new byte[length];
+        final byte[] salt = new byte[length];
 
         try {
-            SecureRandom random = SecureRandom.getInstanceStrong();
+            final SecureRandom random = SecureRandom.getInstanceStrong();
             random.nextBytes(salt);
-        } catch (NoSuchAlgorithmException e) {
+        } catch (final NoSuchAlgorithmException e) {
             System.err.println("Errore nella generazione del satl.");
         }
 
@@ -53,9 +51,9 @@ public class CryptoUtils {
      * @return a char array representing the generated password
      * @throws IllegalArgumentException if the minimum length is less than 16
      */
-    public static char[] generateSecureRandomNotUsablePassword(int minimumLength) {
-        int lowerBound = 16;
-        int higherBound = 64;
+    public static char[] generateSecureRandomNotUsablePassword(final int minimumLength) {
+        final int lowerBound = CryptoLength.MINIMUM_PASSWORD_LENGTH.getParameter();
+        final int higherBound = CryptoLength.PASSHPRASE_PASSWORD_LENGTH.getParameter();
 
         if (minimumLength < lowerBound) {
             throw new IllegalArgumentException("The minimum length of the password is " + lowerBound);
@@ -64,8 +62,8 @@ public class CryptoUtils {
         char[] password = null;
 
         try {
-            SecureRandom secureRandom = SecureRandom.getInstanceStrong();
-            int length = secureRandom.nextInt(minimumLength, higherBound);
+            final SecureRandom secureRandom = SecureRandom.getInstanceStrong();
+            final int length = secureRandom.nextInt(minimumLength, higherBound);
 
             password = new char[length];
 
@@ -85,7 +83,7 @@ public class CryptoUtils {
                 // Check if the code point actually exists for a char and it should not be a
                 // surrogate char
                 if (Character.isDefined(codePoint)) {
-                    char[] character = Character.toChars(codePoint);
+                    final char[] character = Character.toChars(codePoint);
 
                     if (character.length == 2) {
                         password[characterPosition++] = character[0];
@@ -96,9 +94,8 @@ public class CryptoUtils {
                     }
                 }
             }
-        } catch (NoSuchAlgorithmException e) {
-            System.err
-                    .println("Error trying to create password because the istance of the generator is not available.");
+        } catch (final NoSuchAlgorithmException e) {
+            System.err.println("Error trying to create password because the istance of the generator is not available.");
         }
 
         return password;
@@ -111,7 +108,7 @@ public class CryptoUtils {
      * @param source the char array to be cleared
      * @throws IllegalArgumentException if the source array is null
      */
-    public static void cleanMemory(char[] source) {
+    public static void cleanMemory(final char[] source) {
         if (source == null) {
             throw new IllegalArgumentException("Source cannot be null");
         }
@@ -126,11 +123,15 @@ public class CryptoUtils {
      * @param source the byte array to be cleared
      * @throws IllegalArgumentException if the source array is null
      */
-    public static void cleanMemory(byte[] source) {
+    public static void cleanMemory(final byte[] source) {
         if (source == null) {
             throw new IllegalArgumentException("Source cannot be null");
         }
 
         Arrays.fill(source, (byte) 0);
+    }
+
+    private CryptoUtils() {
+
     }
 }

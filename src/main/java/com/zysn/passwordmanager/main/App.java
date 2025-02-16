@@ -1,6 +1,5 @@
 package com.zysn.passwordmanager.main;
 
-import java.security.Provider;
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

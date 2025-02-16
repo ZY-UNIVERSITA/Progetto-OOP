@@ -7,9 +7,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.scene.impl.MainController">
    <children>
+      <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleLogout" text="Logout" textAlignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
       <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefWidth="400.0" promptText="Search">
          <font>
             <Font size="18.0" />
@@ -20,7 +24,7 @@
             <Insets top="10.0" />
          </VBox.margin>
       </ListView>
-      <Button fx:id="addServiceButton" mnemonicParsing="false" onAction="#handleAddService" text="Add Service">
+      <Button fx:id="addServiceButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleAddService" text="Add Service">
          <VBox.margin>
             <Insets top="10.0" />
          </VBox.margin>

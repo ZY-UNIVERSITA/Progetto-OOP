@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
 
 /**
  * Algorithm configuration class for creating configuration for algorithm.

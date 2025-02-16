@@ -3,7 +3,7 @@ package com.zysn.passwordmanager.model.authentication.keystore.api;
 import java.security.KeyStore;
 
 import com.zysn.passwordmanager.model.authentication.keystore.impl.KeyStoreConfig;
-import com.zysn.passwordmanager.model.utils.file.FileManager;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
 /**
  * The KeyStoreManager interface provides methods for managing key store

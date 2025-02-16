@@ -4,9 +4,9 @@ import java.io.File;
 
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.FileManager;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
-class AccountManager {
+public class AccountManager {
     private CryptoManager cryptoManager;
     private FileManager fileManager;
     // private SessionManager sessionManager;

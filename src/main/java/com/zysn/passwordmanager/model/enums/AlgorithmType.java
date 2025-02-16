@@ -1,6 +1,6 @@
-package com.zysn.passwordmanager.model.utils.enumerations;
+package com.zysn.passwordmanager.model.enums;
 
-public enum AlgorithmTypeEnum {
+public enum AlgorithmType {
     KEY_DERIVATION_ALGORITHM("Key Derivation Algorithm"),
     ENCRYPTION_ALGORITHM("Encryption Algorithm"),
     
@@ -8,7 +8,7 @@ public enum AlgorithmTypeEnum {
 
     private final String parameter;
 
-    AlgorithmTypeEnum(String parameter) {
+    AlgorithmType(String parameter) {
         this.parameter = parameter;
     }
 
