@@ -5,7 +5,7 @@ import com.zysn.passwordmanager.model.account.manager.AccountManager;
 import com.zysn.passwordmanager.model.account.manager.SessionManager;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.FileManager;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
 import javafx.application.Application;
 import javafx.stage.Stage;

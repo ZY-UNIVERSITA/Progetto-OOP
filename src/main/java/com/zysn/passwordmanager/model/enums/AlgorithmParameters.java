@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils.enumerations;
+package com.zysn.passwordmanager.model.enums;
 
 public enum AlgorithmParameters {
     // ARGON2 
@@ -8,13 +8,16 @@ public enum AlgorithmParameters {
     PARALLELISM("parallelism"),
     KEY_SIZE("key_size"),
     
-    // BCRYTP
+    // BCRYPT
     COST("cost"),
 
     // SCRYPT
     COST_FACTOR("cost_factor"),
     BLOCK_SIZE("block_size"),
-    
+
+    // HKDF
+    DIGEST("digest"),
+    INFO("info"),
     ;
 
     private final String parameter;

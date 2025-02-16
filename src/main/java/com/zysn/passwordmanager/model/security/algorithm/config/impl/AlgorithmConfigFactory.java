@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmName;
+import com.zysn.passwordmanager.model.enums.AlgorithmName;
 import com.zysn.passwordmanager.model.enums.AlgorithmType;
 import com.zysn.passwordmanager.model.security.algorithm.config.api.AlgorithmConfigBuilder;
 
