@@ -2,10 +2,9 @@ package com.zysn.passwordmanager.model.security.algorithm.derivation.impl;
 
 import org.bouncycastle.crypto.generators.SCrypt;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
-import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
-import com.zysn.passwordmanager.model.utils.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;
 
 /**
  * This class implements the Scrypt Key Derivation Function (KDF) as defined by the KeyDerivationAlgorithm interface.
@@ -20,7 +19,7 @@ public class Scrypt implements KeyDerivationAlgorithm {
      * @return the derived secret key as as an array of byte.
      */
     @Override
-    public byte[] deriveKey(char[] source, AlgorithmConfig algorithmConfig) {
+    public byte[] deriveKey(byte[] source, AlgorithmConfig algorithmConfig) {
         // Configurations of the algorithm
         int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST_FACTOR.getParameter()));
         int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.BLOCK_SIZE.getParameter()));
@@ -29,18 +28,8 @@ public class Scrypt implements KeyDerivationAlgorithm {
 
         byte[] salt = algorithmConfig.getSalt();
 
-        // Convert password from char[] to byte[]s
-        byte[] sourceBytes = CryptoUtils.charToByteConverter(source);
+        byte[] keyBytes = SCrypt.generate(source, salt, costFactor, blockSize, parallelism, keySize);
 
-        byte[] keyBytes = null;
-
-        try {
-            keyBytes = SCrypt.generate(sourceBytes, salt, costFactor, blockSize, parallelism, keySize);
-        } finally {
-            // Clean the converted password in bytes
-            CryptoUtils.cleanMemory(sourceBytes);
-        }
-;
         return keyBytes;
     }
 }

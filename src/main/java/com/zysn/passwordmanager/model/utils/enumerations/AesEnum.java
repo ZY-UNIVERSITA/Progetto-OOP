@@ -1,7 +1,7 @@
 package com.zysn.passwordmanager.model.utils.enumerations;
 
 public enum AesEnum {
-    AES_ALGORITHM("aes_algorithm"),
+    AES_ALGORITHM("variant"),
     GCM_IV_LENGTH("12"),
     GCM_TAG_LENGTH("128"),
     

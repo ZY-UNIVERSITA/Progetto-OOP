@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.security.algorithm.config;
+package com.zysn.passwordmanager.model.security.algorithm.config.impl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +17,7 @@ class AlgorithmConfigTest {
     private AlgorithmConfig algorithmConfig;
     private String algorithmType;
     private String algorithName; 
-
+    private byte[] salt;
     private Map<String, String> parameters;
 
     @BeforeEach 
@@ -29,7 +29,9 @@ class AlgorithmConfigTest {
         parameters.put("key_size", "128"); 
         parameters.put("round", "12"); 
 
-        algorithmConfig = new AlgorithmConfig(algorithName, algorithmType, null, parameters);
+        salt = new byte[] { 1, 2, 3, 4, 5, 6 };
+
+        algorithmConfig = new AlgorithmConfig(algorithName, algorithmType, salt, parameters);
     }
 
     @Test
@@ -118,9 +120,6 @@ class AlgorithmConfigTest {
 
     @Test
     void testRemoveConfigurations() {
-        byte[] salt = new byte[] { 1, 2, 3, 4, 5, 6 };
-        this.algorithmConfig.setSalt(salt);
-
         byte[] zeroSalt = new byte[salt.length];
         Arrays.fill(zeroSalt, (byte) 0);
 
@@ -140,6 +139,5 @@ class AlgorithmConfigTest {
 
         assertTrue(params.isEmpty(), "The parameters is not empty");
         assertArrayEquals(zeroSalt, salt, "The salt name is not empty.");
-
     }
 }

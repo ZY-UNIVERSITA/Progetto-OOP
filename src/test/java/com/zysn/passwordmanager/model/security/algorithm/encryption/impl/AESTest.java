@@ -8,10 +8,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.zysn.passwordmanager.model.security.algorithm.config.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.encryption.api.EncryptionAlgorithm;
-import com.zysn.passwordmanager.model.security.algorithm.encryption.patterns.EncryptionAlgorithmFactory;
-import com.zysn.passwordmanager.model.utils.CryptoUtils;
+import com.zysn.passwordmanager.model.security.algorithm.encryption.factory.EncryptionAlgorithmFactory;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 public class AESTest {
     private String originalData = "Prova di criptazione";
@@ -42,7 +42,8 @@ public class AESTest {
         this.algorithmConfig = new AlgorithmConfig(algorithmName, algorithmType);
         this.algorithmConfig.setSalt(iv);
 
-        this.algorithmConfig.addNewParameter("aes_algorithm", "AES/GCM/NoPadding");
+        this.algorithmConfig.addNewParameter("mode", "GCM");
+        this.algorithmConfig.addNewParameter("padding", "NoPadding");
     }
 
     @Test
@@ -70,11 +71,12 @@ public class AESTest {
 
         byte[] decryptedData = encryptionAlgorithm.decrypt(encryptedData, masterKey, algorithmConfig);
 
-        char[] actualDecryptedData = CryptoUtils.byteToCharConverter(decryptedData);
+        char[] actualDecryptedData = EncodingUtils.byteToCharConverter(decryptedData);
 
         char[] expectedDecryptedData = this.dataInChar;
 
         assertArrayEquals(expectedDecryptedData, actualDecryptedData,
                 "The algorithm didn't create the right decrypted data.");
     }
+
 }

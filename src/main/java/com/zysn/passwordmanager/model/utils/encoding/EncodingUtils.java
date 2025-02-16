@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils;
+package com.zysn.passwordmanager.model.utils.encoding;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -6,75 +6,12 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.Base64;
 
-import org.bouncycastle.util.Arrays;
-
-public class CryptoUtils {
-    private CryptoUtils() {
-
-    }
-
-    public static char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase,
-            boolean useLowerCase) {
-        return null;
-    }
-
-    /**
-     * Generates a random salt of the specified length.
-     *
-     * @param length the length of the salt
-     * @return a byte array containing the generated salt
-     * @throws IllegalArgumentException if the length is 0 or less
-     */
-    public static byte[] generateSalt(int length) {
-        if (length <= 0) {
-            throw new IllegalArgumentException("The length of the salt cannot be 0 or less.");
-        }
-
-        byte[] salt = new byte[length];
-
-        try {
-            SecureRandom random = SecureRandom.getInstanceStrong();
-            random.nextBytes(salt);
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Errore nella generazione del satl.");
-        }
-
-        return salt;
-    }
-
-    /**
-     * Clears the contents of the specified char array by setting each element to
-     * zero.
-     *
-     * @param source the char array to be cleared
-     * @throws IllegalArgumentException if the source array is null
-     */
-    public static void cleanMemory(char[] source) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source cannot be null");
-        }
-
-        Arrays.fill(source, '\u0000');
-    }
-
-    /**
-     * Clears the contents of the specified byte array by setting each element to
-     * zero.
-     *
-     * @param source the byte array to be cleared
-     * @throws IllegalArgumentException if the source array is null
-     */
-    public static void cleanMemory(byte[] source) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source cannot be null");
-        }
-
-        Arrays.fill(source, (byte) 0);
-    }
-
+/**
+ * The EncodingUtils class provides utility methods for encoding and decoding data.
+ */
+public class EncodingUtils {
     /**
      * Converts the specified char array to a byte array using UTF-8 encoding.
      *
@@ -150,4 +87,14 @@ public class CryptoUtils {
         return charArray;
     }
 
+    /**
+     * Encodes the given byte array into a Base64 char array.
+     *
+     * @param source the byte array to be encoded
+     * @return a char array representing the Base64-encoded string of the source
+     *         byte array
+     */
+    public static char[] byteToBase64(byte[] source) {
+        return Base64.getEncoder().encodeToString(source).toCharArray();
+    }
 }
