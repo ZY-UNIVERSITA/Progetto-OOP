@@ -1,9 +1,16 @@
+package com.zysn.passwordmanager.controller.scene.impl;
+
+import com.zysn.passwordmanager.controller.scene.api.SceneControllerBase;
+
+import javafx.event.ActionEvent;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.fxml.FXML;
+
 /**
  * Sample Skeleton for 'Login.fxml' Controller Class
  */
-
-package com.zysn.passwordmanager.controller.scene.impl;
-
 public class LoginController extends SceneControllerBase {
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;

@@ -5,7 +5,7 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.HKDFBytesGenerator;
 import org.bouncycastle.crypto.params.HKDFParameters;
 
-import com.zysn.passwordmanager.model.enums.AlgorithmParameters;
+import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
 import com.zysn.passwordmanager.model.enums.ShaHashLength;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.algorithm.derivation.api.KeyDerivationAlgorithm;

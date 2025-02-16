@@ -2,7 +2,7 @@ package com.zysn.passwordmanager.model.authentication.keystore.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
-import com.zysn.passwordmanager.model.utils.file.FileManager;
+import com.zysn.passwordmanager.model.utils.FileManager;
 
 /**
  * Configuration class for managing key store settings.
