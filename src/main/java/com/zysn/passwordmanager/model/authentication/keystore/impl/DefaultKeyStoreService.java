@@ -3,9 +3,9 @@ package com.zysn.passwordmanager.model.authentication.keystore.impl;
 import java.util.function.Consumer;
 
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreService;
+import com.zysn.passwordmanager.model.enums.CryptoLength;
 import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-import com.zysn.passwordmanager.model.utils.enumerations.CryptoLength;
 
 /**
  * DefaultKeyStoreService is an implementation of the KeyStoreService interface.

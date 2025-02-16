@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreService;
-import com.zysn.passwordmanager.model.utils.enumerations.CryptoLength;
+import com.zysn.passwordmanager.model.enums.CryptoLength;
 
 public class DefaultKeyStoreServiceTest {
     private KeyStoreService keyStoreService;

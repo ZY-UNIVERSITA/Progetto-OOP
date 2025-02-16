@@ -15,8 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
-import com.zysn.passwordmanager.model.utils.enumerations.PathsEnum;
-import com.zysn.passwordmanager.model.utils.file.FileManager;
+import com.zysn.passwordmanager.model.enums.PathsConstant;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
+import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
 
 public class DefaultKeyStoreManagerTest {
     private KeyStoreManager keyStoreManager;
@@ -27,7 +28,7 @@ public class DefaultKeyStoreManagerTest {
         Security.addProvider(new BouncyCastleProvider());
 
         this.keyStoreManager = new DefaultKeyStoreManager();
-        this.fileManager = new FileManager();
+        this.fileManager = new DefaultFileManager();
 
         this.keyStoreManager.setFileManager(fileManager);
     }
@@ -102,7 +103,7 @@ public class DefaultKeyStoreManagerTest {
         assertTrue(totpEncryptionKey, "TOTP Encryption Key is not present.");
         assertTrue(totpKey, "TOTP Key is not present.");
 
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsEnum.KEY_STORE.getParameter(),
+        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
                 "testLoading".concat(".bcfks"));
 
         keyStoreFilePath.toFile().delete();
@@ -146,7 +147,7 @@ public class DefaultKeyStoreManagerTest {
         this.keyStoreManager.populateNewKeyStore("prova password".getBytes());
         this.keyStoreManager.saveKeyStore("testKeyStoreSaving");
 
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsEnum.KEY_STORE.getParameter(),
+        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
                 "testKeyStoreSaving".concat(".bcfks"));
         try {
             assertTrue(keyStoreFilePath.toFile().exists(), "The file has not been saved.");
