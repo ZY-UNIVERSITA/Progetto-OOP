@@ -1,12 +1,15 @@
-package com.zysn.passwordmanager.controller.scene.impl;
+package com.zysn.passwordmanager.controller.login;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import com.zysn.passwordmanager.controller.scene.api.SceneControllerBase;
 
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.fxml.FXML;
 
 /**
  * Sample Skeleton for 'Login.fxml' Controller Class
@@ -34,7 +37,7 @@ public class LoginController extends SceneControllerBase {
 
     @FXML
     void handleRegister(ActionEvent event) {
-        this.getViewNavigator().navigateTo("/layouts/Register.fxml", "Registration");
+        this.getViewNavigator().navigateTo("/layouts/registration/Register.fxml", "Registration");
     }
 
     @FXML

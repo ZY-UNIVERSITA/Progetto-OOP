@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import com.zysn.passwordmanager.model.utils.enumerations.AlgorithmParameters;
+import com.zysn.passwordmanager.model.enums.AlgorithmParameters;
 
 public class AlgorithmConfigFactoryTest {
     @Test

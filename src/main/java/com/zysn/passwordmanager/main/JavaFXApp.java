@@ -41,9 +41,9 @@ public final class JavaFXApp extends Application {
             this.viewNavigator = new ViewNavigator(primaryStage, accountManager);
 
             // Load the FXML file representing the entry point of the app
-            this.viewNavigator.navigateTo("/layouts/Login.fxml");
+            this.viewNavigator.navigateTo("/layouts/login/Login.fxml", "Login");
         } catch (Exception e) {
-            System.err.println("Error starting the application");
+            System.err.println("An error occurred while trying to start the application.");
         }
     }
 }
