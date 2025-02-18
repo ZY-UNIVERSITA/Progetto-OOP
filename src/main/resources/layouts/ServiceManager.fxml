@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
@@ -16,9 +18,9 @@
   <content>
       <VBox>
          <children>
-            <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
+            <VBox fx:id="serviceVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0">
                <children>
-                  <Button fx:id="modifyButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleModifyService" text="Modify" textAlignment="CENTER">
+                  <Button fx:id="saveButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleSaveAction" text="Save" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -94,6 +96,48 @@
                         </TextArea>
                      </children>
                   </HBox>
+                  <VBox fx:id="passwordGeneratorVBox" prefHeight="200.0" prefWidth="600.0" spacing="10.0">
+                     <VBox.margin>
+                        <Insets top="15.0" />
+                     </VBox.margin>
+                     <children>
+                        <ChoiceBox fx:id="lengthChoiceBox" prefWidth="150.0">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </ChoiceBox>
+                        <CheckBox fx:id="lowercaseCheck" mnemonicParsing="false" text="Lowercase">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="uppercaseCheck" mnemonicParsing="false" text="Uppercase">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="digitsCheck" mnemonicParsing="false" text="Digits">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="specialCheck" mnemonicParsing="false" text="Special Chars">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <TextField fx:id="passwordGeneratedField">
+                           <VBox.margin>
+                              <Insets left="10.0" />
+                           </VBox.margin>
+                        </TextField>
+                        <Button fx:id="generateButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#generatePassword" text="Generate">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Button>
+                     </children>
+                  </VBox>
                </children>
             </VBox>
          </children>
