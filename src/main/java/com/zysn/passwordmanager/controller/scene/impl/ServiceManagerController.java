@@ -115,11 +115,19 @@ public class ServiceManagerController extends SceneControllerBase {
 
     @FXML
     public void generatePassword(ActionEvent event) {
+        int length = lengthChoiceBox.getValue();
+        boolean lowercase = lowercaseCheck.isSelected();
+        boolean uppercase = uppercaseCheck.isSelected();
+        boolean digits = digitsCheck.isSelected();
+        boolean special = specialCheck.isSelected();
 
+        char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
+        //passwordGeneratedField.setText((String)password);
+        //passwordField.setText(password);
     }
 
     @FXML
     public void handleDeleteService(ActionEvent event) {
-        
+
     }
 }
