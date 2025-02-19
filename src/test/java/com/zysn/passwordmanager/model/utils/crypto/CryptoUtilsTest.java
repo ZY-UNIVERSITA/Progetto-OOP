@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils.crypto.impl;
+package com.zysn.passwordmanager.model.utils.crypto;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +25,7 @@ public class CryptoUtilsTest {
     void testCleanMemoryOfArrayOfChar() {
         CryptoUtils.cleanMemory(stringInArrayOfChar);
 
-        char[] charArrayToCompare = new char[stringInArrayOfChar.length];
+        final char[] charArrayToCompare = new char[stringInArrayOfChar.length];
 
         for (int i = 0; i < charArrayToCompare.length; i++) {
             charArrayToCompare[i] = '\u0000';
@@ -39,7 +39,7 @@ public class CryptoUtilsTest {
     void testCleanMemoryOfArrayOfByte() {
         CryptoUtils.cleanMemory(stringInArrayOfByte);
 
-        byte[] byteArrayToCompare = new byte[stringInArrayOfByte.length];
+        final byte[] byteArrayToCompare = new byte[stringInArrayOfByte.length];
 
         for (int i = 0; i < byteArrayToCompare.length; i++) {
             byteArrayToCompare[i] = (byte) 0;
@@ -50,20 +50,20 @@ public class CryptoUtilsTest {
 
     @Test
     void testGenerateSalt() {
-        int length = 32;
-        byte[] salt1 = CryptoUtils.generateSalt(length);
+        final int length = 32;
+        final byte[] salt1 = CryptoUtils.generateSalt(length);
 
         assertEquals(length, salt1.length, "The lenght of the array is not 32 but " + salt1.length);
 
-        byte[] salt2 = CryptoUtils.generateSalt(length);
+        final byte[] salt2 = CryptoUtils.generateSalt(length);
 
         assertFalse(Arrays.equals(salt1, salt2), "The 2 salt are equals.");
     }
 
     @Test
     void testGenerateSecureRandomNotUsablePassword() {
-        int minimumLength = 63;
-        char[] actualPassword = CryptoUtils.generateSecureRandomNotUsablePassword(minimumLength);
+        final int minimumLength = 63;
+        final char[] actualPassword = CryptoUtils.generateSecureRandomNotUsablePassword(minimumLength);
 
         assertNotNull(actualPassword, "The password is not null.");
 
