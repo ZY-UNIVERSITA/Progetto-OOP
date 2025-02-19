@@ -12,9 +12,9 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.zysn.passwordmanager.model.enums.ShaHashLength;
 import com.zysn.passwordmanager.model.security.totp.api.TOTPAuthentication;
-import com.zysn.passwordmanager.model.utils.crypto.api.MustBeDestroyed;
-import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;

@@ -71,11 +71,11 @@ public class EncodingUtilsTest {
 
     @Test
     void testDeserializeData() {
-        byte[] data = new byte[] { 123, 34, 102, 105, 114, 115, 116, 70, 105, 101, 108, 100, 34, 58, 34, 70,
+        final byte[] data = new byte[] { 123, 34, 102, 105, 114, 115, 116, 70, 105, 101, 108, 100, 34, 58, 34, 70,
                 105, 101, 108, 100, 32, 49, 34, 44, 34, 115, 101, 99, 111, 110, 100, 70, 105, 101, 108, 100, 34, 58, 49,
                 125 };
 
-        EncodingClassForTesting encodingClassForTesting = EncodingUtils.deserializeData(data, new TypeReference<EncodingClassForTesting>() {});
+        final EncodingClassForTesting encodingClassForTesting = EncodingUtils.deserializeData(data, new TypeReference<EncodingClassForTesting>() {});
 
         assertEquals("Field 1", encodingClassForTesting.getFirstField());
         assertEquals(1, encodingClassForTesting.getSecondField());
@@ -83,11 +83,11 @@ public class EncodingUtilsTest {
 
     @Test
     void testSerializeData() {
-        EncodingClassForTesting encodingClassForTesting = new EncodingClassForTesting("Field 1", 1);
+        final EncodingClassForTesting encodingClassForTesting = new EncodingClassForTesting("Field 1", 1);
 
-        byte[] serializeData = EncodingUtils.serializeData(encodingClassForTesting);
+        final byte[] serializeData = EncodingUtils.serializeData(encodingClassForTesting);
 
-        byte[] expectedData = new byte[] { 123, 34, 102, 105, 114, 115, 116, 70, 105, 101, 108, 100, 34, 58, 34, 70,
+        final byte[] expectedData = new byte[] { 123, 34, 102, 105, 114, 115, 116, 70, 105, 101, 108, 100, 34, 58, 34, 70,
                 105, 101, 108, 100, 32, 49, 34, 44, 34, 115, 101, 99, 111, 110, 100, 70, 105, 101, 108, 100, 34, 58, 49,
                 125 };
 
@@ -96,10 +96,10 @@ public class EncodingUtilsTest {
     
     @Test
     void testByteToBase32Byte() {
-        byte[] byteToConvert = new byte[] { 2, 0, 2, -1, 100, -100, -128, 127, 50, -50 };
+        final byte[] byteToConvert = new byte[] { 2, 0, 2, -1, 100, -100, -128, 127, 50, -50 };
 
-        byte[] actualConvertedText = EncodingUtils.byteToBase32Byte(byteToConvert);
-        byte[] expectedConvertedText = new byte[] { 65, 73, 65, 65, 70, 55, 51, 69, 84, 83, 65, 72, 54, 77, 87, 79 };
+        final byte[] actualConvertedText = EncodingUtils.byteToBase32Byte(byteToConvert);
+        final byte[] expectedConvertedText = new byte[] { 65, 73, 65, 65, 70, 55, 51, 69, 84, 83, 65, 72, 54, 77, 87, 79 };
 
         assertArrayEquals(expectedConvertedText, actualConvertedText, "The converted text is not equals to the expected text.");;
     }
