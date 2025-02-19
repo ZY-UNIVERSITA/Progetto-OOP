@@ -105,12 +105,28 @@ public class ServiceManagerController extends SceneControllerBase {
 
     @FXML
     public void handleSaveAction(ActionEvent event) {
+        String newName = serviceNameField.getText();
+        String newUsername = usernameField.getText();
+        String newEmail = emailField.getText();
+        //String newPassword = passwordField.getText();
+        String newInfo = infoArea.getText();
 
+        Service newService = new Service(newName, newUsername, newEmail, newPassword, null, newInfo);
+
+        serviceManager.modifyService(service.getName(), newService);
     }
 
     @FXML
     public void togglePassword(ActionEvent event) {
-
+        if (visibilityButton.isSelected()) {
+            passwordVisibleField.setText(passwordField.getText());
+            passwordVisibleField.setVisible(true);
+            passwordField.setVisible(false);
+        } else {
+            passwordField.setText(passwordVisibleField.getText());
+            passwordField.setVisible(true);
+            passwordVisibleField.setVisible(false);
+        }
     }
 
     @FXML
@@ -128,6 +144,6 @@ public class ServiceManagerController extends SceneControllerBase {
 
     @FXML
     public void handleDeleteService(ActionEvent event) {
-
+        serviceManager.removeService(this.service.getName());
     }
 }
