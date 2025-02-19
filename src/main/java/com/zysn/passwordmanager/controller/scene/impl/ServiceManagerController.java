@@ -1,5 +1,6 @@
 package com.zysn.passwordmanager.controller.scene.impl;
 
+import com.zysn.passwordmanager.controller.scene.api.SceneControllerBase;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 
@@ -15,7 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 
 
-public class ServiceManagerController {
+public class ServiceManagerController extends SceneControllerBase {
     
     @FXML
     private Button saveButton;
@@ -54,6 +55,9 @@ public class ServiceManagerController {
     private TextArea infoArea;
 
     @FXML
+    private Label passwordGeneratorLabel;
+
+    @FXML
     private ChoiceBox<Integer> lengthChoiceBox;
 
     @FXML
@@ -75,12 +79,28 @@ public class ServiceManagerController {
     private Button generateButton;
 
 
-    ServiceManager serviceManager = ServiceManager.getInstance();
+    private Service service;
+    private ServiceManager serviceManager;
 
+
+    public void setService (Service service) {
+        this.service = service;
+    }
 
     @FXML
     public void initialize() {
+        if (service != null) {
+            serviceNameField.setText(service.getName());
+            usernameField.setText(service.getUsername());
+            emailField.setText(service.getEmail());
+            //passwordField.setText((String)service.getPassword());
+            passwordVisibleField.setVisible(false);
+            infoArea.setText(service.getInfo());
 
+            lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
+        }
+
+        this.serviceManager = ServiceManager.getInstance();
     }
 
     @FXML
@@ -96,5 +116,10 @@ public class ServiceManagerController {
     @FXML
     public void generatePassword(ActionEvent event) {
 
+    }
+
+    @FXML
+    public void handleDeleteService(ActionEvent event) {
+        
     }
 }
