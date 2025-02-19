@@ -1,40 +1,36 @@
 package com.zysn.passwordmanager.model.authentication.keystore.impl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 
 /**
  * Configuration class for managing key store settings.
  */
-public class KeyStoreConfig {
+public class KeyStoreConfig implements MustBeDestroyed {
     /**
-     * The master key used to open the key store (encrypted in file).
+     * The master key used to open the key store.
      */
     private byte[] keyStoreEncryptionKey;
 
     /**
-     * Salt added with the password-derived key to open the "TOTP encryption key" (encrypted in file).
+     * Salt added with the password-derived key to open the "TOTP encryption key".
      */
     private byte[] saltWithPasswordDerived;
 
     /**
-     * The TOTP encryption master key (saved in the key store).
-     */
-    @JsonIgnore
-    private byte[] totpEncryptionKey;
-
-    /**
-     * Salt added with the TOTP encryption master key (encrypted in file).
+     * Salt added with the TOTP encryption master key.
      */
     private byte[] saltWithTotpEncryptionKey;
 
     /**
-     * The TOTP master key (saved in the key store).
+     * Salt used for HKDF.
      */
-    @JsonIgnore
-    private byte[] totpKey;
+    private byte[] saltForHKDF;
 
+    /**
+     * Salt used for service decryption.
+     */
     private byte[] serviceDecryptionSalt;
 
     /**
@@ -46,9 +42,10 @@ public class KeyStoreConfig {
 
     /**
      * Serializes this KeyStoreConfig object to a byte array.
+     * 
      * @return Serialized byte array of this KeyStoreConfig object.
      */
-    public byte[] serializeObject() {
+    public byte[] serialize() {
         return EncodingUtils.serializeData(this);
     }
 
@@ -58,32 +55,27 @@ public class KeyStoreConfig {
      */
     public void destroy() {
         if (this.getKeyStoreEncryptionKey() != null) {
-            CryptoUtils.cleanMemory(keyStoreEncryptionKey);
+            CryptoUtils.cleanMemory(this.getKeyStoreEncryptionKey());
             this.setKeyStoreEncryptionKey(null);
         }
 
         if (this.getSaltWithPasswordDerived() != null) {
-            CryptoUtils.cleanMemory(saltWithPasswordDerived);
+            CryptoUtils.cleanMemory(this.getSaltWithPasswordDerived());
             this.setSaltWithPasswordDerived(null);
         }
-        
-        if (this.getTotpEncryptionKey() != null) {
-            CryptoUtils.cleanMemory(totpEncryptionKey);
-            this.setTotpEncryptionKey(null);
-        }
-        
+
         if (this.getSaltWithTotpEncryptionKey() != null) {
-            CryptoUtils.cleanMemory(saltWithTotpEncryptionKey);
+            CryptoUtils.cleanMemory(this.getSaltWithTotpEncryptionKey());
             this.setSaltWithTotpEncryptionKey(null);
         }
-        
-        if (this.getTotpKey() != null) {
-            CryptoUtils.cleanMemory(totpKey);
-            this.setTotpKey(null);
+
+        if (this.getSaltForHKDF() != null) {
+            CryptoUtils.cleanMemory(this.getSaltForHKDF());
+            this.setSaltForHKDF(null);
         }
 
         if (this.getServiceDecryptionSalt() != null) {
-            CryptoUtils.cleanMemory(serviceDecryptionSalt);
+            CryptoUtils.cleanMemory(this.getServiceDecryptionSalt());
             this.setServiceDecryptionSalt(null);
         }
     }
@@ -93,47 +85,51 @@ public class KeyStoreConfig {
         return keyStoreEncryptionKey;
     }
 
+    public char[] getKeyStoreEncryptionKeyChar() {
+        return EncodingUtils.byteToBase64(this.getKeyStoreEncryptionKey());
+    }
+
     public byte[] getSaltWithPasswordDerived() {
         return saltWithPasswordDerived;
     }
 
-    public byte[] getTotpEncryptionKey() {
-        return totpEncryptionKey;
+    public char[] getSaltWithPasswordDerivedChar() {
+        return EncodingUtils.byteToCharConverter(this.getSaltWithPasswordDerived());
     }
 
     public byte[] getSaltWithTotpEncryptionKey() {
         return saltWithTotpEncryptionKey;
     }
 
-    public byte[] getTotpKey() {
-        return totpKey;
+    public char[] getSaltWithTotpEncryptionKeyChar() {
+        return EncodingUtils.byteToCharConverter(this.getSaltWithTotpEncryptionKey());
     }
-    
+
     public byte[] getServiceDecryptionSalt() {
         return serviceDecryptionSalt;
     }
 
-    public void setKeyStoreEncryptionKey(byte[] keyStoreEncryptionKey) {
+    public void setKeyStoreEncryptionKey(final byte[] keyStoreEncryptionKey) {
         this.keyStoreEncryptionKey = keyStoreEncryptionKey;
     }
 
-    public void setSaltWithPasswordDerived(byte[] saltWithPasswordDerived) {
+    public void setSaltWithPasswordDerived(final byte[] saltWithPasswordDerived) {
         this.saltWithPasswordDerived = saltWithPasswordDerived;
     }
 
-    public void setTotpEncryptionKey(byte[] totpEncryptionKey) {
-        this.totpEncryptionKey = totpEncryptionKey;
-    }
-
-    public void setSaltWithTotpEncryptionKey(byte[] saltWithTotpEncryptionKey) {
+    public void setSaltWithTotpEncryptionKey(final byte[] saltWithTotpEncryptionKey) {
         this.saltWithTotpEncryptionKey = saltWithTotpEncryptionKey;
     }
 
-    public void setTotpKey(byte[] totpKey) {
-        this.totpKey = totpKey;
+    public void setServiceDecryptionSalt(final byte[] serviceDecryptionSalt) {
+        this.serviceDecryptionSalt = serviceDecryptionSalt;
     }
 
-    public void setServiceDecryptionSalt(byte[] serviceDecryptionSalt) {
-        this.serviceDecryptionSalt = serviceDecryptionSalt;
-    }    
+    public byte[] getSaltForHKDF() {
+        return saltForHKDF;
+    }
+
+    public void setSaltForHKDF(final byte[] saltForHKDF) {
+        this.saltForHKDF = saltForHKDF;
+    }
 }
