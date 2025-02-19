@@ -11,6 +11,8 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+
 public class CryptoUtilsTest {
     private char[] stringInArrayOfChar;
     private byte[] stringInArrayOfByte;
