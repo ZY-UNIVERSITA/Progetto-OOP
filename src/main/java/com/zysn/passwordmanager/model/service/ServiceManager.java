@@ -127,23 +127,31 @@ public class ServiceManager {
     }
 
     /**
-     * Generates a password based on the provided criteria and assigns it to a service.
-     * 
-     * @param serviceName The name of the service.
-     * @param length The desired length of the generated password.
-     * @param useSpecialChar Whether or not to include special characters.
-     * @param useNumbers Whether or not to include digits.
-     * @param useUpperCase Whether or not to include uppercase letters.
-     * @param useLowerCase Whether or not to include lowercase letters.
-     * @return {@code true} if the password was successfully generated and added to the service, {@code false} otherwise.
+     * Generates a random password based on given criteria.
+     *
+     * @param length         password length
+     * @param useSpecialChar include special characters
+     * @param useNumbers     include numbers
+     * @param useUpperCase   include uppercase letters
+     * @param useLowerCase   include lowercase letters
+     * @return generated password as a char array
      */
-    public boolean generateAndAddPasswordToService(String serviceName, int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
+    public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
         PasswordGenerator generator = new PasswordGenerator();
-        char[] generatedPassword = generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
-        
+        return generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
+    }
+
+    /**
+     * Adds generated password to an existing service.
+     *
+     * @param serviceName the service name
+     * @param password    the password as a char array
+     * @return {@code true} if successfully assigned, {@code false} if service not found
+     */
+    public boolean addPasswordToService(String serviceName, char[] password) {
         Service service = selectService(serviceName);
         if (service != null) {
-            service.setPassword(new String(generatedPassword).getBytes());
+            service.setPassword(new String(password).getBytes());
             return true;
         }
         return false;
