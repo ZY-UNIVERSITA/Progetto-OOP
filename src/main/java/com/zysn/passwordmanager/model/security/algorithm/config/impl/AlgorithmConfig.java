@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import com.zysn.passwordmanager.model.utils.crypto.impl.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 
 /**
  * Algorithm configuration class for creating configuration for algorithm.
@@ -113,7 +113,7 @@ public class AlgorithmConfig {
      * resets the algorithm name and type to null,
      * and clears the parameters.
      */
-    public void clearConfigurations() {
+    public void destroy() {
         // Clear and set null for salt
         if (this.getSalt() != null) {
             CryptoUtils.cleanMemory(this.getSalt());

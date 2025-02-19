@@ -3,6 +3,7 @@ package com.zysn.passwordmanager.model.enums;
 public enum ExtensionsConstant {
     JSON(".json"),
     ENC(".enc"),
+    BCFKS(".bcfks"),
 
     ;
 

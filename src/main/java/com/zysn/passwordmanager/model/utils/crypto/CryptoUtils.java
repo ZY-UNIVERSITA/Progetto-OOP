@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils.crypto.impl;
+package com.zysn.passwordmanager.model.utils.crypto;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -95,7 +95,8 @@ public class CryptoUtils {
                 }
             }
         } catch (final NoSuchAlgorithmException e) {
-            System.err.println("Error trying to create password because the istance of the generator is not available.");
+            System.err
+                    .println("Error trying to create password because the istance of the generator is not available.");
         }
 
         return password;
@@ -130,7 +131,7 @@ public class CryptoUtils {
 
         Arrays.fill(source, (byte) 0);
     }
-
+    
     private CryptoUtils() {
 
     }
