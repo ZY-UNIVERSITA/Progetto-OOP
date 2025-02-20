@@ -1,5 +1,6 @@
 package com.zysn.passwordmanager.model.authentication.keystore.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
@@ -85,6 +86,7 @@ public class KeyStoreConfig implements MustBeDestroyed {
         return keyStoreEncryptionKey;
     }
 
+    @JsonIgnore
     public char[] getKeyStoreEncryptionKeyChar() {
         return EncodingUtils.byteToBase64(this.getKeyStoreEncryptionKey());
     }
@@ -93,6 +95,7 @@ public class KeyStoreConfig implements MustBeDestroyed {
         return saltWithPasswordDerived;
     }
 
+    @JsonIgnore
     public char[] getSaltWithPasswordDerivedChar() {
         return EncodingUtils.byteToCharConverter(this.getSaltWithPasswordDerived());
     }
@@ -101,6 +104,7 @@ public class KeyStoreConfig implements MustBeDestroyed {
         return saltWithTotpEncryptionKey;
     }
 
+    @JsonIgnore
     public char[] getSaltWithTotpEncryptionKeyChar() {
         return EncodingUtils.byteToCharConverter(this.getSaltWithTotpEncryptionKey());
     }
