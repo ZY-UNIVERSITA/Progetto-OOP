@@ -11,17 +11,18 @@ import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreCreato
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 
 /**
- * A class that implements the {@link KeyStoreCreator} interface and provides 
+ * A class that implements the {@link KeyStoreCreator} interface and provides
  * a method to create a new KeyStore instance.
  */
 public class DefaultKeyStoreCreator implements KeyStoreCreator {
 
     /**
-     * Creates a new instance of a KeyStore using the BouncyCastle provider and 
+     * Creates a new instance of a KeyStore using the BouncyCastle provider and
      * initializes it with the given password.
      *
      * @param keyStorePassword the password used to protect the KeyStore
-     * @return the initialized KeyStore instance, or {@code null} if an error occurred
+     * @return the initialized KeyStore instance, or {@code null} if an error
+     *         occurred
      */
     @Override
     public KeyStore createKeyStore(final char[] keyStorePassword) {
