@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.zysn.passwordmanager.model.authentication.passwordlist.api.PasswordListConfigService;
+import com.zysn.passwordmanager.model.authentication.passwordlist.api.ServiceCryptoConfigService;
 import com.zysn.passwordmanager.model.enums.AesAlgorithm;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
@@ -14,14 +14,14 @@ import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 /**
  * Service implementation for managing password list configuration.
  */
-public class DefaultPasswordListConfigService implements PasswordListConfigService {
+public class DefaultServiceCryptoConfigService implements ServiceCryptoConfigService {
     private final CryptoManager cryptoManager;
 
     /**
      * Constructs a DefaultPasswordListConfigService and initializes the
      * CryptoManager.
      */
-    public DefaultPasswordListConfigService() {
+    public DefaultServiceCryptoConfigService() {
         this.cryptoManager = new CryptoManager();
     }
 

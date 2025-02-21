@@ -15,14 +15,14 @@ import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmCo
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
-public class DefaultPasswordListConfigServiceTest {
-    private DefaultPasswordListConfigService service;
+public class DefaultServiceCryptoConfigTest {
+    private DefaultServiceCryptoConfigService service;
 
     @BeforeEach
     public void setup() {
         Security.addProvider(new BouncyCastleProvider());
 
-        service = new DefaultPasswordListConfigService();
+        service = new DefaultServiceCryptoConfigService();
     }
 
     @Test

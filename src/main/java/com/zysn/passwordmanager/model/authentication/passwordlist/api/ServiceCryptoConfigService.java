@@ -6,7 +6,7 @@ import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmCo
 /**
  * Interface for managing password list configurations.
  */
-public interface PasswordListConfigService {
+public interface ServiceCryptoConfigService {
 
     /**
      * Creates a new ServiceCryptoConfig for the password list.
