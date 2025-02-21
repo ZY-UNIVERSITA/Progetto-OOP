@@ -204,5 +204,11 @@ public class DefaultKeyStoreManagerTest {
 
         assertNotNull(this.sessionManager.getUserAuthKey().getTotpEncryptionKey(), "The totp encryption key should not be null.");
         assertNotNull(this.sessionManager.getUserAuthKey().getTotpKey(), "The totp key should not be null.");
+
+        Path tempDir = Paths.get(System.getProperty(PathsConstant.USER_ROOT.getParameter()), PathsConstant.KEY_STORE.getParameter());
+
+        File file = tempDir.resolve("test user.bcfks").toFile();
+
+        file.delete();
     }
 }
