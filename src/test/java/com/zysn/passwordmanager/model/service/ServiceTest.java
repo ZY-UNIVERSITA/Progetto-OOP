@@ -3,56 +3,55 @@ package com.zysn.passwordmanager.model.service;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import javax.crypto.spec.SecretKeySpec;
+import com.zysn.passwordmanager.model.account.entity.UserAccount;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 
 public class ServiceTest {
 
     private Service service;
-    private byte[] password;
-    private AlgorithmConfig encryptionConfig;
+    private String password;
+    private UserAccount user;
+    private CryptoManager manager;
 
     @BeforeEach
     void setUp() {
-        password = new byte[]{1, 2, 3};
-        encryptionConfig = new AlgorithmConfig();
-        service = new Service("Wokwi", "user123", "user@example.com", password, encryptionConfig, "Some info");
+        user = new UserAccount("primary", new AlgorithmConfig(), new SecretKeySpec(new byte[] { 1, 2, 3, 4, 5 }, "AES"));
+        password = "String1234";
+        service = new ServiceBuilder(user, manager)
+        .setName("Wokwi")
+        .setUsername("user123")
+        .setEmail("user@example.com")
+        .setPassword(password)
+        .setInfo("Some info")
+        .build();
     }
 
     @Test
-    void testCostructor() {
+    void testBuilderAndGetters() {
         assertEquals("Wokwi", service.getName());
         assertEquals("user123", service.getUsername());
         assertEquals("user@example.com", service.getEmail());
-        assertEquals(password, service.getPassword());
-        assertNotNull(service.getEncryptionConfig());
+        assertNotNull(service.getPassword());
         assertEquals("Some info", service.getInfo());
     }
 
     @Test
-    void testGettersAndSetters() {
-        service.setName("NewName");
-        service.setUsername("newUsername");
-        service.setEmail("newEmail@example.com");
-        service.setPassword(new byte[]{4, 5, 6});
-        service.setEncryptionConfig(new AlgorithmConfig());
-        service.setInfo("New info");
-
-        assertEquals("NewName", service.getName());
-        assertEquals("newUsername", service.getUsername());
-        assertEquals("newEmail@example.com", service.getEmail());
-        assertArrayEquals(new byte[]{4, 5, 6}, service.getPassword());
-        assertNotNull(service.getEncryptionConfig());
-        assertEquals("New info", service.getInfo());
-    }
-
-    @Test
     void testEqualsAndHashCode() {
-        Service ser2 = new Service("Wokwi", "user123", "user@example.com", password, encryptionConfig, "Some info");
+        Service ser2 = new ServiceBuilder(user, manager)
+        .setName("Wokwi")
+        .setUsername("user123")
+        .setEmail("user@example.com")
+        .setPassword(password)
+        .setInfo("Some info")
+        .build();
+
         assertTrue(service.equals(ser2));
         assertEquals(service.hashCode(), ser2.hashCode());
 
-        Service ser3 = new Service();
+        Service ser3 = new ServiceBuilder(user, manager)
+        .build();
         assertFalse(service.equals(ser3));
     }
 
