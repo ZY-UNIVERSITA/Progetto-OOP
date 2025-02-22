@@ -43,7 +43,7 @@ public class DefaultServiceCryptoConfigManager implements ServiceCryptoConfigMan
     public void encryptConfig() {
         final byte[] serializeData = EncodingUtils.serializeData(this.sessionManager.getServiceConfig());
         
-        final byte[] key = this.sessionManager.getUserAuthKey().getPasswordListConfigKey();
+        final byte[] key = this.sessionManager.getUserAuthKey().getServiceConfigKey();
         final byte[] salt = this.sessionManager.getKeyStoreConfig().getServiceDecryptionSalt();
         final AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
 
@@ -58,7 +58,7 @@ public class DefaultServiceCryptoConfigManager implements ServiceCryptoConfigMan
     public void decryptConfig() {
         final byte[] encryptedData = this.sessionManager.getUserAuthInfo().getServiceConfigEncryptedData();
 
-        final byte[] key = this.sessionManager.getUserAuthKey().getPasswordListConfigKey();
+        final byte[] key = this.sessionManager.getUserAuthKey().getServiceConfigKey();
         final byte[] salt = this.sessionManager.getKeyStoreConfig().getServiceDecryptionSalt();
         final AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
 

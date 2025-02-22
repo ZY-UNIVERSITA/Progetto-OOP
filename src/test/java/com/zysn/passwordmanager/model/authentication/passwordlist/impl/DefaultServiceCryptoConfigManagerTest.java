@@ -25,7 +25,7 @@ public class DefaultServiceCryptoConfigManagerTest {
 
         byte[] key = new byte[32];
         Arrays.fill(key, (byte) 1);
-        this.sessionManager.getUserAuthKey().setPasswordListConfigKey(key);
+        this.sessionManager.getUserAuthKey().setServiceConfigKey(key);
 
         byte[] iv = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
         this.sessionManager.getKeyStoreConfig().setServiceDecryptionSalt(iv);
