@@ -8,7 +8,7 @@ import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
 import com.zysn.passwordmanager.model.authentication.common.api.AuthenticationStep;
 import com.zysn.passwordmanager.model.authentication.common.impl.CloseKeyStore;
 import com.zysn.passwordmanager.model.authentication.common.impl.CreateKeyStore;
-import com.zysn.passwordmanager.model.authentication.common.impl.CreatePasswordListConfig;
+import com.zysn.passwordmanager.model.authentication.common.impl.CreateServiceConfig;
 import com.zysn.passwordmanager.model.authentication.common.impl.DeriveKeyFromPassword;
 import com.zysn.passwordmanager.model.authentication.common.impl.DeriveMasterKey;
 import com.zysn.passwordmanager.model.authentication.common.impl.DerivePasswordListKey;
@@ -107,7 +107,7 @@ public class DefaultRegistrationService implements RegistrationService {
      * authentication process.
      */
     private void createServiceConfig() {
-        authenticationStep.add(new CreatePasswordListConfig(sessionManager, serviceCryptoConfigManager));
+        authenticationStep.add(new CreateServiceConfig(sessionManager, serviceCryptoConfigManager));
         authenticationStep.add(new DerivePasswordListKey(sessionManager, cryptoManager));
     }
 
