@@ -13,7 +13,7 @@ import com.zysn.passwordmanager.model.authentication.common.impl.DeriveKeyFromPa
 import com.zysn.passwordmanager.model.authentication.common.impl.DeriveMasterKey;
 import com.zysn.passwordmanager.model.authentication.common.impl.DeriveServiceConfigKey;
 import com.zysn.passwordmanager.model.authentication.common.impl.EncryptKeyStoreConfig;
-import com.zysn.passwordmanager.model.authentication.common.impl.EncryptPasswordListConfig;
+import com.zysn.passwordmanager.model.authentication.common.impl.EncryptServiceConfig;
 import com.zysn.passwordmanager.model.authentication.common.impl.InsertUserConfig;
 import com.zysn.passwordmanager.model.authentication.common.impl.InsertUserData;
 import com.zysn.passwordmanager.model.authentication.common.impl.SaveKeyStore;
@@ -116,7 +116,7 @@ public class DefaultRegistrationService implements RegistrationService {
      */
     private void encryptConfigData() {
         authenticationStep.add(new EncryptKeyStoreConfig(sessionManager, keyStoreManager));
-        authenticationStep.add(new EncryptPasswordListConfig(sessionManager, serviceCryptoConfigManager));
+        authenticationStep.add(new EncryptServiceConfig(sessionManager, serviceCryptoConfigManager));
     }
 
     /**
