@@ -82,7 +82,9 @@ public class AlgorithmConfigFactory {
      */
     private static Map<String, String> getHkdfDefaults() {
         return Map.of(
-                "digest", "SHA256");
+                "digest", "SHA256",
+                "info", "Default key derivation"
+                );
     }
 
     /**
@@ -92,6 +94,7 @@ public class AlgorithmConfigFactory {
      */
     private static Map<String, String> getAesDefaults() {
         return Map.of(
+                "key_size", "256",
                 "mode", "GCM",
                 "padding", "NoPadding");
     }

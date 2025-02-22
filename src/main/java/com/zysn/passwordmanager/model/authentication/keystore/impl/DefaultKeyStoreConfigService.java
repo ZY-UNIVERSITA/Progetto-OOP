@@ -49,11 +49,13 @@ public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
      */
     @Override
     public void generateKeyStoreConfigSalt(final KeyStoreConfig keyStoreConfig) {
-        final int saltLength = CryptoLength.MINIMUM_PASSWORD_LENGTH.getParameter();
-        this.passwordGenerator.generateSecureUsablePassword(saltLength, keyStoreConfig::setSaltWithPasswordDerived);
-        this.passwordGenerator.generateSecureUsablePassword(saltLength, keyStoreConfig::setSaltWithTotpEncryptionKey);
-        this.passwordGenerator.generateSecureUsablePassword(saltLength, keyStoreConfig::setSaltForHKDF);
-        this.passwordGenerator.generateSecureUsablePassword(saltLength * 2, keyStoreConfig::setServiceDecryptionSalt);
+        final int minSaltLength = CryptoLength.MINIMUM_PASSWORD_LENGTH.getParameter();
+        final int optimalSaltLength = CryptoLength.OPTIMAL_PASSWORD_LENGTH.getParameter();
+
+        this.passwordGenerator.generateSecureUsablePassword(optimalSaltLength, keyStoreConfig::setSaltWithPasswordDerived);
+        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setSaltWithTotpEncryptionKey);
+        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setSaltForHKDF);
+        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setServiceDecryptionSalt);
     }
 
     /**
