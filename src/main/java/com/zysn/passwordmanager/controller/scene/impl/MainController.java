@@ -30,7 +30,7 @@ public class MainController extends SceneControllerBase {
     @FXML
     private Button logoutButton;
 
-    ServiceManager serviceManager = ServiceManager.getInstance();
+    private ServiceManager serviceManager = ServiceManager.getInstance();
     private ObservableList<String> serviceNames = FXCollections.observableArrayList();
 
 
