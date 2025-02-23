@@ -16,16 +16,25 @@ public class ServiceBuilder {
     private byte[] encryptedPassword;
     private AlgorithmConfig encryptionConfig;
     private String info;
-    private UserAccount user;
-    private CryptoManager cryptoManager;
+    private final UserAccount user;
+    private final CryptoManager cryptoManager;
 
     public ServiceBuilder(UserAccount user, CryptoManager crypto) {
+        if (user == null) {
+            throw new IllegalArgumentException("UserAccount cannot be null.");
+        }
+        if (crypto == null) {
+            throw new IllegalArgumentException("CryptoManager cannot be null.");
+        }
         this.user = user;
         this.cryptoManager = crypto;
         this.encryptionConfig = user.getAlgorithmConfig();
     }
 
     public ServiceBuilder setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be null or empty.");
+        }
         this.name = name;
         return this;
     }
@@ -54,6 +63,12 @@ public class ServiceBuilder {
     }
 
     public Service build() {
+        if (name == null || name.isBlank()) {
+            throw new IllegalStateException("Name must be set before building.");
+        }
+        if (encryptedPassword == null || encryptedPassword.length == 0) {
+            throw new IllegalStateException("Password must be set before building.");
+        }
         return new Service(name, username, email, encryptedPassword, encryptionConfig, info);
     }
 }
