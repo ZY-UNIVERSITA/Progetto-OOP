@@ -1,6 +1,6 @@
 %% Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
-%% ```mermaid
+```mermaid
 
 classDiagram
 
@@ -41,12 +41,14 @@ classDiagram
 
         + ServiceManager()
 
+        + selectService(String serviceName) Service
         + addService(Service service) boolean
         + removeService(String serviceName) boolean
         + modifyService(String serviceName, Service newService) boolean
         + getServices() List~Service~
         + searchService(String searchTerm) List~Service~
-        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]
+        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase): char[]
+        + addPasswordToService(String serviceName, char[] password): boolean
         + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
         + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
     }
