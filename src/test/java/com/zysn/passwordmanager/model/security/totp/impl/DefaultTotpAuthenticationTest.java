@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.bastiaanjansen.otp.TOTPGenerator;
-import com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication;
-
 import javafx.scene.image.WritableImage;
 
 public class DefaultTotpAuthenticationTest {
@@ -92,7 +90,7 @@ public class DefaultTotpAuthenticationTest {
 
         char[] OTPAuthURL = this.totpAuthentication.generateOtpAuthURL(account);
 
-        char[] expectedOutput = "otpauth://totp/PassKeeper:username?secret=J4LWJKFBABXFIJ7MGXZQHOAMZEWRXNPMBMA76E2HLPFPI3WOE3AA====&issuer=PassKeeper&algorithm=SHA256&digits=8&period=30".toCharArray();
+        char[] expectedOutput = "otpauth://totp/ZYSN%20Password%20Manager:username?secret=J4LWJKFBABXFIJ7MGXZQHOAMZEWRXNPMBMA76E2HLPFPI3WOE3AA====&issuer=ZYSN%20Password%20Manager&algorithm=SHA256&digits=8&period=30".toCharArray();
 
         assertNotNull(OTPAuthURL, "The link has not been generated.");
 

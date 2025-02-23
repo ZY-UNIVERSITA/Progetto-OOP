@@ -3,8 +3,12 @@ package com.zysn.passwordmanager.model.utils.crypto;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import com.zysn.passwordmanager.model.enums.CryptoLength;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 
 /**
  * Utility class for cryptographic operations, including generating salts,
@@ -131,8 +135,32 @@ public class CryptoUtils {
 
         Arrays.fill(source, (byte) 0);
     }
-    
+
+    /**
+     * Destroys the object provided by the getter function if it is not null.
+     * 
+     * @param <T>            the type of the object to be destroyed
+     * @param getterFunction a Supplier that provides the object to be destroyed
+     * @param setterFunction a Consumer that sets the object to null after it has
+     *                       been destroyed
+     */
+    public static <T> void destroy(final Supplier<T> getterFunction, final Consumer<T> setterFunction) {
+        Optional.ofNullable(getterFunction.get()).ifPresent(value -> {
+            if (value instanceof byte[]) {
+                CryptoUtils.cleanMemory((byte[]) value);
+            } else if (value instanceof char[]) {
+                CryptoUtils.cleanMemory((char[]) value);
+            } else if (value instanceof MustBeDestroyed){
+                final MustBeDestroyed mustBeDestroyed = (MustBeDestroyed) value;
+                mustBeDestroyed.destroy();
+            }
+            
+            setterFunction.accept(null);
+        });
+    }
+
     private CryptoUtils() {
 
     }
+
 }
