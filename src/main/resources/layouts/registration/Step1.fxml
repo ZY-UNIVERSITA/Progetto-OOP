@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.registration.RegistrationStep1Controller">
+   <children>
+      <Label text="User account information" />
+      <Label text="Username" />
+      <TextField fx:id="usernameField" maxWidth="200.0" prefWidth="200.0" promptText="Username" />
+      <Label text="Password" />
+      <PasswordField fx:id="passwordField" maxWidth="200.0" prefWidth="200.0" promptText="Password" />
+      <Label text="Confirm password" />
+      <PasswordField fx:id="confirmPasswordField" maxWidth="200.0" prefWidth="200.0" promptText="Confirm password" />
+   </children>
+   <stylesheets>
+      <URL value="@../../css/registration/MainRegistrationPage.css" />
+      <URL value="@../../css/registration/RegistrationStep1.css" />
+   </stylesheets>
+</VBox>
