@@ -1,6 +1,6 @@
 package com.zysn.passwordmanager.controller.scene.impl;
 
-import com.zysn.passwordmanager.controller.scene.api.SceneControllerBase;
+import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,12 +11,14 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 
-public class MainController extends SceneControllerBase {
+public class MainController extends ControllerAbstract<Stage, AccountManager> {
     
     @FXML
     private TextField searchField;
@@ -36,7 +38,6 @@ public class MainController extends SceneControllerBase {
 
     @FXML
     public void initialize() {
-
         for (Service s : serviceManager.getServices()) {
             serviceNames.add(s.getName());
         }
@@ -51,7 +52,7 @@ public class MainController extends SceneControllerBase {
             if (selectedService != null) {
                 Service service = serviceManager.selectService(selectedService);
                 if (service != null) {
-                    this.getViewNavigator().navigateTo("/layouts/ServiceManager.fxml", "Service", service);
+                    this.getNavigator().navigateTo("/layouts/ServiceManager.fxml", "Service", service);
                 }
             }
     }
