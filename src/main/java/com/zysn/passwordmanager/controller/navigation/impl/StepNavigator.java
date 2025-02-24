@@ -8,9 +8,9 @@ import javafx.scene.layout.Pane;
 /**
  * StepNavigator is a concrete implementation of {@link GenericNavigatorAbstract} for managing pane-based navigation.
  *
- * @param <T> the type of the data to be managed
+ * @param <S> the type of the data to be managed
  */
-public class StepNavigator<T> extends GenericNavigatorAbstract<Pane, T> {
+public class StepNavigator<S> extends GenericNavigatorAbstract<Pane, S> {
 
     /**
      * Constructor initializing the pane and data.
@@ -18,7 +18,7 @@ public class StepNavigator<T> extends GenericNavigatorAbstract<Pane, T> {
      * @param pane the pane
      * @param data the data
      */
-    public StepNavigator(Pane pane, T data) {
+    public StepNavigator(Pane pane, S data) {
         super(pane, data);
     }
     
