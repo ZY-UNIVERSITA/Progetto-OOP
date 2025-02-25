@@ -72,7 +72,7 @@ public class Login2FAController extends ControllerAbstract<Stage, AccountManager
         if (!totpAuthentication.validateCode(twoFactorAuthenticationCode.getText().toCharArray())) {
             errorHandler.showError("Wrong code", "Your inserted code is wrong");
         } else {
-            this.getNavigator().navigateTo("/layouts/Main.fxml", "Main");
+            this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
         }
     }
 
