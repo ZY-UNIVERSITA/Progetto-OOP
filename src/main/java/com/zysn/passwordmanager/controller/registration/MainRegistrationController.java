@@ -89,16 +89,16 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
      */
     @FXML
     void handleNext(final ActionEvent event) {
-        final boolean stepResult = this.controller.handleStep();
+        if (!this.controller.handleStep()) {
+            return;
+        }
 
-        if (stepResult && currentStep < MAX_STEPS) {
-            if (currentStep == 4) {
-                super.getData().register(collectedUserData);
-            }
+        if (currentStep < MAX_STEPS) {
+            handleCurrentStep();
             currentStep++;
             updateStepView();
-        } else if (stepResult) {
-            this.getNavigator().navigateTo("/layouts/Main.fxml", "Main");
+        } else {
+            navigateToMain();
         }
     }
 
@@ -115,6 +115,27 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
                 : "fx:id=\"nextButton\" was not injected: check your FXML file 'MainRegistrationPage.fxml'.";
         assert stepLabel != null
                 : "fx:id=\"stepLabel\" was not injected: check your FXML file 'MainRegistrationPage.fxml'.";
+    }
+
+    /**
+     * Handles specific actions for the current step.
+     */
+    private void handleCurrentStep() {
+        if (currentStep == 4) {
+            super.getData().register(collectedUserData);
+
+            if (!this.collectedUserData.isEnabled2FA()) {
+                navigateToMain();
+            }
+        }
+    }
+    
+
+    /**
+     * Navigates to the main page.
+     */
+    private void navigateToMain() {
+        this.getNavigator().navigateTo("/layouts/Main.fxml", "Main");
     }
 
     /**
