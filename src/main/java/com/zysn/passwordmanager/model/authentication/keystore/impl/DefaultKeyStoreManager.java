@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyStore;
+
 import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
+import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreConfigService;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreCreator;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreEntryService;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
-import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreConfigService;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreStorageService;
 import com.zysn.passwordmanager.model.enums.ExtensionsConstant;
 import com.zysn.passwordmanager.model.enums.PathsConstant;
@@ -24,19 +25,17 @@ import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
  * It implements the KeyStoreManager interface.
  */
 public class DefaultKeyStoreManager implements KeyStoreManager {
+    private static final String TOTP_ENCRYPTION_KEY_ALIAS = "TOTP Encryption Key";
+    private static final String TOTP_KEY_ALIAS = "TOTP Key";
 
     private FileManager fileManager;
-    private KeyStore keyStore;
-
     private SessionManager sessionManager;
 
+    private KeyStore keyStore;
     private KeyStoreConfigService keyStoreService;
     private KeyStoreCreator keyStoreCreator;
     private KeyStoreStorageService keyStoreStorage;
     private KeyStoreEntryService keyStoreEntryManager;
-
-    private static final String TOTP_ENCRYPTION_KEY_ALIAS = "TOTP Encryption Key";
-    private static final String TOTP_KEY_ALIAS = "TOTP Key";
 
     /**
      * Initializes a new DefaultKeyStoreManager instance with the given session manager.
@@ -85,7 +84,6 @@ public class DefaultKeyStoreManager implements KeyStoreManager {
      */
     @Override
     public void populateNewKeyStore() {
-
         char[] totpEncryptionKeyPassword = DataUtils.concatArray(
                 this.sessionManager.getUserAuthKey().getPasswordDerivedKeyChar(),
                 this.sessionManager.getKeyStoreConfig().getSaltWithPasswordDerivedChar());
