@@ -98,4 +98,13 @@ public class DefaultFileManagerTest {
             Files.deleteIfExists(this.fileManager.createPath("prova"));
         }
     }
+
+    @Test
+    void testDeleteData() {
+        this.fileManager.saveData("prova", encodedClass);
+
+        this.fileManager.deleteData("prova");
+
+        assertTrue(!this.fileManager.createPath("prova").toFile().exists(), "The file still exist.");
+    }
 }
