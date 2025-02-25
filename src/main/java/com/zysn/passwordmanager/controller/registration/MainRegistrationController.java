@@ -134,7 +134,7 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
      * Navigates to the main page.
      */
     private void navigateToMain() {
-        this.getNavigator().navigateTo("/layouts/Main.fxml", "Main");
+        this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
     /**

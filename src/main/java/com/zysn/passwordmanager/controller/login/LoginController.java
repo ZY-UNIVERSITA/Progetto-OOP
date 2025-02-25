@@ -121,7 +121,7 @@ public class LoginController extends ControllerAbstract<Stage, AccountManager> {
         if (this.getData().getSessionManager().getUserAuthInfo().isEnabled2FA()) {
             this.getNavigator().navigateTo("/layouts/login/Login2FA.fxml", "Main");
         } else {
-            this.getNavigator().navigateTo("/layouts/Main.fxml", "Main");
+            this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
         }
     }
 
