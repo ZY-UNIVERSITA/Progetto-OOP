@@ -41,6 +41,7 @@ public class DefaultAccountManager implements AccountManager {
      * @param collectedUserData The data collected from the user required for
      *                          registration.
      */
+    @Override
     public void register(final CollectedUserData collectedUserData) {
         this.registrationService.register(collectedUserData);
     }
@@ -50,6 +51,7 @@ public class DefaultAccountManager implements AccountManager {
      *
      * @param collectedUserData The data collected from the user required for login.
      */
+    @Override
     public void login(final CollectedUserData collectedUserData) {
         this.loginService.login(collectedUserData);
     }
