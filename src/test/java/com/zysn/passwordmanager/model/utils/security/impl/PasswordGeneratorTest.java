@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.model.utils;
+package com.zysn.passwordmanager.model.utils.security.impl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
