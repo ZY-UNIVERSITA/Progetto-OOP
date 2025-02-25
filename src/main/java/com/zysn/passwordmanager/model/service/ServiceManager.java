@@ -1,6 +1,7 @@
 package com.zysn.passwordmanager.model.service;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zysn.passwordmanager.model.account.entity.UserAccount;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.utils.PasswordGenerator;
@@ -21,6 +23,8 @@ import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 public class ServiceManager {
     private static ServiceManager instance;
     private List<Service> services;
+    private UserAccount user;
+    private CryptoManager cryptoManager;
 
     private ServiceManager() {
         this.services = new ArrayList<>();
@@ -46,6 +50,15 @@ public class ServiceManager {
      */
     public static void resetInstance() {
         instance = null;
+    }
+
+    // Setter methods to inject dependencies
+    public void setUserAccount (UserAccount user) {
+        this.user = user;
+    }
+
+    public void setCryptoManager (CryptoManager crypto) {
+        this.cryptoManager = crypto;
     }
 
     /**
@@ -104,26 +117,49 @@ public class ServiceManager {
     }
 
     /**
-     * Modifies the details of an existing service in the list of services,
-     * with the data from the provided Service object.
+     * Updates the details of an existing service in the list based on the provided parameters.
+     * If a service with the specified name is found, it is replaced with a new instance
+     * containing the updated details.
      *
-     * @param serviceName the name of the service to modify
-     * @param newService the Service object containing the new details to update
-     * @return {@code true} if the service was found and modified, {@code false} if no service with the specified name was found
+     * @param serviceName the current name of the service to be modified
+     * @param newName the new name to set for the service
+     * @param newUsername the new username associated with the service
+     * @param newEmail the new email associated with the service
+     * @param newPassword the new password to store for the service
+     * @param newInfo additional information or notes about the service
+     * @return {@code true} if the service was found and successfully updated, {@code false} if no service with the specified name was found
      */
-    public boolean modifyService(String serviceName, Service newService) {
-        for (Service service : services) {
+    public boolean modifyService(String serviceName, String newName, String newUsername, String newEmail, String newPassword, String newInfo) {
+        for (int i = 0; i < services.size(); i++) {
+            Service service = services.get(i);
             if (service.getName().equals(serviceName)) {
-                service.setName(newService.getName());
-                service.setUsername(newService.getUsername());
-                service.setEmail(newService.getEmail());
-                service.setPassword(newService.getPassword());
-                service.setEncryptionConfig(newService.getEncryptionConfig());
-                service.setInfo(newService.getInfo());
+                Service updatedService = new ServiceBuilder(this.user, this.cryptoManager)
+                        .setName(newName)
+                        .setUsername(newUsername)
+                        .setEmail(newEmail)
+                        .setPassword(newPassword)
+                        .setInfo(newInfo)
+                        .build();
+
+                services.set(i, updatedService);
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Retrieves a decrypted password from the specified service.
+     * @param service the service from which the password is decrypted
+     * @return the decrypted password as string
+     */
+    public String getDecryptedPassword(Service service) {
+        byte[] decryptedBytes = this.cryptoManager.decrypt(
+            service.getPassword(),
+            this.user.getMasterKey(),
+            this.user.getAlgorithmConfig()
+            );
+        return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
     /**
@@ -139,22 +175,6 @@ public class ServiceManager {
     public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
         PasswordGenerator generator = new PasswordGenerator();
         return generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
-    }
-
-    /**
-     * Adds generated password to an existing service.
-     *
-     * @param serviceName the service name
-     * @param password    the password as a char array
-     * @return {@code true} if successfully assigned, {@code false} if service not found
-     */
-    public boolean addPasswordToService(String serviceName, char[] password) {
-        Service service = selectService(serviceName);
-        if (service != null) {
-            service.setPassword(new String(password).getBytes());
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -210,7 +230,6 @@ public class ServiceManager {
             return false;
         }
     }
-    
 
     @Override
     public String toString() {
