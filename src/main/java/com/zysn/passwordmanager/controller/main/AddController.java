@@ -3,6 +3,7 @@ package com.zysn.passwordmanager.controller.main;
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.service.Service;
+import com.zysn.passwordmanager.model.service.ServiceBuilder;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 
 import javafx.fxml.FXML;
@@ -38,7 +39,6 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
 
     private Service service;
     private ServiceManager serviceManager;
-    private ServiceBuilder builder;
     
     @FXML
     private void handleSaveAction() {
@@ -53,9 +53,20 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
             return;
         }
         
-        // ServiceManager.addService()
+        service = new ServiceBuilder(null, null)
+                .setName(serviceName)
+                .setUsername(username)
+                .setEmail(email)
+                .setPassword(password)
+                .setInfo(info)
+                .build();
         
-        showAlert(AlertType.INFORMATION, "Success", "The service has been successfully saved!");
+        if (serviceManager.addService(service)) {
+            showAlert(AlertType.INFORMATION, "Success", "The service has been successfully saved!");
+        }
+        else {
+            showAlert(AlertType.ERROR, "Failed","Failed to save the service.");
+        }
     }
     
     @FXML
