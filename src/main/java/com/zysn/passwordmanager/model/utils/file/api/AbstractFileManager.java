@@ -90,6 +90,27 @@ public abstract class AbstractFileManager implements FileManager {
     }
 
     /**
+     * Deletes data from the specified file.
+     *
+     * @param fileName the name of the file to delete data from
+     * @throws RuntimeException if the file cannot be deleted
+     */
+    @Override
+    public void deleteData(final String fileName) {
+        final Path filePath = this.createPath(fileName);
+
+        if (filePath.toFile().exists()) {
+            final boolean deleted = filePath.toFile().delete();
+            if (!deleted) {
+                throw new RuntimeException("Failed to delete the file: " + fileName);
+            }
+        }
+    }
+
+    @Override
+    public abstract Path createPath(String fileName);
+
+    /**
      * Abstract method to obtain an InputStream given a Path.
      *
      * @param path Path of the file.

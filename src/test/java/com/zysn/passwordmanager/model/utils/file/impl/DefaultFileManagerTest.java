@@ -85,7 +85,7 @@ public class DefaultFileManagerTest {
 
         Path actualPath = this.fileManager.createPath("prova");
 
-        assertEquals(expectedPath, actualPath, "The created path is not what is it expected.");
+        assertEquals(expectedPath.toAbsolutePath(), actualPath, "The created path is not what is it expected.");
     }
 
     @Test
@@ -97,5 +97,14 @@ public class DefaultFileManagerTest {
         } finally {
             Files.deleteIfExists(this.fileManager.createPath("prova"));
         }
+    }
+
+    @Test
+    void testDeleteData() {
+        this.fileManager.saveData("prova", encodedClass);
+
+        this.fileManager.deleteData("prova");
+
+        assertTrue(!this.fileManager.createPath("prova").toFile().exists(), "The file still exist.");
     }
 }

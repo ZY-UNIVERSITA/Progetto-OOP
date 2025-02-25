@@ -130,7 +130,7 @@ class AlgorithmConfigTest {
         assertNotNull(this.algorithmConfig.getParameters(), "The parameters are null.");
         assertNotNull(this.algorithmConfig.getSalt(), "The salt name is null.");
 
-        this.algorithmConfig.clearConfigurations();
+        this.algorithmConfig.destroy();
         
         assertNull(this.algorithmConfig.getAlgorithmName(), "The algorithm name is not null.");
         assertNull(this.algorithmConfig.getAlgorithmType(), "The algorithm type is not null.");

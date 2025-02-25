@@ -1,8 +1,13 @@
 package com.zysn.passwordmanager.controller.scene.impl;
 
-import com.zysn.passwordmanager.controller.scene.api.SceneControllerBase;
+import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
+import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,9 +19,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.stage.Stage;
 
 
-public class ServiceManagerController extends SceneControllerBase {
+public class ServiceManagerController extends ControllerAbstract<Stage, AccountManager> {
     
     @FXML
     private Button saveButton;
@@ -78,29 +84,12 @@ public class ServiceManagerController extends SceneControllerBase {
     @FXML
     private Button generateButton;
 
-
     private Service service;
     private ServiceManager serviceManager;
 
-
-    public void setService (Service service) {
-        this.service = service;
-    }
-
     @FXML
     public void initialize() {
-        if (service != null) {
-            serviceNameField.setText(service.getName());
-            usernameField.setText(service.getUsername());
-            emailField.setText(service.getEmail());
-            //passwordField.setText((String)service.getPassword());
-            passwordVisibleField.setVisible(false);
-            infoArea.setText(service.getInfo());
-
-            lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
-        }
-
-        this.serviceManager = ServiceManager.getInstance();
+        
     }
 
     @FXML
@@ -108,10 +97,13 @@ public class ServiceManagerController extends SceneControllerBase {
         String newName = serviceNameField.getText();
         String newUsername = usernameField.getText();
         String newEmail = emailField.getText();
-        //String newPassword = passwordField.getText();
+        byte[] newPassword = passwordField.getText().getBytes();
         String newInfo = infoArea.getText();
 
-        Service newService = new Service(newName, newUsername, newEmail, newPassword, null, newInfo);
+        byte[] salt = CryptoUtils.generateSalt(12);
+        AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
+
+        Service newService = new Service(newName, newUsername, newEmail, newPassword, algorithmConfig, newInfo);
 
         serviceManager.modifyService(service.getName(), newService);
     }
@@ -146,4 +138,26 @@ public class ServiceManagerController extends SceneControllerBase {
     public void handleDeleteService(ActionEvent event) {
         serviceManager.removeService(this.service.getName());
     }
+
+    @Override
+    public <U> void initializeData(U optionalData) {
+        if (optionalData instanceof Service) {
+            this.service = (Service) optionalData;
+        }
+
+        if (service != null) {
+            serviceNameField.setText(service.getName());
+            usernameField.setText(service.getUsername());
+            emailField.setText(service.getEmail());
+            passwordField.setText(String.valueOf(EncodingUtils.byteToCharConverter(service.getPassword())));
+            passwordVisibleField.setVisible(false);
+            infoArea.setText(service.getInfo());
+
+            lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
+        }
+
+        this.serviceManager = ServiceManager.getInstance();
+    }
+
+    
 }

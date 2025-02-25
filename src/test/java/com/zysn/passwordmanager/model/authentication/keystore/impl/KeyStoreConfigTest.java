@@ -6,44 +6,70 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+
 public class KeyStoreConfigTest {
     private KeyStoreConfig keyStoreConfig;
-    private byte[] keyStoreEncryptionKey = new byte[] { 1, 2, 3 };
-    private byte[] totpKey = new byte[] { 4, 5, 6 };
+
+    private byte[] initialKeyStoreEncryptionKey;
+    private byte[] initialSaltWithPasswordDerived;
+    private byte[] initialSaltWithTotpEncryptionKey;
+    private byte[] initialSaltForHKDF;
+    private byte[] initialServiceDecryptionSalt;
 
     @BeforeEach
     void setup() {
         this.keyStoreConfig = new KeyStoreConfig();
 
-        this.keyStoreConfig.setKeyStoreEncryptionKey(keyStoreEncryptionKey);
-        this.keyStoreConfig.setTotpKey(totpKey);
+        this.initialKeyStoreEncryptionKey = new byte[] { 1, 2, 3 };
+        this.initialSaltWithPasswordDerived = new byte[] { 4, 5, 6 };
+        this.initialSaltWithTotpEncryptionKey = new byte[] { 7, 8, 9 };
+        this.initialSaltForHKDF = new byte[] { 10, 11, 12 };
+        this.initialServiceDecryptionSalt = new byte[] { 13, 14, 15 };
+
+        this.keyStoreConfig.setKeyStoreEncryptionKey(this.initialKeyStoreEncryptionKey);
+        this.keyStoreConfig.setSaltWithPasswordDerived(this.initialSaltWithPasswordDerived);
+        this.keyStoreConfig.setSaltWithTotpEncryptionKey(this.initialSaltWithTotpEncryptionKey);
+        this.keyStoreConfig.setSaltForHKDF(this.initialSaltForHKDF);
+        this.keyStoreConfig.setServiceDecryptionSalt(this.initialServiceDecryptionSalt);
     }
 
     @Test
     void testDestroy() {
         this.keyStoreConfig.destroy();
 
-        assertNull(this.keyStoreConfig.getKeyStoreEncryptionKey(), "The key store encryption key is not null.");
-        assertNull(this.keyStoreConfig.getTotpKey(), "The totp key is not null.");
+        assertNull(this.keyStoreConfig.getKeyStoreEncryptionKey(), "KeyStoreEncryptionKey should be null");
+        assertNull(this.keyStoreConfig.getSaltWithPasswordDerived(), "SaltWithPasswordDerived should be null");
+        assertNull(this.keyStoreConfig.getSaltWithTotpEncryptionKey(), "SaltWithTotpEncryptionKey should be null");
+        assertNull(this.keyStoreConfig.getSaltForHKDF(), "SaltForHKDF should be null");
+        assertNull(this.keyStoreConfig.getServiceDecryptionSalt(), "ServiceDecryptionSalt should be null");
 
-        byte[] fullZeros = new byte[] { (byte) 0, (byte) 0, (byte) 0 };
+        byte[] zeroBytes = new byte[] { 0, 0, 0 };
 
-        assertArrayEquals(fullZeros, keyStoreEncryptionKey, "The key has not been cleaned");
-        assertArrayEquals(fullZeros, totpKey, "The key has not been cleaned.");
+        assertArrayEquals(zeroBytes, this.initialKeyStoreEncryptionKey,
+                "Initial KeyStoreEncryptionKey should be zeroed out");
+        assertArrayEquals(zeroBytes, this.initialSaltWithPasswordDerived,
+                "Initial SaltWithPasswordDerived should be zeroed out");
+        assertArrayEquals(zeroBytes, this.initialSaltWithTotpEncryptionKey,
+                "Initial SaltWithTotpEncryptionKey should be zeroed out");
+        assertArrayEquals(zeroBytes, this.initialSaltForHKDF, "Initial SaltForHKDF should be zeroed out");
+        assertArrayEquals(zeroBytes, this.initialServiceDecryptionSalt,
+                "Initial ServiceDecryptionSalt should be zeroed out");
     }
 
     @Test
     void testSerializeObject() {
-        byte[] expectedSerializedArray = new byte[] { 123, 34, 107, 101, 121, 83, 116, 111, 114, 101, 69, 110, 99, 114,
-                121, 112, 116, 105, 111, 110, 75, 101, 121, 34, 58, 34, 65, 81, 73, 68, 34, 44, 34, 115, 97, 108, 116,
-                87, 105, 116, 104, 80, 97, 115, 115, 119, 111, 114, 100, 68, 101, 114, 105, 118, 101, 100, 34, 58, 110,
-                117, 108, 108, 44, 34, 115, 97, 108, 116, 87, 105, 116, 104, 84, 111, 116, 112, 69, 110, 99, 114, 121,
-                112, 116, 105, 111, 110, 75, 101, 121, 34, 58, 110, 117, 108, 108, 44, 34, 115, 101, 114, 118, 105, 99,
-                101, 68, 101, 99, 114, 121, 112, 116, 105, 111, 110, 83, 97, 108, 116, 34, 58, 110, 117, 108, 108,
-                125 };
+        byte[] actualSerializedArray = this.keyStoreConfig.serialize();
 
-        byte[] actualSerializedArray = this.keyStoreConfig.serializeObject();
+        KeyStoreConfig keyStoreConfigDeserialized = EncodingUtils.deserializeData(actualSerializedArray, new TypeReference<KeyStoreConfig>() {
+            
+        });
 
-        assertArrayEquals(expectedSerializedArray, actualSerializedArray, "The serialized object is not the same as expected.");
+        byte[] actualKeyStoreEncryptionKey = keyStoreConfigDeserialized.getKeyStoreEncryptionKey();
+        byte[] actualSaltForHKDF = keyStoreConfigDeserialized.getSaltForHKDF();
+
+        assertArrayEquals(initialKeyStoreEncryptionKey, actualKeyStoreEncryptionKey);
+        assertArrayEquals(initialSaltForHKDF, actualSaltForHKDF);
     }
 }

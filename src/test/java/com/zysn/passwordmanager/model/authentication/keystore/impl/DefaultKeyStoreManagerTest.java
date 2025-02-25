@@ -1,11 +1,15 @@
 package com.zysn.passwordmanager.model.authentication.keystore.impl;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.Security;
 
@@ -13,54 +17,61 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
+import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
+import com.zysn.passwordmanager.model.account.manager.impl.DefaultSessionManager;
 import com.zysn.passwordmanager.model.enums.PathsConstant;
-import com.zysn.passwordmanager.model.utils.file.api.FileManager;
-import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
 
 public class DefaultKeyStoreManagerTest {
-    private KeyStoreManager keyStoreManager;
-    private FileManager fileManager;
+    private SessionManager sessionManager;
+    private DefaultKeyStoreManager keyStoreManager;
 
     @BeforeEach
     void setup() {
         Security.addProvider(new BouncyCastleProvider());
 
-        this.keyStoreManager = new DefaultKeyStoreManager();
-        this.fileManager = new DefaultFileManager();
+        this.sessionManager = new DefaultSessionManager();
 
-        this.keyStoreManager.setFileManager(fileManager);
+        this.sessionManager.getKeyStoreConfig().setKeyStoreEncryptionKey(new byte[] { 1, 1, 1, 1, 1});
+
+        byte[] key = new byte[32];
+        Arrays.fill(key, (byte) 1);
+
+        this.sessionManager.getUserAuthKey().setPasswordDerivedKey(key);
+
+        this.sessionManager.getUserAccount().setUsername("test user");
+
+        this.keyStoreManager = new DefaultKeyStoreManager(this.sessionManager);
     }
 
+    // FATTO
     @Test
-    void testClose() {
+    void testCloseKeyStore() throws KeyStoreException {
         this.keyStoreManager.createNewKeyStore();
+        this.keyStoreManager.createKeyStoreConfig();
         this.keyStoreManager.createKeyStoreEntry();
-        this.keyStoreManager.populateNewKeyStore("prova password".getBytes());
+        this.keyStoreManager.populateNewKeyStore();
 
-        this.keyStoreManager.close();
+        KeyStore keyStore = this.keyStoreManager.getKeyStore();
+
+        this.keyStoreManager.closeKeyStore();
 
         assertNull(this.keyStoreManager.getKeyStore(), "The Key store has not been eliminated.");
-        assertNull(this.keyStoreManager.getKeyStoreConfiguration(), "The Key store configuration has not been eliminated.");
+        assertFalse(keyStore.aliases().hasMoreElements(), "The Key store entries has not been eliminated.");
     }
 
+    // FATTO
     @Test
     void testCreateKeyStoreEntry() {
         this.keyStoreManager.createNewKeyStore();
         this.keyStoreManager.createKeyStoreEntry();
 
-        assertNotNull(this.keyStoreManager.getKeyStoreConfiguration().getKeyStoreEncryptionKey(),
-                "The keystore encryption key is null.");
-        assertNotNull(this.keyStoreManager.getKeyStoreConfiguration().getTotpEncryptionKey(),
-                "The TOTP encryption key is null.");
-        assertNotNull(this.keyStoreManager.getKeyStoreConfiguration().getTotpKey(), "The TOTP key is null.");
-        assertNotNull(this.keyStoreManager.getKeyStoreConfiguration().getSaltWithPasswordDerived(),
-                "The salt with password is null.");
-        assertNotNull(this.keyStoreManager.getKeyStoreConfiguration().getSaltWithTotpEncryptionKey(),
-                "The salt with TOTP encryption key is null.");
+        assertNotNull(this.sessionManager.getUserAuthKey().getTotpEncryptionKey(), "The TOTP encryption key is null.");
+        assertNotNull(this.sessionManager.getUserAuthKey().getTotpKey(), "The TOTP key is null.");
     }
 
+    // FATTO
     @Test
     void testCreateNewKeyStore() {
         this.keyStoreManager.createNewKeyStore();
@@ -68,94 +79,136 @@ public class DefaultKeyStoreManagerTest {
         assertNotNull(this.keyStoreManager.getKeyStore(), "The key store is null.");
     }
 
+    // FATTO
     @Test
     void testLoadKeyStore() {
         this.keyStoreManager.createNewKeyStore();
-        this.keyStoreManager.createKeyStoreEntry();
-        try {
-            this.keyStoreManager.populateNewKeyStore("prova password".getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("Error tryin to create key store");
-        }
+        this.keyStoreManager.saveKeyStore();
 
-        byte[] keyStorePassword = Arrays.copyOf(
-                this.keyStoreManager.getKeyStoreConfiguration().getKeyStoreEncryptionKey(),
-                this.keyStoreManager.getKeyStoreConfiguration().getKeyStoreEncryptionKey().length);
+        this.keyStoreManager.closeKeyStore();
 
-        this.keyStoreManager.saveKeyStore("testLoading");
-        this.keyStoreManager.close();
+        assertNull(this.keyStoreManager.getKeyStore(), "The key store has not been closed.");
 
-        this.keyStoreManager = new DefaultKeyStoreManager(this.fileManager);
-        this.keyStoreManager.getKeyStoreConfiguration().setKeyStoreEncryptionKey(keyStorePassword);
+        this.keyStoreManager.loadKeyStore();
 
-        this.keyStoreManager.loadKeyStore("testLoading");
+        assertNotNull(this.keyStoreManager.getKeyStore(), "The key store has not been loaded.");
 
-        boolean totpEncryptionKey = false;
-        boolean totpKey = false;
+        Path tempDir = Paths.get(System.getProperty(PathsConstant.USER_ROOT.getParameter()), PathsConstant.KEY_STORE.getParameter());
 
-        try {
-            totpEncryptionKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Encryption Key");
-            totpKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Key");
-        } catch (KeyStoreException e) {
-            System.err.println("Error trying to get aliases.");
-        }
+        File file = tempDir.resolve("test user.bcfks").toFile();
 
-        assertTrue(totpEncryptionKey, "TOTP Encryption Key is not present.");
-        assertTrue(totpKey, "TOTP Key is not present.");
+        assertNotNull(file, "Non esiste." + tempDir.toAbsolutePath());
 
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
-                "testLoading".concat(".bcfks"));
-
-        keyStoreFilePath.toFile().delete();
+        file.delete();
     }
 
+    // FATTO
     @Test
-    void testObtainKey() {
+    void testPopulateNewKeyStore() throws KeyStoreException {
         this.keyStoreManager.createNewKeyStore();
+        this.keyStoreManager.createKeyStoreConfig();
         this.keyStoreManager.createKeyStoreEntry();
-        this.keyStoreManager.populateNewKeyStore("prova password".getBytes());
+        this.keyStoreManager.populateNewKeyStore();
 
-        byte[] totpKey = this.keyStoreManager.obtainKey("TOTP Key", false, this.keyStoreManager.getKeyStoreConfiguration().getTotpEncryptionKey(), this.keyStoreManager.getKeyStoreConfiguration().getSaltWithTotpEncryptionKey());
-    
-        assertNotNull(totpKey, "The totp key has not been obtained.");
-    }
-
-    @Test
-    void testPopulateNewKeyStore() {
-        this.keyStoreManager.createNewKeyStore();
-        this.keyStoreManager.createKeyStoreEntry();
-        this.keyStoreManager.populateNewKeyStore("prova password".getBytes());
-
-        boolean totpEncryptionKey = false;
-        boolean totpKey = false;
-
-        try {
-            totpEncryptionKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Encryption Key");
-            totpKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Key");
-        } catch (KeyStoreException e) {
-            System.err.println("Error trying to get aliases.");
-        }
+        boolean totpEncryptionKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Encryption Key");
+        boolean totpKey = this.keyStoreManager.getKeyStore().containsAlias("TOTP Key");
 
         assertTrue(totpEncryptionKey, "TOTP Encryption Key is not present.");
         assertTrue(totpKey, "TOTP Key is not present.");
     }
 
+    // FATTO
     @Test
-    void testSaveKeyStore() {
+    void testSaveKeyStore() throws IOException {
+        this.keyStoreManager.createNewKeyStore();
+        this.keyStoreManager.saveKeyStore();
+
+        Path tempDir = Paths.get(System.getProperty(PathsConstant.USER_ROOT.getParameter()), PathsConstant.KEY_STORE.getParameter());
+
+        File file = tempDir.resolve("test user.bcfks").toFile();
+
+        assertNotNull(file, "Non esiste." + tempDir.toAbsolutePath());
+
+        file.delete();
+    }
+
+    //FATTO
+    @Test
+    void testCreateKeyStoreConfig() {
+        this.keyStoreManager.createKeyStoreConfig();
+        
+        assertNotNull(this.sessionManager.getKeyStoreConfig().getKeyStoreEncryptionKey(), "The key store encryption key is null.");
+        assertNotNull(this.sessionManager.getKeyStoreConfig().getSaltWithPasswordDerived(), "The salt with password is null.");
+        assertNotNull(this.sessionManager.getKeyStoreConfig().getSaltWithTotpEncryptionKey(), "The salt with totp encryption key is null.");
+        assertNotNull(this.sessionManager.getKeyStoreConfig().getSaltForHKDF(), "The salt with HKDF key is null.");
+        assertNotNull(this.sessionManager.getKeyStoreConfig().getServiceDecryptionSalt(), "The salt for service config decryption key is null.");
+    }
+
+    // FATTO
+    @Test
+    void testDecryptConfig() {
+        this.keyStoreManager.createKeyStoreConfig();
+        
+        byte[] salt = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+        AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
+
+        this.sessionManager.getUserAuthInfo().setKeyStoreEncryptionConfig(algorithmConfig);
+
+        this.keyStoreManager.encryptConfig();
+
+        this.sessionManager.setKeyStoreConfig(null);
+
+        this.keyStoreManager.decryptConfig();
+
+        assertNotNull(this.sessionManager.getKeyStoreConfig(), "The data has not been decrypted.");
+
+        assertTrue(this.sessionManager.getKeyStoreConfig().getKeyStoreEncryptionKey().length > 0, "The key store encryption key is not existent.");
+    }
+
+    // FATTO
+    @Test
+    void testEncryptConfig() {
+        this.keyStoreManager.createKeyStoreConfig();
+        
+        byte[] salt = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+        AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
+
+        this.sessionManager.getUserAuthInfo().setKeyStoreEncryptionConfig(algorithmConfig);
+
+        this.keyStoreManager.encryptConfig();
+
+        byte[] encryptedData = this.sessionManager.getUserAuthInfo().getKeyStoreConfigEncryptedData();
+
+        assertNotNull(encryptedData, "The encrypted data is null.");
+    }
+
+
+    @Test
+    void testGetKeyStoreKeys() {
+        this.keyStoreManager.createKeyStoreConfig();
         this.keyStoreManager.createNewKeyStore();
         this.keyStoreManager.createKeyStoreEntry();
-        this.keyStoreManager.populateNewKeyStore("prova password".getBytes());
-        this.keyStoreManager.saveKeyStore("testKeyStoreSaving");
+        this.keyStoreManager.populateNewKeyStore();
+        this.keyStoreManager.saveKeyStore();
 
-        Path keyStoreFilePath = this.fileManager.createPath(true, PathsConstant.KEY_STORE.getParameter(),
-                "testKeyStoreSaving".concat(".bcfks"));
-        try {
-            assertTrue(keyStoreFilePath.toFile().exists(), "The file has not been saved.");
-        } finally {
-            if (keyStoreFilePath.toFile().exists()) {
-                keyStoreFilePath.toFile().delete();
-            }
-        }
+        this.keyStoreManager.closeKeyStore();
 
+        this.keyStoreManager.loadKeyStore();
+        this.sessionManager.getUserAuthKey().setTotpEncryptionKey(null);
+        this.sessionManager.getUserAuthKey().setTotpKey(null);
+
+        assertNull(this.sessionManager.getUserAuthKey().getTotpEncryptionKey(), "The totp encryption key should be null.");
+        assertNull(this.sessionManager.getUserAuthKey().getTotpKey(), "The totp key should be null.");
+
+        this.keyStoreManager.getKeyStoreKeys();
+
+        assertNotNull(this.sessionManager.getUserAuthKey().getTotpEncryptionKey(), "The totp encryption key should not be null.");
+        assertNotNull(this.sessionManager.getUserAuthKey().getTotpKey(), "The totp key should not be null.");
+
+        Path tempDir = Paths.get(System.getProperty(PathsConstant.USER_ROOT.getParameter()), PathsConstant.KEY_STORE.getParameter());
+
+        File file = tempDir.resolve("test user.bcfks").toFile();
+
+        file.delete();
     }
 }
