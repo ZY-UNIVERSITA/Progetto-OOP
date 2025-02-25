@@ -40,3 +40,6 @@ replay_pid*
 
 # Escludere il jar di gradle-wrapper
 !gradle/wrapper/gradle-wrapper.jar
+
+# VSCode
+.vscode/

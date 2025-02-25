@@ -32,10 +32,6 @@ dependencies {
     // Suppressions for SpotBugs
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.8.6")
 
-    // Example library: Guava. Add what you need (and remove Guava if you don't use it)
-    // implementation("com.google.guava:guava:28.1-jre")
-
-    // JavaFX: comment out if you do not need them
     val javaFxVersion = "23.0.1"
     for (platform in supportedPlatforms) {
         for (module in javaFXModules) {
@@ -47,6 +43,11 @@ dependencies {
     // JUnit API and testing engine
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jUnitVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jUnitVersion")
+
+    val mockitoVersion = "5.12.0"
+    // Mockito core
+    testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 
     // Bouncy castle
     implementation("org.bouncycastle:bcprov-jdk18on:1.80")
@@ -77,6 +78,5 @@ tasks.withType<Test> {
 }
 
 application {
-    // Define the main class for the application
     mainClass.set("com.zysn.passwordmanager.main.App")
 }
