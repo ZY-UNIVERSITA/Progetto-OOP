@@ -4,12 +4,17 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import com.zysn.passwordmanager.model.utils.encoding.EncodingClassForTesting;
 
 public class CryptoUtilsTest {
     private char[] stringInArrayOfChar;
@@ -68,5 +73,19 @@ public class CryptoUtilsTest {
         assertNotNull(actualPassword, "The password is not null.");
 
         assertTrue(actualPassword.length >= minimumLength, "The password is shorter than the minimum length.");
+    }
+
+    @Test
+    void testDestroy() {
+        EncodingClassForTesting encodingClassForTesting = new EncodingClassForTesting("Stringa", 112);
+
+        Supplier<String> getterFunction = () -> encodingClassForTesting.getFirstField();
+        Consumer<String> setterFunction = encodingClassForTesting::setFirstField;
+
+        CryptoUtils.destroy(getterFunction, setterFunction);
+
+        String stringValueAfterDestroy = encodingClassForTesting.getFirstField();
+        
+        assertNull(stringValueAfterDestroy, "The string is not null.");
     }
 }
