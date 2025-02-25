@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.controller.scene.impl;
+package com.zysn.passwordmanager.controller.service;
 
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
