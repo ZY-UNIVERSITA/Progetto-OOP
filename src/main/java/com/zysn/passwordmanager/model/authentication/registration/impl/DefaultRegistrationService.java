@@ -16,6 +16,7 @@ import com.zysn.passwordmanager.model.authentication.common.impl.EncryptKeyStore
 import com.zysn.passwordmanager.model.authentication.common.impl.EncryptServiceConfig;
 import com.zysn.passwordmanager.model.authentication.common.impl.InsertUserConfig;
 import com.zysn.passwordmanager.model.authentication.common.impl.InsertUserData;
+import com.zysn.passwordmanager.model.authentication.common.impl.LoadUserPassword;
 import com.zysn.passwordmanager.model.authentication.common.impl.SaveKeyStore;
 import com.zysn.passwordmanager.model.authentication.common.impl.SaveUserData;
 import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreManager;
@@ -73,6 +74,7 @@ public class DefaultRegistrationService implements RegistrationService {
         this.encryptConfigData();
         this.saveData();
         this.createMasterKey();
+        this.loadUserPassword();
 
         this.authenticationStep.forEach(AuthenticationStep::executeStep);
 
@@ -133,5 +135,9 @@ public class DefaultRegistrationService implements RegistrationService {
      */
     private void createMasterKey() {
         authenticationStep.add(new DeriveMasterKey(sessionManager, cryptoManager));
+    }
+
+    private void loadUserPassword() {
+        authenticationStep.add(new LoadUserPassword(sessionManager, true));
     }
 }
