@@ -2,9 +2,13 @@ package com.zysn.passwordmanager.controller.main;
 
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceBuilder;
 import com.zysn.passwordmanager.model.service.ServiceManager;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -40,6 +44,13 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
     private Service service;
     private ServiceManager serviceManager;
     
+    private CryptoManager cryptoManager;
+
+    @Override
+    public void initializeData() {
+        this.cryptoManager = new CryptoManager();        
+    }
+
     @FXML
     private void handleSaveAction() {
         String serviceName = serviceNameField.getText();
@@ -47,17 +58,21 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         String email = emailField.getText();
         String password = passwordField.getText();
         String info = infoArea.getText();
+
+        byte[] iv = CryptoUtils.generateSalt(12);
+        AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", iv, null);
         
         if (serviceName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             showAlert(AlertType.ERROR, "Error", "All required fields must be filled in!");
             return;
         }
         
-        service = new ServiceBuilder(null, null)
+        service = new ServiceBuilder(super.getData().getSessionManager().getUserAccount(), cryptoManager)
                 .setName(serviceName)
                 .setUsername(username)
                 .setEmail(email)
-                .setPassword(password)
+                .setEncryptionConfig(algorithmConfig)
+                .setPassword(password.getBytes())
                 .setInfo(info)
                 .build();
         
