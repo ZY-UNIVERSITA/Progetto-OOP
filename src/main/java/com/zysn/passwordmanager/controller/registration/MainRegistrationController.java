@@ -130,7 +130,6 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
         }
     }
     
-
     /**
      * Navigates to the main page.
      */
