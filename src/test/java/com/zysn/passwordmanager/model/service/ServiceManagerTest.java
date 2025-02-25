@@ -1,6 +1,7 @@
 package com.zysn.passwordmanager.model.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -9,27 +10,39 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.zysn.passwordmanager.model.account.entity.UserAccount;
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 
+@ExtendWith(MockitoExtension.class)
 public class ServiceManagerTest {
 
     private ServiceManager serviceManager;
+
+    @Mock
     private UserAccount user;
+
+    @Mock
     private CryptoManager cryptoManager;
+
+    @Mock
     private FileManager fileManager;
+
     private SecretKeySpec secretKey;
+
+    @Mock
+    private AlgorithmConfig algorithmConfig;
 
     @BeforeEach
     void setUp() {
         ServiceManager.resetInstance();
         serviceManager = ServiceManager.getInstance();
 
-        user = mock(UserAccount.class);
-        cryptoManager = mock(CryptoManager.class);
-        fileManager = mock(FileManager.class);
         secretKey = new SecretKeySpec("mysecretkey12345".getBytes(), "AES");
 
         serviceManager.setUserAccount(user);
@@ -148,6 +161,7 @@ public class ServiceManagerTest {
                 .setPassword("EncryptedPassword")
                 .setInfo("Streaming")
                 .build();
+
         serviceManager.addService(service);
 
         String password = "EncryptedPassword";
@@ -155,8 +169,9 @@ public class ServiceManagerTest {
 
         assertNotNull(decryptedPassword);
         assertEquals(password, decryptedPassword);
-    }
 
+        verify(cryptoManager).decrypt(any(), any(), any());
+    }
 
     @Test
     void testLoadServices() {
@@ -164,6 +179,8 @@ public class ServiceManagerTest {
 
         assertTrue(res);
         assertNotNull(serviceManager.getServices());
+
+        verify(fileManager).loadData(any());
     }
 
     @Test
@@ -190,5 +207,7 @@ public class ServiceManagerTest {
         boolean result = serviceManager.saveServices(secretKey, cryptoManager, fileManager);
 
         assertTrue(result);
+
+        verify(fileManager).saveData(any(), any());
     }
 }

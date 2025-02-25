@@ -47,6 +47,7 @@ dependencies {
     val mockitoVersion = "5.12.0"
     // Mockito core
     testImplementation("org.mockito:mockito-core:$mockitoVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 
     // Bouncy castle
     implementation("org.bouncycastle:bcprov-jdk18on:1.80")
