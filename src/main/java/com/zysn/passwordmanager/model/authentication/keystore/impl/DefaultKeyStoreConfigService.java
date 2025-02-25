@@ -10,9 +10,9 @@ import com.zysn.passwordmanager.model.authentication.keystore.api.KeyStoreConfig
 import com.zysn.passwordmanager.model.enums.CryptoLength;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
-import com.zysn.passwordmanager.model.utils.PasswordGenerator;
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator;
 
 /**
  * Service implementation for KeyStore configuration.
@@ -21,6 +21,8 @@ import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
  */
 public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
 
+    final int keyLength;
+
     private final PasswordGenerator passwordGenerator;
     private final CryptoManager cryptoManager;
 
@@ -28,6 +30,7 @@ public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
      * Constructs a new DefaultKeyStoreConfigService.
      */
     public DefaultKeyStoreConfigService() {
+        this.keyLength = CryptoLength.OPTIMAL_PASSWORD_LENGTH.getParameter();
         this.passwordGenerator = new PasswordGenerator();
         this.cryptoManager = new CryptoManager();
     }
@@ -39,7 +42,7 @@ public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
      */
     @Override
     public void generateKeyStoreConfigKey(final KeyStoreConfig keyStoreConfig) {
-        this.passwordGenerator.generateSecureUsablePassword(keyStoreConfig::setKeyStoreEncryptionKey);
+        this.generateAndSetKey(keyLength, keyStoreConfig::setKeyStoreEncryptionKey);
     }
 
     /**
@@ -49,13 +52,10 @@ public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
      */
     @Override
     public void generateKeyStoreConfigSalt(final KeyStoreConfig keyStoreConfig) {
-        final int minSaltLength = CryptoLength.MINIMUM_PASSWORD_LENGTH.getParameter();
-        final int optimalSaltLength = CryptoLength.OPTIMAL_PASSWORD_LENGTH.getParameter();
-
-        this.passwordGenerator.generateSecureUsablePassword(optimalSaltLength, keyStoreConfig::setSaltWithPasswordDerived);
-        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setSaltWithTotpEncryptionKey);
-        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setSaltForHKDF);
-        this.passwordGenerator.generateSecureUsablePassword(minSaltLength, keyStoreConfig::setServiceDecryptionSalt);
+        this.generateAndSetKey(keyLength, keyStoreConfig::setSaltWithPasswordDerived);
+        this.generateAndSetKey(keyLength, keyStoreConfig::setSaltWithTotpEncryptionKey);
+        this.generateAndSetKey(keyLength, keyStoreConfig::setSaltForHKDF);
+        this.generateAndSetKey(keyLength, keyStoreConfig::setServiceDecryptionSalt);
     }
 
     /**
@@ -97,13 +97,25 @@ public class DefaultKeyStoreConfigService implements KeyStoreConfigService {
         return keyStoreConfig;
     }
 
+    private void generateAndSetKey(final int passwordLength, final Consumer<byte[]> setterFunction) {
+        final char[] passwordInChar = this.passwordGenerator.generateHightEntropyKey(passwordLength);
+        
+        try {
+            final byte[] passwordInByte = EncodingUtils.charToByteConverter(passwordInChar);
+
+            setterFunction.accept(passwordInByte);
+        } finally {
+            CryptoUtils.cleanMemory(passwordInChar);
+        }
+    }
+
     /**
      * Generates a TOTP encryption key.
      * 
      * @param setterFunction The function to set the TOTP encryption key.
      */
     private void generateTotpEncryptionKey(final Consumer<byte[]> setterFunction) {
-        this.passwordGenerator.generateSecureUsablePassword(setterFunction);
+        this.generateAndSetKey(keyLength, setterFunction);
     }
 
     /**
