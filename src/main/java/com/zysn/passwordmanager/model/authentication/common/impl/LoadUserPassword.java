@@ -36,7 +36,7 @@ public class LoadUserPassword extends AuthenticationStepAbstract {
         AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", this.getSessionManager().getServiceConfig().getSaltForServiceEncryption(), null);
         serviceManager.setAlgorithmConfig(algorithmConfig);
         
-        serviceManager.setKey(this.getSessionManager().getUserAccount().getMasterKey());
+        serviceManager.setUserAccount(this.getSessionManager().getUserAccount());
     }
     
 }

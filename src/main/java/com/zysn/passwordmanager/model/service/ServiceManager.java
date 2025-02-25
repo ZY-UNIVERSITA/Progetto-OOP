@@ -1,6 +1,5 @@
 package com.zysn.passwordmanager.model.service;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,12 +7,16 @@ import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zysn.passwordmanager.model.account.entity.UserAccount;
+import com.zysn.passwordmanager.model.account.entity.impl.UserAccount;
+import com.zysn.passwordmanager.model.enums.ExtensionsConstant;
+import com.zysn.passwordmanager.model.enums.PathsConstant;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
-import com.zysn.passwordmanager.model.utils.PasswordGenerator;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.file.api.FileManager;
+import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
+import com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator;
 
 /**
  * Singleton class that manages a list of services.
@@ -25,9 +28,13 @@ public class ServiceManager {
     private List<Service> services;
     private UserAccount user;
     private CryptoManager cryptoManager;
+    private FileManager fileManager;
+    private AlgorithmConfig servicesListEncryptionConfig;
+    private String fileName;
 
     private ServiceManager() {
         this.services = new ArrayList<>();
+        this.fileManager = new DefaultFileManager(PathsConstant.SERVICE, ExtensionsConstant.ENC);
     }
 
     /**
@@ -59,6 +66,14 @@ public class ServiceManager {
 
     public void setCryptoManager (CryptoManager crypto) {
         this.cryptoManager = crypto;
+    }
+
+    public void setAlgorithmConfig(AlgorithmConfig servicesListEncryptionConfig) {
+        this.servicesListEncryptionConfig = servicesListEncryptionConfig;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     /**
@@ -116,6 +131,7 @@ public class ServiceManager {
         return res;
     }
 
+    // DA AGGIORNARE
     /**
      * Updates the details of an existing service in the list based on the provided parameters.
      * If a service with the specified name is found, it is replaced with a new instance
@@ -129,16 +145,17 @@ public class ServiceManager {
      * @param newInfo additional information or notes about the service
      * @return {@code true} if the service was found and successfully updated, {@code false} if no service with the specified name was found
      */
-    public boolean modifyService(String serviceName, String newName, String newUsername, String newEmail, String newPassword, String newInfo) {
+    public boolean modifyService(String serviceName, Service newService) {
         for (int i = 0; i < services.size(); i++) {
             Service service = services.get(i);
             if (service.getName().equals(serviceName)) {
                 Service updatedService = new ServiceBuilder(this.user, this.cryptoManager)
-                        .setName(newName)
-                        .setUsername(newUsername)
-                        .setEmail(newEmail)
-                        .setPassword(newPassword)
-                        .setInfo(newInfo)
+                        .setName(newService.getName())
+                        .setUsername(newService.getUsername())
+                        .setEmail(newService.getEmail())
+                        .setEncryptionConfig(newService.getEncryptionConfig())
+                        .setPassword(newService.getPassword())
+                        .setInfo(newService.getInfo())
                         .build();
 
                 services.set(i, updatedService);
@@ -156,8 +173,8 @@ public class ServiceManager {
     public String getDecryptedPassword(Service service) {
         byte[] decryptedBytes = this.cryptoManager.decrypt(
             service.getPassword(),
-            this.user.getMasterKey(),
-            this.user.getAlgorithmConfig()
+            new SecretKeySpec(this.user.getMasterKey(), service.getEncryptionConfig().getAlgorithmName()),
+            service.getEncryptionConfig()
             );
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
@@ -177,6 +194,7 @@ public class ServiceManager {
         return generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
     }
 
+    // DA AGGIORNARE IL JAVADOC
     /**
      * Loads the services from a file and decrypts them using the provided key.
      * 
@@ -185,29 +203,27 @@ public class ServiceManager {
      * @param fileManager the FileManager instance used to read the services file
      * @return {@code true} if the services were successfully loaded and decrypted, {@code false} otherwise
      */
-    public boolean loadServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {
-        byte[] encryptedData = fileManager.loadData("services.dat");
+    public boolean loadServices() {
+        byte[] encryptedData = fileManager.loadData(fileName);
         if (encryptedData == null) {
             return false;
         }
 
-        byte[] decryptedData = cryptoManager.decrypt(encryptedData, key, new AlgorithmConfig("AES", "CBC"));
+        byte[] decryptedData = cryptoManager.decrypt(encryptedData, new SecretKeySpec(user.getMasterKey(), servicesListEncryptionConfig.getAlgorithmName()), servicesListEncryptionConfig);
         if (decryptedData == null) {
             return false;
         }
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<Service> loadedServices = objectMapper.readValue(decryptedData, new TypeReference<List<Service>>(){});
-            this.services = loadedServices;
-        } catch (IOException e) {
-            System.err.println("Error deserializing services data: " + e.getMessage());
+        this.services = EncodingUtils.deserializeData(decryptedData, new TypeReference<List<Service> >() {});
+        
+        if (this.services == null) {
             return false;
         }
-        
+
         return true;
     }
 
+    // DA AGGIORNARE IL JAVADOC
     /**
      * Saves the services to a file after encrypting the data.
      * 
@@ -216,19 +232,18 @@ public class ServiceManager {
      * @param fileManager the FileManager instance used to write the services file
      * @return {@code true} if the services were successfully encrypted and saved, {@code false} otherwise
      */
-    public boolean saveServices(SecretKeySpec key, CryptoManager cryptoManager, FileManager fileManager) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            byte[] encryptedData = objectMapper.writeValueAsBytes(services);
-            byte[] cipherText = cryptoManager.encrypt(encryptedData, key, new AlgorithmConfig("AES", "CBC"));
-            
-            fileManager.saveData("service.data", cipherText);
+    public boolean saveServices() {
+        byte[] servicesList = EncodingUtils.serializeData(this.services);
 
-            return true;
-        } catch (IOException e) {
-            System.err.println("Error serializing services data: " + e.getMessage());
-            return false;
+        try {    
+            byte[] cipherText = cryptoManager.encrypt(servicesList, new SecretKeySpec(user.getMasterKey(), servicesListEncryptionConfig.getAlgorithmName()), servicesListEncryptionConfig);
+
+            this.fileManager.saveData(fileName, cipherText);
+        } finally {
+            CryptoUtils.cleanMemory(servicesList);
         }
+        
+        return true;
     }
 
     @Override

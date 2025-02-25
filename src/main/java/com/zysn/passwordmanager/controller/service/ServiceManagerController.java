@@ -3,10 +3,8 @@ package com.zysn.passwordmanager.controller.service;
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
-import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfigFactory;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 import javafx.event.ActionEvent;
@@ -100,8 +98,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         byte[] newPassword = passwordField.getText().getBytes();
         String newInfo = infoArea.getText();
 
-        byte[] salt = CryptoUtils.generateSalt(12);
-        AlgorithmConfig algorithmConfig = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
+        AlgorithmConfig algorithmConfig = this.service.getEncryptionConfig();
 
         Service newService = new Service(newName, newUsername, newEmail, newPassword, algorithmConfig, newInfo);
 

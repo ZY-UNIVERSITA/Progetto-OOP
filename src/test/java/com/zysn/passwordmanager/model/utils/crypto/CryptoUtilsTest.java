@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.zysn.passwordmanager.model.utils.encoding.EncodingClassForTesting;
+import com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator;
 
 public class CryptoUtilsTest {
     private char[] stringInArrayOfChar;
@@ -67,8 +68,10 @@ public class CryptoUtilsTest {
 
     @Test
     void testGenerateSecureRandomNotUsablePassword() {
+        PasswordGenerator passwordGenerator = new PasswordGenerator();
+
         final int minimumLength = 63;
-        final char[] actualPassword = CryptoUtils.generateSecureRandomNotUsablePassword(minimumLength);
+        final char[] actualPassword = passwordGenerator.generateHightEntropyKey(minimumLength);
 
         assertNotNull(actualPassword, "The password is not null.");
 

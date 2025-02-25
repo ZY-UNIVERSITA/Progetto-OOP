@@ -10,6 +10,7 @@ import com.zysn.passwordmanager.model.authentication.login.api.LoginService;
 import com.zysn.passwordmanager.model.authentication.login.impl.DefaultLoginService;
 import com.zysn.passwordmanager.model.authentication.registration.api.RegistrationService;
 import com.zysn.passwordmanager.model.authentication.registration.impl.DefaultRegistrationService;
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ public final class JavaFXApp extends Application {
 
     private SessionManager sessionManager;
     private ServiceManager serviceManager;
+    private CryptoManager cryptoManager;
     
     private LoginService loginService;
     private RegistrationService registrationService;
@@ -35,12 +37,14 @@ public final class JavaFXApp extends Application {
      */
     @Override
     public void start(final Stage primaryStage) throws Exception {
+        this.cryptoManager = new CryptoManager();
         this.sessionManager = new DefaultSessionManager();
 
         this.loginService = new DefaultLoginService(this.sessionManager);
         this.registrationService = new DefaultRegistrationService(this.sessionManager);
         
         this.serviceManager = ServiceManager.getInstance();
+        this.serviceManager.setCryptoManager(cryptoManager);
 
         try {
             // Create managers and the view navigator
