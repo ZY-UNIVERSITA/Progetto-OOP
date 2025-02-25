@@ -1,6 +1,8 @@
 package com.zysn.passwordmanager.model.service;
 
-import com.zysn.passwordmanager.model.account.entity.UserAccount;
+import javax.crypto.spec.SecretKeySpec;
+
+import com.zysn.passwordmanager.model.account.entity.impl.UserAccount;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 
@@ -16,6 +18,7 @@ public class ServiceBuilder {
     private byte[] encryptedPassword;
     private AlgorithmConfig encryptionConfig;
     private String info;
+    
     private final UserAccount user;
     private final CryptoManager cryptoManager;
 
@@ -28,7 +31,6 @@ public class ServiceBuilder {
         }
         this.user = user;
         this.cryptoManager = crypto;
-        this.encryptionConfig = user.getAlgorithmConfig();
     }
 
     public ServiceBuilder setName(String name) {
@@ -48,12 +50,17 @@ public class ServiceBuilder {
         this.email = email;
         return this;
     }
+    
+    public ServiceBuilder setEncryptionConfig(AlgorithmConfig encryptionConfig) {
+        this.encryptionConfig = encryptionConfig;
+        return this;
+    }
 
-    public ServiceBuilder setPassword(String password) {
-        if (password == null || password.isEmpty()) {
+    public ServiceBuilder setPassword(byte[] password) {
+        if (password == null || password.length <= 0) {
             throw new IllegalArgumentException("Password cannot be null or empty.");
         }
-        this.encryptedPassword = cryptoManager.encrypt(password.getBytes(), user.getMasterKey(), encryptionConfig);
+        this.encryptedPassword = cryptoManager.encrypt(password, new SecretKeySpec(user.getMasterKey(), encryptionConfig.getAlgorithmName()), encryptionConfig);
         return this;
     }
 
