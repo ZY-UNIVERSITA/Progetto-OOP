@@ -1,0 +1,75 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+#serviceVBox {
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+.label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.text-field, .password-field, .text-area {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+}
+
+.button {
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-cursor: hand;
+}
+
+#buttonHBox {
+    -fx-alignment: center;
+    -fx-spacing: 50;
+}
+
+#buttonHBox .button {
+    -fx-pref-width: 100;
+}
+
+#buttonHBox .button#cancelButton {
+    -fx-background-color: #b52d2d;
+}
+
+#buttonHBox .button#cancelButton:hover {
+    -fx-background-color: #d34b4b;
+}
+
+#buttonHBox .button#saveButton {
+    -fx-background-color: #4f9d4f;
+}
+
+#buttonHBox .button#saveButton:hover {
+    -fx-background-color: #62be62;
+}
+
+#usernameHBox, #emailHBox, #passwordHBox, #infoHBox {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+#usernameHBox .label, #emailHBox .label, #passwordHBox .label, #infoHBox .label {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+}
+
+#usernameField, #emailField, #passwordField, #infoArea {
+    -fx-pref-width: 200px;
+    -fx-padding: 8 10 8 10;
+}

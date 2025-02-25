@@ -1,4 +1,4 @@
-package com.zysn.passwordmanager.controller.scene.impl;
+package com.zysn.passwordmanager.controller.main;
 
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 
@@ -52,7 +52,7 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
             if (selectedService != null) {
                 Service service = serviceManager.selectService(selectedService);
                 if (service != null) {
-                    this.getNavigator().navigateTo("/layouts/ServiceManager.fxml", "Service", service);
+                    this.getNavigator().navigateTo("/layouts/service/ServiceManager.fxml", "Service", service);
                 }
             }
     }
