@@ -36,12 +36,6 @@ public class ResourcesFileManagerTest {
     void testOpenInputStream() throws IOException {
         try (InputStream inputStream = this.resourcesFileManager.openInputStream((this.resourcesFileManager.createPath(AlgorithmType.ENCRYPTION_ALGORITHM.getParameter())))) {
             assertNotNull(inputStream, "The file has not been loaded.");
-        } 
-
-    }
-
-    @Test
-    void testSaveData() {
-
+        }
     }
 }
