@@ -5,10 +5,14 @@ on:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
+  workflow_dispatch: 
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -18,6 +22,26 @@ jobs:
         distribution: 'adopt'
         java-version: '23'
     - name: Build with Gradle
-      run: ./gradlew.bat build
+      run: ./gradlew build
+      shell: bash
     - name: Run tests
-      run: ./gradlew.bat test
+      run: ./gradlew test
+      shell: bash
+    - name: Build JAR
+      if: success()
+      run: ./gradlew jar
+      shell: bash
+    - name: Upload JAR
+      if: success()
+      uses: actions/upload-artifact@v2
+      with:
+        name: password-manager
+        path: build/libs/*.jar
+    - name: Download JAR
+      uses: actions/download-artifact@v2
+      with:
+        name: password-manager
+        path: ./artifact
+    - name: Execute JAR
+      run: java -jar ./artifact/my-java-app.jar
+      shell: bash
