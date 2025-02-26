@@ -16,7 +16,6 @@ public class CollectedUserDataTest {
     private byte[] passwordConfirm;
     private AlgorithmConfig algConf;
     private AlgorithmConfig algConf2;
-    private byte[] key;
 
     @BeforeEach
     void setup() {
@@ -37,9 +36,6 @@ public class CollectedUserDataTest {
         this.collectedUserData.setKeyStoreConfigEncryptionConfig(algConf2);
 
         this.collectedUserData.setEnabled2FA(true);
-        
-        this.key = new byte[] { 1, 2, 3 };
-        this.collectedUserData.setTotpKey(key);
     }
 
     @Test
@@ -61,9 +57,6 @@ public class CollectedUserDataTest {
 
         assertNull(this.collectedUserData.getKeyStoreConfigEncryptionConfig(), "The key store config is not null.");
         assertNull(algConf2.getAlgorithmName(), "The name is not null.");
-
-        assertNull(this.collectedUserData.getTotpKey(), "The totp key is not null.");
-        assertArrayEquals(zeroArrays, this.key, "The key is not full of zeros.");
 
         assertFalse(this.collectedUserData.isEnabled2FA(), "The 2FA is not false.");
     }

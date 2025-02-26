@@ -43,7 +43,6 @@ public class CollectedUserData extends UserAccountAbstract {
         CryptoUtils.destroy(this::getConfirmPassword, this::setConfirmPassword);
         CryptoUtils.destroy(this::getPasswordDerivationConfig, this::setPasswordDerivationConfig);
         CryptoUtils.destroy(this::getKeyStoreConfigEncryptionConfig, this::setKeyStoreConfigEncryptionConfig);
-        CryptoUtils.destroy(this::getTotpKey, this::setTotpKey);
     }
 
     public byte[] getPassword() {
