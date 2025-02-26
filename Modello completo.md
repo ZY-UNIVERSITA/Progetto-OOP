@@ -43,14 +43,16 @@ classDiagram
 
         + ServiceManager()
 
-        + addService(Service service) boolean
-        + removeService(String serviceName) boolean
-        + modifyService(String serviceName, Service newService) boolean
-        + getServices() List~Service~
-        + searchService(String searchTerm) List~Service~
-        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) char[]
-        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
-        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager) boolean
+        + selectService(String serviceName): Service
+        + addService(Service service): boolean
+        + removeService(String serviceName): boolean
+        + modifyService(String serviceName, String serviceName, String newName, String newUsername, String newEmail, String newPassword, String newInfo): boolean
+        + getServices(): List~Service~
+        + searchService(String searchTerm): List~Service~
+        + getDecryptedPassword(Service service): String
+        + generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase): char[]
+        + loadServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager): boolean
+        + saveServices(KeySpec key, CryptoManager cryptoManager, FileManager fileManager): boolean
     }
 
     class Service {
@@ -61,8 +63,12 @@ classDiagram
         - AlgorithmConfig encryptionConfig
         - String info
 
-        + Service()
-        + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig, String info)
+        + Service(String name, String username, String email, byte[] encryptedPassword, AlgorithmConfig encryptionConfig,String info)
+    }
+
+    %% Builder per Service
+    class ServiceBuilder {
+        + build(): Service
     }
 
     class SessionManager {

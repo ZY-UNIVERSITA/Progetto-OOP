@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../css/main/Main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.main.MainController">
+   <children>
+      <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleLogout" text="Logout" textAlignment="CENTER">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <TextField fx:id="searchField" onKeyReleased="#handleSearch" prefWidth="400.0" promptText="Search">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <ListView fx:id="servicesListView" prefHeight="300.0" prefWidth="400.0">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </ListView>
+      <Button fx:id="addServiceButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleAddService" text="Add Service">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+   </children>
+</VBox>

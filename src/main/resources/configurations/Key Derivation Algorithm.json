@@ -1,0 +1,87 @@
+[
+    {
+        "algorithmName": "Argon2",
+        "algorithmType": "Key Derivation Algorithm",
+        "parameters": {
+            "memory_cost": {
+                "name": "Memory Cost",
+                "type": "numerical",
+                "min_value": 65536,
+                "default_value": "65536"
+            },
+            "iterations": {
+                "name": "Iterations",
+                "type": "numerical",
+                "min_value": 1,
+                "default_value": "3"
+            },
+            "parallelism": {
+                "name": "Parallelism",
+                "type": "numerical",
+                "min_value": 1,
+                "default_value": "1"
+            },
+            "key_size": {
+                "name": "Key Size",
+                "type": "numerical",
+                "min_value": 128,
+                "default_value": "256"
+            },
+            "variant": {
+                "name": "Variant",
+                "type": "multiple_choose",
+                "options": ["argon2id", "argon2i", "argon2d"],
+                "default_value": "argon2id"
+            }
+        }
+    },
+    {
+        "algorithmName": "Scrypt",
+        "algorithmType": "Key Derivation Algorithm",
+        "parameters": {
+            "cost_factor": {
+                "name": "Cost Factor",
+                "type": "numerical",
+                "min_value": 1,
+                "default_value": "16"
+            },
+            "block_size": {
+                "name": "Block Size",
+                "type": "numerical",
+                "min_value": 1,
+                "default_value": "8"
+            },
+            "parallelism": {
+                "name": "Parallelism",
+                "type": "numerical",
+                "min_value": 1,
+                "default_value": "1"
+            },
+            "key_size": {
+                "name": "Key Size",
+                "type": "numerical",
+                "min_value": 128,
+                "default_value": "256"
+            }
+        }
+    },
+    {
+        "algorithmName": "Bcrypt",
+        "algorithmType": "Key Derivation Algorithm",
+        "parameters": {
+            "cost": {
+                "name": "Cost",
+                "type": "numerical",
+                "min_value": 4,
+                "max_value": 31,
+                "default_value": "12"
+            },
+            "key_size": {
+                "name": "Key",
+                "type": "multiple_choose",
+                "options": ["192"],
+                "default_value": "192"
+            }
+        }
+    }
+]

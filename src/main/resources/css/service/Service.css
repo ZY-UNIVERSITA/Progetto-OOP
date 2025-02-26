@@ -1,0 +1,233 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+#serviceVBox {
+    -fx-alignment: top-center;
+    -fx-padding: 20;
+    -fx-background-color: #2b2b2b;
+    -fx-spacing: 10;
+}
+
+#serviceVBox > .button:first-child {
+    -fx-alignment: top-right;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-cursor: hand;
+    -fx-background-color: #4f9d4f;
+}
+
+#serviceVBox > .button:first-child:hover {
+    -fx-background-color: #62be62; /* Use save button hover color */
+}
+
+#serviceVBox > .text-field:nth-child(2) { /* Style the service name field */
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 15 10 15 10; /* Increased padding for larger appearance */
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+    -fx-font-size: 18px;
+    -fx-alignment: center;
+    -fx-min-height: 50px;
+    -fx-pref-width: 600px;
+}
+
+.label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.text-field, .password-field, .text-area {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+}
+
+.button {
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-cursor: hand;
+    -fx-background-color: #4f9d4f;
+}
+
+.button:hover {
+    -fx-background-color: #62be62;
+}
+
+#buttonHBox {
+    -fx-alignment: center;
+    -fx-spacing: 50;
+}
+
+#buttonHBox .button {
+    -fx-pref-width: 100;
+}
+
+#buttonHBox .button#cancelButton {
+    -fx-background-color: #b52d2d;
+}
+
+#buttonHBox .button#cancelButton:hover {
+    -fx-background-color: #d34b4b;
+}
+
+#usernameHBox, #emailHBox, #passwordHBox, #infoHBox {
+    -fx-alignment: center;
+    -fx-spacing: 10;
+    -fx-padding: 5 0 5 0;
+}
+
+#usernameHBox .label, #emailHBox .label, #passwordHBox .label, #infoHBox .label {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 14px;
+    -fx-min-width: 80px;
+    -fx-alignment: center-right;
+}
+
+#usernameField, #emailField, #passwordField, #infoArea {
+    -fx-pref-width: 200px;
+    -fx-padding: 8 10 8 10;
+}
+
+#passwordHBox {
+    -fx-background-color: #2b2b2b;
+}
+
+#passwordHBox > .password-field {
+    -fx-pref-width: 250px;
+    -fx-padding: 8 10 8 10;
+}
+
+#passwordHBox > .text-field {
+    -fx-pref-width: 250px;
+    -fx-padding: 8 10 8 10;
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+}
+
+.toggle-button {
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-cursor: hand;
+    -fx-background-color: #555555;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #777777;
+}
+
+.toggle-button:hover {
+    -fx-background-color: #666666;
+}
+
+#infoArea {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 120px;
+    -fx-padding: 8 10 8 10;
+}
+
+#passwordGeneratorVBox {
+    -fx-background-color: #2b2b2b;
+    -fx-spacing: 10;
+    -fx-padding: 15;
+}
+
+#passwordGeneratorLabel {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e0e0e0;
+    -fx-alignment: center;
+    -fx-padding: 0 0 10 0;
+}
+
+#lengthChoiceBox {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8;
+}
+
+.check-box {
+    -fx-text-fill: #e0e0e0;
+}
+
+.check-box .box {
+    -fx-background-color: #3c3f41;
+    -fx-border-color: #505050;
+    -fx-border-radius: 2;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #4f9d4f;
+}
+
+#passwordGeneratedField {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+    -fx-editable: false;
+}
+
+#generateButton {
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-cursor: hand;
+    -fx-background-color: #4f9d4f;
+    -fx-pref-width: 120px;
+    -fx-alignment: center;
+}
+
+#generateButton:hover {
+    -fx-background-color: #62be62;
+}
+
+#deleteServiceButton {
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 10 15 10 15;
+    -fx-cursor: hand;
+    -fx-background-color: #b52d2d;
+    -fx-font-size: 16px;
+    -fx-alignment: center;
+    -fx-pref-width: 150px;
+    -fx-translate-y: 10px;
+}
+
+#deleteServiceButton:hover {
+    -fx-background-color: #d34b4b;
+}
