@@ -79,6 +79,8 @@ public class DefaultRegistrationService implements RegistrationService {
 
         this.authenticationStep.forEach(AuthenticationStep::executeStep);
 
+        this.authenticationStep.clear();
+
         this.collectedUserData.setTotpKey(Arrays.copyOf(this.sessionManager.getUserAuthKey().getTotpKey(), this.sessionManager.getUserAuthKey().getTotpKey().length));
     }
 

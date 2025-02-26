@@ -233,7 +233,7 @@ public class ServiceManager implements MustBeDestroyed {
      * @param fileManager the FileManager instance used to write the services file
      * @return {@code true} if the services were successfully encrypted and saved, {@code false} otherwise
      */
-    public boolean saveServices() {
+    public void saveServices() {
         byte[] servicesList = EncodingUtils.serializeData(this.services);
 
         try {    
@@ -243,8 +243,6 @@ public class ServiceManager implements MustBeDestroyed {
         } finally {
             CryptoUtils.cleanMemory(servicesList);
         }
-        
-        return true;
     }
 
     @Override
