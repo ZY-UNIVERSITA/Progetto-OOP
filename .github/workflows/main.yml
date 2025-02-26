@@ -27,21 +27,4 @@ jobs:
     - name: Run tests
       run: ./gradlew test
       shell: bash
-    - name: Build JAR
-      if: success()
-      run: ./gradlew jar
-      shell: bash
-    - name: Upload JAR
-      if: success()
-      uses: actions/upload-artifact@v2
-      with:
-        name: password-manager
-        path: build/libs/*.jar
-    - name: Download JAR
-      uses: actions/download-artifact@v2
-      with:
-        name: password-manager
-        path: ./artifact
-    - name: Execute JAR
-      run: java -jar ./artifact/my-java-app.jar
-      shell: bash
+
