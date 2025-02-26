@@ -123,6 +123,8 @@ public class LoginController extends ControllerAbstract<Stage, AccountManager> {
         } else {
             this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
         }
+        
+        this.collectedUserData.destroy();
     }
 
     /**

@@ -5,11 +5,11 @@ import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmCo
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 
 /**
- * The CollectedUserData class extends UserAccountAbstract and provides additional
+ * The CollectedUserData class extends UserAccountAbstract and provides
+ * additional
  * functionality specific to user data collection.
  */
 public class CollectedUserData extends UserAccountAbstract {
-
     private byte[] password;
 
     private byte[] confirmPassword;
@@ -36,7 +36,7 @@ public class CollectedUserData extends UserAccountAbstract {
     @Override
     public void destroy() {
         super.destroy();
-        
+
         this.setEnabled2FA(false);
 
         CryptoUtils.destroy(this::getPassword, this::setPassword);

@@ -1,5 +1,7 @@
 package com.zysn.passwordmanager.model.authentication.common.impl;
 
+import org.bouncycastle.util.Arrays;
+
 import com.zysn.passwordmanager.model.account.entity.impl.CollectedUserData;
 import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
 import com.zysn.passwordmanager.model.authentication.common.api.AuthenticationCollectingStepAbstract;
@@ -43,7 +45,7 @@ public class InsertUserData extends AuthenticationCollectingStepAbstract {
      * Sets the password in the session manager.
      */
     private void setPassword() {
-        final byte[] password = super.getCollectedUserData().getPassword();
+        final byte[] password = Arrays.copyOf(super.getCollectedUserData().getPassword(), super.getCollectedUserData().getPassword().length);
         super.getSessionManager().getUserAuthKey().setPassword(password);
     }
 
