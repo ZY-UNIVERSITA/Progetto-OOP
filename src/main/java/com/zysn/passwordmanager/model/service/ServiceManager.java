@@ -16,6 +16,7 @@ import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 import com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator;
 
 /**
@@ -23,7 +24,7 @@ import com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator;
  * Ensures that only one instance of ServiceManager exists throughout the application.
  * Use {@link #getInstance()} to access the instance.
  */
-public class ServiceManager {
+public class ServiceManager implements MustBeDestroyed {
     private static ServiceManager instance;
     private List<Service> services;
     private UserAccount user;
@@ -245,6 +246,12 @@ public class ServiceManager {
     }
 
     @Override
+    public void destroy() {
+        this.services.forEach(MustBeDestroyed::destroy);
+        this.services.clear();
+    }
+
+    @Override
     public String toString() {
         return "ServiceManager [services=" + services + "]";
     }
@@ -273,5 +280,6 @@ public class ServiceManager {
             return false;
         return true;
     }
+ 
     
 }

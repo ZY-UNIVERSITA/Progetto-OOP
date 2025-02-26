@@ -27,7 +27,7 @@ public interface AccountManager {
      *
      * @return true if the logout was successful, false otherwise.
      */
-    public boolean logout();
+    public void logout();
 
     /**
      * Gets the session manager associated with the user account.

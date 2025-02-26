@@ -7,6 +7,8 @@ package com.zysn.passwordmanager.controller.registration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import org.bouncycastle.util.Arrays;
+
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 import com.zysn.passwordmanager.controller.scene.api.StepHandler;
 import com.zysn.passwordmanager.model.account.entity.impl.CollectedUserData;
@@ -86,7 +88,7 @@ public class RegistrationStep5Controller extends ControllerAbstract<Pane, Collec
      * code, and starts the timer.
      */
     public void initializeData() {
-        this.totpAuthentication = new DefaultTotpAuthentication(super.getData().getTotpKey());
+        this.totpAuthentication = new DefaultTotpAuthentication(Arrays.copyOf(super.getData().getTotpKey(), super.getData().getTotpKey().length));
         this.load2FAImage();
         this.update2FACode();
         this.setTimer();
