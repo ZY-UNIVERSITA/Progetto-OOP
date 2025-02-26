@@ -1,6 +1,7 @@
 package com.zysn.passwordmanager.model.authentication.registration.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.zysn.passwordmanager.model.account.entity.impl.CollectedUserData;
@@ -78,7 +79,7 @@ public class DefaultRegistrationService implements RegistrationService {
 
         this.authenticationStep.forEach(AuthenticationStep::executeStep);
 
-        this.collectedUserData.setTotpKey(this.sessionManager.getUserAuthKey().getTotpKey());
+        this.collectedUserData.setTotpKey(Arrays.copyOf(this.sessionManager.getUserAuthKey().getTotpKey(), this.sessionManager.getUserAuthKey().getTotpKey().length));
     }
 
     /**
