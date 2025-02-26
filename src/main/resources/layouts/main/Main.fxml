@@ -9,7 +9,7 @@
 
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../css/main/Main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.main.MainController">
    <children>
-      <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleLogout" text="Logout" textAlignment="CENTER">
+      <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleLogout" text="Logout" textAlignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>
