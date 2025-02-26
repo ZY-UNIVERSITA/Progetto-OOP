@@ -48,8 +48,6 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void register(final CollectedUserData collectedUserData) {
         this.registrationService.register(collectedUserData);
-        
-        collectedUserData.destroy();
     }
 
     /**
@@ -60,8 +58,6 @@ public class DefaultAccountManager implements AccountManager {
     @Override
     public void login(final CollectedUserData collectedUserData) {
         this.loginService.login(collectedUserData);
-
-        collectedUserData.destroy();
     }
 
     /**
