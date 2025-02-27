@@ -83,7 +83,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
     private Button generateButton;
 
     private Service service;
-    private ServiceManager serviceManager;
+    private ServiceManager serviceManager = ServiceManager.getInstance();
 
     @FXML
     public void initialize() {
