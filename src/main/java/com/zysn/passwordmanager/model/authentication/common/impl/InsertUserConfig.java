@@ -1,9 +1,11 @@
 package com.zysn.passwordmanager.model.authentication.common.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.zysn.passwordmanager.model.account.entity.impl.CollectedUserData;
 import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
 import com.zysn.passwordmanager.model.authentication.common.api.AuthenticationCollectingStepAbstract;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 
 /**
  * InsertUserConfig is a step in the authentication process that collects and sets
@@ -35,7 +37,11 @@ public class InsertUserConfig extends AuthenticationCollectingStepAbstract {
      * Sets the password derivation configuration in the session manager.
      */
     private void setPasswordDerivationConfig() {
-        final AlgorithmConfig algorithmConfig = super.getCollectedUserData().getPasswordDerivationConfig();
+        byte[] serializedData = EncodingUtils.serializeData(super.getCollectedUserData().getPasswordDerivationConfig());
+
+        final AlgorithmConfig algorithmConfig = EncodingUtils.deserializeData(serializedData, new TypeReference<AlgorithmConfig>() {
+            
+        });
         super.getSessionManager().getUserAuthInfo().setPasswordDerivedKeyConfig(algorithmConfig);
     }
 
@@ -43,7 +49,11 @@ public class InsertUserConfig extends AuthenticationCollectingStepAbstract {
      * Sets the keystore encryption configuration in the session manager.
      */
     private void setKeyStoreConfigEncryptionConfig() {
-        final AlgorithmConfig algorithmConfig = super.getCollectedUserData().getKeyStoreConfigEncryptionConfig();
+        byte[] serializedData = EncodingUtils.serializeData(super.getCollectedUserData().getKeyStoreConfigEncryptionConfig());
+
+        final AlgorithmConfig algorithmConfig = EncodingUtils.deserializeData(serializedData, new TypeReference<AlgorithmConfig>() {
+            
+        });
         super.getSessionManager().getUserAuthInfo().setKeyStoreEncryptionConfig(algorithmConfig);
     }
 }

@@ -69,6 +69,8 @@ public class DefaultLoginService implements LoginService {
         this.loadUserPassword();
 
         this.authenticationStep.forEach(AuthenticationStep::executeStep);
+
+        this.authenticationStep.clear();
     }
 
     /**

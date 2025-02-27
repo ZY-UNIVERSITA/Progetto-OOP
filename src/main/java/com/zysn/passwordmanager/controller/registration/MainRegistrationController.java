@@ -95,8 +95,6 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
 
         if (currentStep < MAX_STEPS) {
             handleCurrentStep();
-            currentStep++;
-            updateStepView();
         } else {
             navigateToMain();
         }
@@ -127,6 +125,9 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
             if (!this.collectedUserData.isEnabled2FA()) {
                 navigateToMain();
             }
+        } else {
+            currentStep++;
+            updateStepView();
         }
     }
     
@@ -135,6 +136,7 @@ public class MainRegistrationController extends ControllerAbstract<Stage, Accoun
      */
     private void navigateToMain() {
         this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
+        this.collectedUserData.destroy();
     }
 
     /**

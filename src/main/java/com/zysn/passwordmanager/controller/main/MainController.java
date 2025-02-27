@@ -7,13 +7,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
@@ -75,6 +72,10 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
     private void handleLogout(ActionEvent event) {
+        this.getData().getServiceManager().saveServices();
+
+        this.getData().logout();
         
+        this.getNavigator().navigateTo("/layouts/login/Login.fxml", "Login");
     }
 }
