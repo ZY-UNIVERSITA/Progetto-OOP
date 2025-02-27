@@ -247,6 +247,11 @@ public class ServiceManager implements MustBeDestroyed {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((services == null) ? 0 : services.hashCode());
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
+        result = prime * result + ((cryptoManager == null) ? 0 : cryptoManager.hashCode());
+        result = prime * result
+                + ((servicesListEncryptionConfig == null) ? 0 : servicesListEncryptionConfig.hashCode());
+        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
         return result;
     }
 
@@ -264,8 +269,26 @@ public class ServiceManager implements MustBeDestroyed {
                 return false;
         } else if (!services.equals(other.services))
             return false;
+        if (user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!user.equals(other.user))
+            return false;
+        if (cryptoManager == null) {
+            if (other.cryptoManager != null)
+                return false;
+        } else if (!cryptoManager.equals(other.cryptoManager))
+            return false;
+        if (servicesListEncryptionConfig == null) {
+            if (other.servicesListEncryptionConfig != null)
+                return false;
+        } else if (!servicesListEncryptionConfig.equals(other.servicesListEncryptionConfig))
+            return false;
+        if (fileName == null) {
+            if (other.fileName != null)
+                return false;
+        } else if (!fileName.equals(other.fileName))
+            return false;
         return true;
-    }
- 
-    
+    }   
 }
