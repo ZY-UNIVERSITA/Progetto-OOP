@@ -77,6 +77,10 @@ public class ServiceManager implements MustBeDestroyed {
         this.fileName = fileName;
     }
 
+    public CryptoManager getCryptoManager () {
+        return this.cryptoManager;
+    }
+
     /**
      * Lists all available services.
      * @return services
@@ -216,8 +220,6 @@ public class ServiceManager implements MustBeDestroyed {
 
     /**
      * Saves the services to a file after encrypting the data.
-     * 
-     * @return {@code true} if the services were successfully encrypted and saved, {@code false} otherwise
      */
     public void saveServices() {
         byte[] servicesList = EncodingUtils.serializeData(this.services);
