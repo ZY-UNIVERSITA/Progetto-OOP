@@ -3,6 +3,7 @@ package com.zysn.passwordmanager.controller.main;
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,9 +35,7 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
     public void initialize() {
-        for (Service s : serviceManager.getServices()) {
-            serviceNames.add(s.getName());
-        }
+        serviceNames.setAll(serviceManager.getServices().stream().map(Service::getName).toList());
         servicesListView.setItems(serviceNames);
 
         servicesListView.setOnMouseClicked(event -> handleServiceClick());
@@ -50,7 +49,7 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
                     this.getNavigator().navigateTo("/layouts/service/ServiceManager.fxml", "Service", service);
                 }
             }
-    }
+    }   
 
     @FXML
     private void handleSearch(KeyEvent event) {
