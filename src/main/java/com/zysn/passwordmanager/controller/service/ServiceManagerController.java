@@ -5,8 +5,6 @@ import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
