@@ -42,14 +42,22 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     }
 
     private void handleServiceClick() {
-        String selectedService = servicesListView.getSelectionModel().getSelectedItem();
+        /*String selectedService = servicesListView.getSelectionModel().getSelectedItem();
             if (selectedService != null) {
                 Service service = serviceManager.selectService(selectedService);
                 if (service != null) {
                     this.getNavigator().navigateTo("/layouts/service/ServiceManager.fxml", "Service", service);
                 }
+            }*/
+        int selectedIndex = servicesListView.getSelectionModel().getSelectedIndex();
+        if (selectedIndex != -1) {
+            Service service = serviceManager.getServices().get(selectedIndex);
+            if (service != null) {
+                this.getNavigator().navigateTo("/layouts/service/ServiceManager.fxml", "Service", service);
             }
-    }   
+        }
+            
+    }  
 
     @FXML
     private void handleSearch(KeyEvent event) {
