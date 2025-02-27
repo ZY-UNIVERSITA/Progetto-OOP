@@ -29,6 +29,10 @@ public class Service implements MustBeDestroyed {
         this.info = info;
     }
 
+    public Service() {
+        
+    }
+
     @Override
     public void destroy() {
         CryptoUtils.destroy(this::getName, this::setName);

@@ -142,18 +142,19 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
             this.service = (Service) optionalData;
         }
 
+        this.serviceManager = ServiceManager.getInstance();
+
         if (service != null) {
             serviceNameField.setText(service.getName());
             usernameField.setText(service.getUsername());
             emailField.setText(service.getEmail());
-            passwordField.setText(String.valueOf(EncodingUtils.byteToCharConverter(service.getPassword())));
+            passwordField.setText(this.serviceManager.getDecryptedPassword(service));
             passwordVisibleField.setVisible(false);
             infoArea.setText(service.getInfo());
 
             lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
         }
 
-        this.serviceManager = ServiceManager.getInstance();
     }
 
     
