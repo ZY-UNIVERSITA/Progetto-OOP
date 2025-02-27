@@ -32,7 +32,6 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     private ServiceManager serviceManager = ServiceManager.getInstance();
     private ObservableList<String> serviceNames = FXCollections.observableArrayList();
 
-
     @FXML
     public void initialize() {
         for (Service s : serviceManager.getServices()) {
@@ -44,7 +43,6 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     }
 
     private void handleServiceClick() {
-
         String selectedService = servicesListView.getSelectionModel().getSelectedItem();
             if (selectedService != null) {
                 Service service = serviceManager.selectService(selectedService);
@@ -56,7 +54,6 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
     private void handleSearch(KeyEvent event) {
-        
         String searchText = searchField.getText();
         ObservableList<String> filteredList = FXCollections.observableArrayList();
         for (Service service : serviceManager.searchService(searchText)) {
@@ -67,7 +64,7 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
     private void handleAddService(ActionEvent event) {
-
+        this.getNavigator().navigateTo("/layouts/main/Add.fxml", "Add Service");
     }
 
     @FXML

@@ -127,8 +127,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         boolean special = specialCheck.isSelected();
 
         char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
-        //passwordGeneratedField.setText((String)password);
-        //passwordField.setText(password);
+        passwordField.setText(new String(password));
     }
 
     @FXML
@@ -155,6 +154,5 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
 
         this.serviceManager = ServiceManager.getInstance();
     }
-
     
 }
