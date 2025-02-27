@@ -137,7 +137,7 @@ public class RegistrationStep5Controller extends ControllerAbstract<Pane, Collec
      * @param totpAuthentication the TOTP authentication instance
      */
     private void startTimer(final DefaultTotpAuthentication totpAuthentication) {
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), _ -> {
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), ignored -> {
             timeLeft--;
 
             final double progress = timeLeft / TOTAL_TIME;

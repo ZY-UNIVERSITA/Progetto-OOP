@@ -132,30 +132,24 @@ public class ServiceManager implements MustBeDestroyed {
         return res;
     }
 
-    // DA AGGIORNARE
     /**
-     * Updates the details of an existing service in the list based on the provided parameters.
-     * If a service with the specified name is found, it is replaced with a new instance
-     * containing the updated details.
+     * Updates the details of an existing service with the details of service passed as an argument.
      *
      * @param serviceName the current name of the service to be modified
-     * @param newName the new name to set for the service
-     * @param newUsername the new username associated with the service
-     * @param newEmail the new email associated with the service
-     * @param newPassword the new password to store for the service
-     * @param newInfo additional information or notes about the service
-     * @return {@code true} if the service was found and successfully updated, {@code false} if no service with the specified name was found
+     * @param newService the service with new details
+     * @return {@code true} if the service was successfully updated, {@code false} otherwise
      */
     public boolean modifyService(String serviceName, Service newService) {
         for (int i = 0; i < services.size(); i++) {
             Service service = services.get(i);
             if (service.getName().equals(serviceName)) {
+                String password = getDecryptedPassword(newService);
                 Service updatedService = new ServiceBuilder(this.user, this.cryptoManager)
                         .setName(newService.getName())
                         .setUsername(newService.getUsername())
                         .setEmail(newService.getEmail())
                         .setEncryptionConfig(newService.getEncryptionConfig())
-                        .setPassword(newService.getPassword())
+                        .setPassword(password.getBytes())
                         .setInfo(newService.getInfo())
                         .build();
 
@@ -195,13 +189,9 @@ public class ServiceManager implements MustBeDestroyed {
         return generator.generatePassword(length, useSpecialChar, useNumbers, useUpperCase, useLowerCase);
     }
 
-    // DA AGGIORNARE IL JAVADOC
     /**
-     * Loads the services from a file and decrypts them using the provided key.
+     * Loads the services from a file and decrypts them.
      * 
-     * @param key the secret key used for decryption
-     * @param cryptoManager the CryptoManager instance used for decryption
-     * @param fileManager the FileManager instance used to read the services file
      * @return {@code true} if the services were successfully loaded and decrypted, {@code false} otherwise
      */
     public boolean loadServices() {
@@ -224,13 +214,9 @@ public class ServiceManager implements MustBeDestroyed {
         return true;
     }
 
-    // DA AGGIORNARE IL JAVADOC
     /**
      * Saves the services to a file after encrypting the data.
      * 
-     * @param key the secret key used for encryption
-     * @param cryptoManager the CryptoManager instance used for encryption
-     * @param fileManager the FileManager instance used to write the services file
      * @return {@code true} if the services were successfully encrypted and saved, {@code false} otherwise
      */
     public void saveServices() {
@@ -261,6 +247,11 @@ public class ServiceManager implements MustBeDestroyed {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((services == null) ? 0 : services.hashCode());
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
+        result = prime * result + ((cryptoManager == null) ? 0 : cryptoManager.hashCode());
+        result = prime * result
+                + ((servicesListEncryptionConfig == null) ? 0 : servicesListEncryptionConfig.hashCode());
+        result = prime * result + ((fileName == null) ? 0 : fileName.hashCode());
         return result;
     }
 
@@ -278,8 +269,26 @@ public class ServiceManager implements MustBeDestroyed {
                 return false;
         } else if (!services.equals(other.services))
             return false;
+        if (user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!user.equals(other.user))
+            return false;
+        if (cryptoManager == null) {
+            if (other.cryptoManager != null)
+                return false;
+        } else if (!cryptoManager.equals(other.cryptoManager))
+            return false;
+        if (servicesListEncryptionConfig == null) {
+            if (other.servicesListEncryptionConfig != null)
+                return false;
+        } else if (!servicesListEncryptionConfig.equals(other.servicesListEncryptionConfig))
+            return false;
+        if (fileName == null) {
+            if (other.fileName != null)
+                return false;
+        } else if (!fileName.equals(other.fileName))
+            return false;
         return true;
-    }
- 
-    
+    }   
 }
