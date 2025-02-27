@@ -142,12 +142,13 @@ public class ServiceManager {
         for (int i = 0; i < services.size(); i++) {
             Service service = services.get(i);
             if (service.getName().equals(serviceName)) {
+                String password = getDecryptedPassword(newService);
                 Service updatedService = new ServiceBuilder(this.user, this.cryptoManager)
                         .setName(newService.getName())
                         .setUsername(newService.getUsername())
                         .setEmail(newService.getEmail())
                         .setEncryptionConfig(newService.getEncryptionConfig())
-                        .setPassword(newService.getPassword())
+                        .setPassword(password.getBytes())
                         .setInfo(newService.getInfo())
                         .build();
 
