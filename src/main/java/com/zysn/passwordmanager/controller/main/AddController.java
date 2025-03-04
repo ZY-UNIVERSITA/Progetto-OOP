@@ -93,7 +93,7 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         passwordField.clear();
         infoArea.clear();
         
-        this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Add Service");
+        this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
     
 
