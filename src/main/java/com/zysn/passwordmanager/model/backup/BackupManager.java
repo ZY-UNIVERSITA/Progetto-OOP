@@ -57,7 +57,7 @@ public class BackupManager {
     
         byte[] encryptedBackup = serviceManager.getCryptoManager().encrypt(
             serializedBackup,
-            new SecretKeySpec(passwordBytes, config.getAlgorithName()),
+            new SecretKeySpec(passwordBytes, config.getAlgorithmName()),
             config
         );
     
@@ -83,7 +83,7 @@ public class BackupManager {
     
         byte[] decryptedBackup = serviceManager.getCryptoManager().decrypt(
             encryptedBackup,
-            new SecretKeySpec(passwordBytes, config.getAlgorithName()),
+            new SecretKeySpec(passwordBytes, config.getAlgorithmName()),
             config
         );
     
