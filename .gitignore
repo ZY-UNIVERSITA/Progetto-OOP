@@ -12,6 +12,9 @@ bin/
 
 esempio
 Analisi e progettazione
+.keystore
+.services
+.users
 
 # Compiled class file
 *.class
@@ -42,4 +45,4 @@ replay_pid*
 !gradle/wrapper/gradle-wrapper.jar
 
 # VSCode
-.vscode/
+.vscode
