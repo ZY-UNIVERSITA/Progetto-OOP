@@ -93,7 +93,7 @@ public abstract class GenericNavigatorAbstract<S, T> implements GenericNavigator
      *
      * @return the view
      */
-    protected S getView() {
+    public S getView() {
         return view;
     }
 

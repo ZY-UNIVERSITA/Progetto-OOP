@@ -93,7 +93,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         String newName = serviceNameField.getText();
         String newUsername = usernameField.getText();
         String newEmail = emailField.getText();
-        byte[] newPassword = passwordField.getText().getBytes();
+        byte[] newPassword = passwordVisibleField.getText().getBytes();
         String newInfo = infoArea.getText();
 
         AlgorithmConfig algorithmConfig = this.service.getEncryptionConfig();
@@ -101,6 +101,8 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         Service newService = new Service(newName, newUsername, newEmail, newPassword, algorithmConfig, newInfo);
 
         serviceManager.modifyService(service.getName(), newService);
+
+        super.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
     @FXML
