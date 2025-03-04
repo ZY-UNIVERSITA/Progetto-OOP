@@ -147,17 +147,19 @@ public class ServiceManager implements MustBeDestroyed {
         for (int i = 0; i < services.size(); i++) {
             Service service = services.get(i);
             if (service.getName().equals(serviceName)) {
-                String password = getDecryptedPassword(newService);
                 Service updatedService = new ServiceBuilder(this.user, this.cryptoManager)
                         .setName(newService.getName())
                         .setUsername(newService.getUsername())
                         .setEmail(newService.getEmail())
                         .setEncryptionConfig(newService.getEncryptionConfig())
-                        .setPassword(password.getBytes())
+                        .setPassword(newService.getPassword())
                         .setInfo(newService.getInfo())
                         .build();
 
                 services.set(i, updatedService);
+
+                this.saveServices();
+                
                 return true;
             }
         }
@@ -209,8 +211,8 @@ public class ServiceManager implements MustBeDestroyed {
             return false;
         }
 
-        this.services = EncodingUtils.deserializeData(decryptedData, new TypeReference<List<Service> >() {});
-        
+        this.services = EncodingUtils.deserializeData(decryptedData, new TypeReference<List<Service>>() {});
+
         if (this.services == null) {
             return false;
         }

@@ -14,7 +14,7 @@ public class Service implements MustBeDestroyed {
     private String name;
     private String username;
     private String email;
-    private byte[] encryptedPassword;
+    private byte[] password;
     private AlgorithmConfig encryptionConfig;
     private String info;
 
@@ -24,9 +24,13 @@ public class Service implements MustBeDestroyed {
         this.name = name;
         this.username = username;
         this.email = email;
-        this.encryptedPassword = password;
+        this.password = password;
         this.encryptionConfig = encryptionConfig;
         this.info = info;
+    }
+
+    public Service() {
+        
     }
 
     @Override
@@ -34,7 +38,7 @@ public class Service implements MustBeDestroyed {
         CryptoUtils.destroy(this::getName, this::setName);
         CryptoUtils.destroy(this::getUsername, this::setUsername);
         CryptoUtils.destroy(this::getEmail, this::setEmail);
-        CryptoUtils.destroy(this::getEncryptedPassword, this::setEncryptedPassword);
+        CryptoUtils.destroy(this::getPassword, this::setPassword);
         CryptoUtils.destroy(this::getEncryptionConfig, this::setEncryptionConfig);
         CryptoUtils.destroy(this::getInfo, this::setInfo);
     }
@@ -53,7 +57,7 @@ public class Service implements MustBeDestroyed {
     }
 
     public byte[] getPassword() {
-        return this.encryptedPassword;
+        return this.password;
     }
 
     public AlgorithmConfig getEncryptionConfig() {
@@ -106,10 +110,6 @@ public class Service implements MustBeDestroyed {
         return true;
     }
 
-    public byte[] getEncryptedPassword() {
-        return encryptedPassword;
-    }
-
     public void setName(final String name) {
         this.name = name;
     }
@@ -122,8 +122,8 @@ public class Service implements MustBeDestroyed {
         this.email = email;
     }
 
-    public void setEncryptedPassword(final byte[] encryptedPassword) {
-        this.encryptedPassword = encryptedPassword;
+    public void setPassword(final byte[] password) {
+        this.password = password;
     }
 
     public void setEncryptionConfig(final AlgorithmConfig encryptionConfig) {

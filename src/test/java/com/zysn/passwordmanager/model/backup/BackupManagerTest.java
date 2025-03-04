@@ -26,7 +26,7 @@ public class BackupManagerTest {
         session = mock(SessionManager.class);
         accountManager = mock(AccountManager.class);
 
-        backupManager = new BackupManager(fileManager, session);
+        backupManager = new BackupManager(fileManager);
     }
 
     @Test
