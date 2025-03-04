@@ -5,8 +5,6 @@ import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -143,18 +141,19 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
             this.service = (Service) optionalData;
         }
 
+        this.serviceManager = ServiceManager.getInstance();
+
         if (service != null) {
             serviceNameField.setText(service.getName());
             usernameField.setText(service.getUsername());
             emailField.setText(service.getEmail());
-            passwordField.setText(serviceManager.getDecryptedPassword(service));
+            passwordField.setText(this.serviceManager.getDecryptedPassword(service));
             passwordVisibleField.setVisible(false);
             infoArea.setText(service.getInfo());
 
             lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
         }
 
-        this.serviceManager = ServiceManager.getInstance();
     }
     
 }

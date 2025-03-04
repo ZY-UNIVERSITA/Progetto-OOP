@@ -52,7 +52,7 @@ public class BackupManagerTest {
 
         services = Arrays.asList(serviceMock);
 
-        backupManager = new BackupManager(fileManager);
+        backupManager = new BackupManager(fileManager, null);
     }
 
     @Test
