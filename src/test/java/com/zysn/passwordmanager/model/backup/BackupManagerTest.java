@@ -1,67 +1,86 @@
 package com.zysn.passwordmanager.model.backup;
 
-import com.zysn.passwordmanager.model.service.Service;
-import com.zysn.passwordmanager.model.account.entity.impl.UserAccount;
-import com.zysn.passwordmanager.model.utils.file.api.FileManager;
-import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
-import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.MockedStatic;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import com.zysn.passwordmanager.model.service.Service;
+import com.zysn.passwordmanager.model.service.ServiceManager;
+import com.zysn.passwordmanager.model.utils.data.DataUtils;
+import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
+import com.zysn.passwordmanager.model.utils.file.api.FileManager;
+import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
+import com.zysn.passwordmanager.model.account.manager.impl.DefaultSessionManager;
+import com.zysn.passwordmanager.model.security.manager.CryptoManager;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BackupManagerTest {
 
     private BackupManager backupManager;
-
-    @Mock
     private FileManager fileManager;
-
-    @Mock
-    private ServiceManager serviceManager;
-
-    @Mock
+    private DefaultSessionManager session;
     private AccountManager accountManager;
-
-    private UserAccount userAccount;
-    private List<Service> services;
+    private ServiceManager serviceManager;
+    private CryptoManager cryptoManager;
 
     @BeforeEach
     public void setUp() {
         fileManager = mock(FileManager.class);
-        serviceManager = mock(ServiceManager.class);
+        session = mock(DefaultSessionManager.class);
         accountManager = mock(AccountManager.class);
-        Service serviceMock = mock(Service.class);
+        serviceManager = mock(ServiceManager.class);
+        cryptoManager = mock(CryptoManager.class);
 
-        AlgorithmConfig algorithmConfig = mock(AlgorithmConfig.class);
-        
-        when(serviceMock.getEncryptionConfig()).thenReturn(algorithmConfig);
-        when(serviceManager.getServices()).thenReturn(Arrays.asList(serviceMock));
+        try (MockedStatic<ServiceManager> mockedServiceManager = mockStatic(ServiceManager.class)) {
+            mockedServiceManager.when(ServiceManager::getInstance).thenReturn(serviceManager);
+           
+            when(serviceManager.getCryptoManager()).thenReturn(cryptoManager);
 
-        userAccount = new UserAccount();
-        userAccount.setMasterKey(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
 
-        services = Arrays.asList(serviceMock);
+            when(cryptoManager.encrypt(any(), any(), any())).thenReturn(new byte[]{1, 2, 3});
+            when(cryptoManager.decrypt(any(), any(), any())).thenReturn(new byte[]{4, 5, 6});
 
-        backupManager = new BackupManager(fileManager, null);
+
+            try (MockedStatic<DataUtils> mockedDataUtils = mockStatic(DataUtils.class)) {
+                byte[] mockSource = new byte[]{7, 8, 9};
+                mockedDataUtils.when(() -> DataUtils.concatArray(any(byte[].class), any(byte[].class))).thenReturn(mockSource);
+
+
+                try (MockedStatic<EncodingUtils> mockedEncodingUtils = mockStatic(EncodingUtils.class)) {
+                    BackupData mockBackupData = mock(BackupData.class);
+                    mockedEncodingUtils.when(() -> EncodingUtils.deserializeData(any(), any())).thenReturn(mockBackupData);
+
+
+                    backupManager = new BackupManager(fileManager, session);
+                }
+            }
+        }
     }
 
     @Test
-    public void testCreateBackup() {
-        
+    public void testCreateBackup() {      
+        List<Service> services = Arrays.asList(mock(Service.class), mock(Service.class));
+       
+        byte[] result = backupManager.createBackup(services);
+        assertNotNull(result);
     }
 
     @Test
     public void testRestoreBackup() {
-        
+        File backupFileMock = mock(File.class);
+       
+        char[] password = "password123".toCharArray();
+        byte[] salt = new byte[16];
+       
+        when(backupFileMock.getAbsolutePath()).thenReturn("/fake/path");
+        when(fileManager.loadData("/fake/path")).thenReturn(new byte[10]);
+       
+        assertDoesNotThrow(() -> backupManager.restoreBackup(backupFileMock, accountManager, password, salt));
     }
 }
