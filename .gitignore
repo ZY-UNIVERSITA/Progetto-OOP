@@ -15,6 +15,7 @@ Analisi e progettazione
 .keystore
 .services
 .users
+.backup
 
 # Compiled class file
 *.class
