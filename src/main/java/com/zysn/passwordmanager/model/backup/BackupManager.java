@@ -40,9 +40,14 @@ public class BackupManager {
     /**
      * Creates an encrypted backup of the provided services.
      * @param services List of services to be saved in the backup.
-     * @return Byte array containing the password and salt used for encryption.
+     * @return Byte array containing the password and salt used for encryption,
+     *          or throws an exception if the user is not authenticated.
+     * @throws IllegalStateException If the user is not authenticated.
      */
     public byte[] createBackup(List<Service> services) {
+        if (this.session.getUserAccount().getUsername() != null) {
+            throw new IllegalStateException("Must be authenticated user to create backup.");
+        }
         byte[] salt = CryptoUtils.generateSalt(16);
         char[] password = serviceManager.generatePassword(32, true, true, true, true);
     
@@ -72,8 +77,12 @@ public class BackupManager {
      * @param accountManager Account manager instance.
      * @param password Password used for decryption.
      * @param salt Salt used for decryption.
+     * @throws IllegalStateException If the user is not authenticated.
      */
     public void restoreBackup(File backupFile, AccountManager accountManager, char[] password, byte[] salt) {
+        if (this.session.getUserAccount().getUsername() != null) {
+            throw new IllegalStateException("Must be authenticated user to restore backup.");
+        }
         FileManager fileManager = new GenericFileManager();
         byte[] encryptedBackup = fileManager.loadData(backupFile.getAbsolutePath());
 
