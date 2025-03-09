@@ -18,7 +18,7 @@
   <content>
       <VBox fx:id="serviceVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="10.0">
          <children>
-            <Button fx:id="saveButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleSaveAction" text="Save" textAlignment="CENTER">
+            <Button fx:id="saveButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleSaveAction" text="Save" textAlignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>

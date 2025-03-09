@@ -1,27 +1,46 @@
 package com.zysn.passwordmanager.model.service;
 
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 
 /**
  * Represents a single Service.
- * Stores details about a particular service (e.g., Facebook, Gmail) along with its credentials.
+ * Stores details about a particular service (e.g., Facebook, Gmail) along with
+ * its credentials.
  */
-public class Service {
+public class Service implements MustBeDestroyed {
 
-    private final String name;
-    private final String username;
-    private final String email;
-    private final byte[] encryptedPassword;
-    private final AlgorithmConfig encryptionConfig;
-    private final String info;
+    private String name;
+    private String username;
+    private String email;
+    private byte[] password;
+    private AlgorithmConfig encryptionConfig;
+    private String info;
 
-    public Service (String name, String username, String email, byte[] password, AlgorithmConfig encryptionConfig, String info) {
+    public Service(final String name, final String username, final String email, final byte[] password,
+            final AlgorithmConfig encryptionConfig,
+            final String info) {
         this.name = name;
         this.username = username;
         this.email = email;
-        this.encryptedPassword = password;
+        this.password = password;
         this.encryptionConfig = encryptionConfig;
         this.info = info;
+    }
+
+    public Service() {
+        
+    }
+
+    @Override
+    public void destroy() {
+        CryptoUtils.destroy(this::getName, this::setName);
+        CryptoUtils.destroy(this::getUsername, this::setUsername);
+        CryptoUtils.destroy(this::getEmail, this::setEmail);
+        CryptoUtils.destroy(this::getPassword, this::setPassword);
+        CryptoUtils.destroy(this::getEncryptionConfig, this::setEncryptionConfig);
+        CryptoUtils.destroy(this::getInfo, this::setInfo);
     }
 
     /* GETTER */
@@ -38,14 +57,14 @@ public class Service {
     }
 
     public byte[] getPassword() {
-        return this.encryptedPassword;
+        return this.password;
     }
 
     public AlgorithmConfig getEncryptionConfig() {
         return this.encryptionConfig;
     }
 
-    public String getInfo () {
+    public String getInfo() {
         return this.info;
     }
 
@@ -65,14 +84,14 @@ public class Service {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Service other = (Service) obj;
+        final Service other = (Service) obj;
         if (name == null) {
             if (other.name != null)
                 return false;
@@ -90,5 +109,29 @@ public class Service {
             return false;
         return true;
     }
-    
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public void setPassword(final byte[] password) {
+        this.password = password;
+    }
+
+    public void setEncryptionConfig(final AlgorithmConfig encryptionConfig) {
+        this.encryptionConfig = encryptionConfig;
+    }
+
+    public void setInfo(final String info) {
+        this.info = info;
+    }
+
 }

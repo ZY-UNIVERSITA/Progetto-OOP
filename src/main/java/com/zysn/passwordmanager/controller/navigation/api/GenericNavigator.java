@@ -29,4 +29,10 @@ public interface GenericNavigator<S, T> {
      * @return a GenericController for the specified scene
      */
     public <U> GenericController<S, T> navigateTo(String pathToFile, String sceneTitle, U optionalData);
+
+    /**
+     * Return the view associated with the navigator.
+     * @return the view.
+     */
+    public S getView();
 }

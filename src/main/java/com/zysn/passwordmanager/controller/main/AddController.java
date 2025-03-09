@@ -41,14 +41,13 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
     @FXML
     private Button saveButton;
 
-    private Service service;
-    private ServiceManager serviceManager;
-    
+    private Service service;  
     private CryptoManager cryptoManager;
+    private ServiceManager serviceManager = ServiceManager.getInstance();
 
     @Override
     public void initializeData() {
-        this.cryptoManager = new CryptoManager();        
+        this.cryptoManager = new CryptoManager();
     }
 
     @FXML
@@ -78,6 +77,8 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         
         if (serviceManager.addService(service)) {
             showAlert(AlertType.INFORMATION, "Success", "The service has been successfully saved!");
+
+            this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
         }
         else {
             showAlert(AlertType.ERROR, "Failed","Failed to save the service.");
@@ -92,7 +93,7 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         passwordField.clear();
         infoArea.clear();
         
-        this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Add Service");
+        this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
     
 

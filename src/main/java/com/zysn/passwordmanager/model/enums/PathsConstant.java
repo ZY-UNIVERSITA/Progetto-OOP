@@ -5,6 +5,7 @@ public enum PathsConstant {
     KEY_STORE(".keystore"),
     SERVICE(".services"),
     USER_PERSONAL(".users"),
+    BACKUP(".backup"),
     CONFIGURATIONS("configurations"),
 
     ;

@@ -6,11 +6,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
 
 /**
  * Algorithm configuration class for creating configuration for algorithm.
  */
-public class AlgorithmConfig {
+public class AlgorithmConfig implements MustBeDestroyed {
     private String algorithmName;
     private String algorithmType;
     private byte[] salt;
@@ -114,15 +115,10 @@ public class AlgorithmConfig {
      * and clears the parameters.
      */
     public void destroy() {
-        // Clear and set null for salt
-        if (this.getSalt() != null) {
-            CryptoUtils.cleanMemory(this.getSalt());
-            this.setSalt(null);
-        }
-
-        // Null for algorithm name and type
-        this.setAlgorithmName(null);
-        this.setAlgorithmType(null);
+        CryptoUtils.destroy(this::getSalt, this::setSalt);
+        CryptoUtils.destroy(this::getAlgorithmName, this::setAlgorithmName);
+        CryptoUtils.destroy(this::getAlgorithmType, this::setAlgorithmType);
+        CryptoUtils.destroy(this::getSalt, this::setSalt);
 
         // Clear and set null for parameters
         this.getParameters().clear();

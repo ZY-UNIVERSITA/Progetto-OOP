@@ -5,8 +5,6 @@ import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
 import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
-import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -83,7 +81,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
     private Button generateButton;
 
     private Service service;
-    private ServiceManager serviceManager;
+    private ServiceManager serviceManager = ServiceManager.getInstance();
 
     @FXML
     public void initialize() {
@@ -95,7 +93,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         String newName = serviceNameField.getText();
         String newUsername = usernameField.getText();
         String newEmail = emailField.getText();
-        byte[] newPassword = passwordField.getText().getBytes();
+        byte[] newPassword = passwordVisibleField.getText().getBytes();
         String newInfo = infoArea.getText();
 
         AlgorithmConfig algorithmConfig = this.service.getEncryptionConfig();
@@ -103,6 +101,8 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         Service newService = new Service(newName, newUsername, newEmail, newPassword, algorithmConfig, newInfo);
 
         serviceManager.modifyService(service.getName(), newService);
+
+        super.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
     @FXML
@@ -127,8 +127,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         boolean special = specialCheck.isSelected();
 
         char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
-        //passwordGeneratedField.setText((String)password);
-        //passwordField.setText(password);
+        passwordField.setText(new String(password));
     }
 
     @FXML
@@ -142,19 +141,20 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
             this.service = (Service) optionalData;
         }
 
+        this.serviceManager = ServiceManager.getInstance();
+
         if (service != null) {
             serviceNameField.setText(service.getName());
             usernameField.setText(service.getUsername());
             emailField.setText(service.getEmail());
-            passwordField.setText(String.valueOf(EncodingUtils.byteToCharConverter(service.getPassword())));
+            passwordField.setText(this.serviceManager.getDecryptedPassword(service));
+            passwordVisibleField.setText(passwordField.getText());
             passwordVisibleField.setVisible(false);
             infoArea.setText(service.getInfo());
 
             lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
         }
 
-        this.serviceManager = ServiceManager.getInstance();
     }
-
     
 }
