@@ -1,4 +1,6 @@
-%% Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
+NON IMPLEMENTARE ALTRO. C'è DA RIGUARDARE UN ATTIMO LA PARTE DI PROGETTAZIONE.
+
+Modello completo. Serve per avere una visione completa. Non eliminare. Modificare aggiungendo eventuali classi o metodi.
 
 ```mermaid
 

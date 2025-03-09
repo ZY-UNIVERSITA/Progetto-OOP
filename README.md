@@ -207,6 +207,114 @@ classDiagram
 
 ## Design dettagliato
 
+<u>Parte di Nataliia Skybun.</u>
+
+**1. Creazione dei Servizi**  
+Rappresentazione UML del pattern Builder per i vari servizi
+```mermaid
+
+classDiagram
+
+    class Service {
+        - name: String
+        - username: String
+        - email: String
+        - password: byte[]
+        - encryptionConfig: AlgorithmConfig
+        - info: String
+    }
+
+    class ServiceBuilder {
+        + build(): Service
+    }
+
+    ServiceBuilder -- Service : constructs
+
+```
+**Problema**  
+Gestore di password deve gestire vari tipi di servizi con un numero di campi. Inoltre, la password deve essere criptata prima di essere memorizzata, per evitare che vengano archiviati dati sensibili in chiaro.  
+**Soluzione**  
+Si è pensato di utilizzare il design pattern Builder in modo da semplificare la creazione dei nuovi servizi (evitando costruttori lunghi), assicurarsi che la password sia sempre criptata prima della memorizzazione e permette di avere una validazione dei campi centralizzata (ad esempio, evitando nomi vuoti o password nulle).  
+_Pro:_ chiarezza nella creazione dei servizi; robustezza degli oggetti creati; sicurezza della password. _Contro:_ complessità aggiunta al sistema; possibile sovraccarico di memoria, per le classi intermedi.  
+**Pattern**  
+_Service:_ rappresenta il servizio con i dati sensibili. _ServiceBuilder:_ consente la costruzione di un Service in modo controllato. Durante la creazione cifra la password usando CryptoManager.
+
+**2. Gestione dei servizi**  
+```mermaid
+
+classDiagram
+
+    class ServiceManager {
+        + getInstance(): ServiceManager
+        + getServices(): List<Service>
+        + selectService(serviceName: String): Service
+        + addService(service: Service): boolean
+        + removeService(serviceName: String): boolean
+        + searchService(searchTerm: String): List<Service>
+        + modifyService(serviceName: String, newService: Service): boolean
+        + getDecryptedPassword(service: Service): String
+        + generatePassword(length: int, useSpecialChar: boolean, useNumbers: boolean, useUpperCase: boolean, useLowerCase: boolean): char[]
+        + loadServices(): boolean
+        + saveServices(): void
+        + destroy(): void
+    }
+
+    class Service {
+        - name: String
+        - username: String
+        - email: String
+        - password: byte[]
+        - encryptionConfig: AlgorithmConfig
+        - info: String
+    }
+
+    ServiceManager -- Service : manage
+
+```
+**Problema**  
+L'applicazione richiede un manager che gestisca un elenco di servizi legati all'utente, con funzionalità per l'aggiunta, la modifica, la rimozione e la ricerca di servizi. Inoltre, i dati dei servizi devono essere protetti tramite crittografia e memorizzati in un file sicuro. Utilizza anche il gestore di password per creare password sicure in caso di necessità.  
+**Soluzione**  
+Si è deciso di implementare la classe come un singleton per evitare istanze multiple e garantire un'unica gestione dei servizi in tutta l'app.  
+_Pro:_ sicurezza; gestione centralizzata. _Contro:_ difficile da testare; evoluzione limitata.  
+**Pattern**  
+_ServiceManager_ con il metodo getInstance() assicura che esista solo una singola istanza della classe durante l'esecuzione dell'app.
+
+**3. Generatore di password sicure**  
+```mermaid
+
+classDiagram
+
+    class PasswordGenerator {
+        + generatePassword(length: int, useSpecialChar: boolean, useNumbers: boolean, useUpperCase: boolean,  useLowerCase: boolean): char[]
+    }
+
+```
+**Problema**  
+Era necessario uno strumento che generi password complesse, sicure e conformi a specifici parametri (lunghezza, presenza di caratteri speciali, numeri e lettere maiuscole / minuscole) per evitare password banali ed evitare una vulnerabilità.  
+**Soluzione**  
+Si è progettato un modulo dedicato alla generazione delle password che accetta in input un numero che indica la lunghezza della password desiderata (con un minimo di 12 caratteri) e i valori booleani che indicano se utilizzare o meno un tipo di carattere.
+
+**4. Sistema di backup e ripristino**
+```mermaid
+
+classDiagram
+
+    class BackupManager {
+        + createBackup(List~Service~: services): byte[]
+        + restoreBackup(backupFile: File, accountManager: AccountManager, password: char[], salt: byte[]): void
+    }
+
+```
+**Problema**  
+Il sistema deve essere in grado di creare e ripristinare backup criptati di dati sensibili associati ai servizi e alle informazioni utente.  
+**Soluzione**  
+Creazione di una classe _BackupManager_ che gestisce centralmente la creazione e il ripristino dei dati. Viene generato una password lunga e complessa assieme a un salt per la crittografia. L'utente deve memorizzare questi dati in modo da effettuare il ripristino quando necessario. In questo modo si riesce a garantire una maggior robustezza al sistema, dato che contiene i dati altamente sensibili.  
+
+
+
+<u>Parte di Yuhang Zhu.</u>  
+...
+
 # Sviluppo
 
 ## Testing automatizzato
