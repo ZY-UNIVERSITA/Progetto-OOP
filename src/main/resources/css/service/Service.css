@@ -22,17 +22,17 @@
 }
 
 #serviceVBox > .button:first-child:hover {
-    -fx-background-color: #62be62; /* Use save button hover color */
+    -fx-background-color: #62be62;
 }
 
-#serviceVBox > .text-field:nth-child(2) { /* Style the service name field */
+#serviceVBox > .text-field:nth-child(2) {
     -fx-background-color: #3c3f41;
     -fx-text-fill: #e0e0e0;
     -fx-prompt-text-fill: #a0a0a0;
     -fx-border-color: #505050;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
-    -fx-padding: 15 10 15 10; /* Increased padding for larger appearance */
+    -fx-padding: 15 10 15 10;
     -fx-focus-color: #6a6a6a;
     -fx-faint-focus-color: transparent;
     -fx-font-size: 18px;
@@ -79,11 +79,11 @@
     -fx-pref-width: 100;
 }
 
-#buttonHBox .button#cancelButton {
+#deleteServiceButton {
     -fx-background-color: #b52d2d;
 }
 
-#buttonHBox .button#cancelButton:hover {
+#deleteServiceButton:hover {
     -fx-background-color: #d34b4b;
 }
 
@@ -213,21 +213,4 @@
 
 #generateButton:hover {
     -fx-background-color: #62be62;
-}
-
-#deleteServiceButton {
-    -fx-text-fill: #ffffff;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
-    -fx-padding: 10 15 10 15;
-    -fx-cursor: hand;
-    -fx-background-color: #b52d2d;
-    -fx-font-size: 16px;
-    -fx-alignment: center;
-    -fx-pref-width: 150px;
-    -fx-translate-y: 10px;
-}
-
-#deleteServiceButton:hover {
-    -fx-background-color: #d34b4b;
 }

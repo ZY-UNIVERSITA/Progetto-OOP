@@ -7,6 +7,8 @@ import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -132,7 +134,21 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
 
     @FXML
     public void handleDeleteService(ActionEvent event) {
-        serviceManager.removeService(this.service.getName());
+        if (serviceManager.removeService(this.service.getName())) {
+            showAlert(AlertType.INFORMATION, "Success", "The service has been successfully deleted!");
+            this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
+        }
+        else {
+            showAlert(AlertType.ERROR, "Failed","Failed to delete the service.");
+        }
+    }
+
+    private void showAlert(AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @Override

@@ -18,7 +18,7 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="saveButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleSaveAction" text="Save" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+            <Button fx:id="saveButton" alignment="CENTER" contentDisplay="RIGHT" mnemonicParsing="false" onMouseClicked="#handleSaveAction" text="Save" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>
