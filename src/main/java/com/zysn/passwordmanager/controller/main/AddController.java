@@ -18,6 +18,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for adding service in the password manager.
+ */
 public class AddController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
@@ -45,11 +48,18 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
     private CryptoManager cryptoManager;
     private ServiceManager serviceManager = ServiceManager.getInstance();
 
+    /**
+     * Initializes the controller with the provided service data.
+     */
     @Override
     public void initializeData() {
         this.cryptoManager = new CryptoManager();
     }
 
+    /**
+     * Handles the save action to add a service.
+     * @param event the action event triggered by the save button.
+     */
     @FXML
     private void handleSaveAction() {
         String serviceName = serviceNameField.getText();
@@ -85,6 +95,10 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         }
     }
     
+    /**
+     * Handles the cancel of an operation.
+     * @param event the action event triggered by the cancel button.
+     */
     @FXML
     private void handleCancelAction() {
         serviceNameField.clear();

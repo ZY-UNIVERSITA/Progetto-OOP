@@ -19,7 +19,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 
-
+/**
+ * Controller for managing services in the password manager.
+ */
 public class ServiceManagerController extends ControllerAbstract<Stage, AccountManager> {
     
     @FXML
@@ -85,11 +87,18 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
     private Service service;
     private ServiceManager serviceManager = ServiceManager.getInstance();
 
+    /**
+     * Initializes the controller after the FXML fields are loaded.
+     */
     @FXML
     public void initialize() {
         
     }
 
+    /**
+     * Handles the save action to update a service entry.
+     * @param event the action event triggered by the save button.
+     */
     @FXML
     public void handleSaveAction(ActionEvent event) {
         String newName = serviceNameField.getText();
@@ -107,6 +116,10 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         super.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
+    /**
+     * Toggles password visibility between plain text and masked format.
+     * @param event The triggered action event.
+     */
     @FXML
     public void togglePassword(ActionEvent event) {
         if (visibilityButton.isSelected()) {
@@ -120,6 +133,10 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         }
     }
 
+    /**
+     * Generates a random password based on selected criteria.
+     * @param event the action event triggered by the generate button.
+     */
     @FXML
     public void generatePassword(ActionEvent event) {
         int length = lengthChoiceBox.getValue();
@@ -132,6 +149,10 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         passwordField.setText(new String(password));
     }
 
+    /**
+     * Handles the deletion of a service.
+     * @param event the action event triggered by the delete button.
+     */
     @FXML
     public void handleDeleteService(ActionEvent event) {
         if (serviceManager.removeService(this.service.getName())) {
@@ -151,6 +172,9 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         alert.showAndWait();
     }
 
+    /**
+     * Initializes the controller with the provided service data.
+     */
     @Override
     public <U> void initializeData(U optionalData) {
         if (optionalData instanceof Service) {
@@ -170,7 +194,5 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
 
             lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
         }
-
-    }
-    
+    } 
 }
