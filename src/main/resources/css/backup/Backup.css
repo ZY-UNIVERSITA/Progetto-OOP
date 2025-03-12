@@ -21,7 +21,7 @@
 }
 
 #backButton {
-    -fx-background-color: red;
+    -fx-background-color: #b52d2d;
     -fx-font-size: 14px;
     -fx-cursor: hand;
     -fx-border-width: 0;
@@ -58,14 +58,6 @@
     -fx-cursor: hand;
 }
 
-.button:hover {
-    -fx-background-color: #6a6a6a;
-}
-
-.button:pressed {
-    -fx-background-color: #4a4a4a;
-}
-
 #restoreButton {
     -fx-background-color: #3a8edb;
 }
@@ -74,18 +66,10 @@
     -fx-background-color: #1f7acb;
 }
 
-#restoreButton:pressed {
-    -fx-background-color: #165c9b;
-}
-
 #createButton {
-    -fx-background-color: #6aaa64;
+    -fx-background-color: #4f9d4f;
 }
 
 #createButton:hover {
-    -fx-background-color: #5e9957;
-}
-
-#createButton:pressed {
-    -fx-background-color: #4b7d45;
+    -fx-background-color: #62be62;
 }

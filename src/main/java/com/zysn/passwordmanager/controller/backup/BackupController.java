@@ -24,6 +24,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+/**
+ * Controller for managing backup of services in the password manager.
+ */
 public class BackupController extends ControllerAbstract<Stage, AccountManager> {
 
     @FXML
@@ -49,6 +52,9 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
     private BackupManager backupManager;
     private FileChooser fileChooser;
 
+    /**
+     * Initializes the controller with the provided service data.
+     */
     @Override
     public void initializeData() {
         this.serviceManager = ServiceManager.getInstance();
@@ -61,6 +67,10 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
         fileChooser.setTitle("Select a file:");
     }
 
+    /**
+     * Handles the save action to create a backup.
+     * @param event the action event triggered by the create button.
+     */
     @FXML
     public void saveBackup(ActionEvent event) {
         byte[] passwordAndSalt = backupManager.createBackup(serviceManager.getServices());
@@ -77,11 +87,19 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
         alert.showAndWait();
     }
 
+    /**
+     * Handles the cancel of an operation.
+     * @param event the action event triggered by the back button.
+     */
     @FXML
     public void returnToMain(ActionEvent event) {
         this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
+    /**
+     * Handles the restore action to restore a backup.
+     * @param event the action event triggered by the restore button.
+     */
     @FXML
     public void loadBackup(ActionEvent event) {
         char[] password = passwordField.getText().toCharArray();

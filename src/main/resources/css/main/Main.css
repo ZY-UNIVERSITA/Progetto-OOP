@@ -85,12 +85,3 @@
     -fx-focus-color: #6a6a6a;
     -fx-faint-focus-color: transparent;
 }
-
-.hyperlink {
-    -fx-text-fill: #8ab4f8;
-    -fx-cursor: hand;
-}
-
-.hyperlink:hover {
-    -fx-text-fill: #ffffff;
-}

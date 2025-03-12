@@ -105,16 +105,6 @@ public class LoginController extends ControllerAbstract<Stage, AccountManager> {
     }
 
     /**
-     * Handles the restore action.
-     *
-     * @param event the action event triggered by the restore button
-     */
-    @FXML
-    void handleRestore(final ActionEvent event) {
-        // Add restore functionality here
-    }
-
-    /**
      * Chooses the next view based on the user authentication information.
      */
     private void chooseNextView() {

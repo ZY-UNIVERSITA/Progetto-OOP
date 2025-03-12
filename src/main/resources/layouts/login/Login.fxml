@@ -29,6 +29,5 @@
             <Hyperlink onAction="#handleRegister" text="Register" />
          </children>
       </HBox>
-      <Hyperlink onAction="#handleRestore" prefHeight="0.0" prefWidth="100.0" text="Restore a backup" />
    </children>
 </VBox>
