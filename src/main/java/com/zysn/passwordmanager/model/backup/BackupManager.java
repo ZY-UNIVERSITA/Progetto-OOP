@@ -45,7 +45,7 @@ public class BackupManager {
      * @throws IllegalStateException If the user is not authenticated.
      */
     public byte[] createBackup(List<Service> services) {
-        if (this.session.getUserAccount().getUsername() != null) {
+        if (this.session.getUserAccount() == null || this.session.getUserAccount().getUsername() == null) {
             throw new IllegalStateException("Must be authenticated user to create backup.");
         }
         byte[] salt = CryptoUtils.generateSalt(16);
@@ -80,7 +80,7 @@ public class BackupManager {
      * @throws IllegalStateException If the user is not authenticated.
      */
     public void restoreBackup(File backupFile, AccountManager accountManager, char[] password, byte[] salt) {
-        if (this.session.getUserAccount().getUsername() != null) {
+        if (this.session.getUserAccount() == null || this.session.getUserAccount().getUsername() == null) {
             throw new IllegalStateException("Must be authenticated user to restore backup.");
         }
         FileManager fileManager = new GenericFileManager();
