@@ -148,6 +148,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
             usernameField.setText(service.getUsername());
             emailField.setText(service.getEmail());
             passwordField.setText(this.serviceManager.getDecryptedPassword(service));
+            passwordVisibleField.setText(passwordField.getText());
             passwordVisibleField.setVisible(false);
             infoArea.setText(service.getInfo());
 

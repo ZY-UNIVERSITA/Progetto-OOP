@@ -3,7 +3,6 @@ package com.zysn.passwordmanager.controller.main;
 import com.zysn.passwordmanager.controller.scene.api.ControllerAbstract;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.service.Service;
@@ -28,7 +28,13 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     private Button addServiceButton;
 
     @FXML
+    private HBox buttonsHBox;
+
+    @FXML
     private Button logoutButton;
+
+    @FXML
+    private Button backupButton;
 
     private ServiceManager serviceManager = ServiceManager.getInstance();
     private ObservableList<String> serviceNames = FXCollections.observableArrayList();
@@ -42,13 +48,6 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     }
 
     private void handleServiceClick() {
-        /*String selectedService = servicesListView.getSelectionModel().getSelectedItem();
-            if (selectedService != null) {
-                Service service = serviceManager.selectService(selectedService);
-                if (service != null) {
-                    this.getNavigator().navigateTo("/layouts/service/ServiceManager.fxml", "Service", service);
-                }
-            }*/
         int selectedIndex = servicesListView.getSelectionModel().getSelectedIndex();
         if (selectedIndex != -1) {
             Service service = serviceManager.getServices().get(selectedIndex);
@@ -72,6 +71,11 @@ public class MainController extends ControllerAbstract<Stage, AccountManager> {
     @FXML
     private void handleAddService(ActionEvent event) {
         this.getNavigator().navigateTo("/layouts/main/Add.fxml", "Add Service");
+    }
+
+    @FXML
+    private void handleBackup(ActionEvent event) {
+        this.getNavigator().navigateTo("/layouts/backup/Backup.fxml", "Backup Manager");
     }
 
     @FXML
