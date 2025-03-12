@@ -79,9 +79,6 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
     private CheckBox specialCheck;
 
     @FXML
-    private TextField passwordGeneratedField;
-
-    @FXML
     private Button generateButton;
 
     private Service service;
@@ -146,6 +143,7 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         boolean special = specialCheck.isSelected();
 
         char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
+        passwordField.setVisible(true);
         passwordField.setText(new String(password));
     }
 

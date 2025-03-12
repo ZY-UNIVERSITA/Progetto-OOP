@@ -10,10 +10,14 @@ import com.zysn.passwordmanager.model.service.ServiceBuilder;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -44,6 +48,27 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
     @FXML
     private Button saveButton;
 
+    @FXML
+    private Label passwordGeneratorLabel;
+
+    @FXML
+    private ChoiceBox<Integer> lengthChoiceBox;
+
+    @FXML
+    private CheckBox lowercaseCheck;
+
+    @FXML
+    private CheckBox uppercaseCheck;
+
+    @FXML
+    private CheckBox digitsCheck;
+
+    @FXML
+    private CheckBox specialCheck;
+
+    @FXML
+    private Button generateButton;
+
     private Service service;  
     private CryptoManager cryptoManager;
     private ServiceManager serviceManager = ServiceManager.getInstance();
@@ -54,6 +79,8 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
     @Override
     public void initializeData() {
         this.cryptoManager = new CryptoManager();
+
+        lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
     }
 
     /**
@@ -94,6 +121,14 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
             showAlert(AlertType.ERROR, "Failed","Failed to save the service.");
         }
     }
+
+    private void showAlert(AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
     
     /**
      * Handles the cancel of an operation.
@@ -109,13 +144,21 @@ public class AddController extends ControllerAbstract<Stage, AccountManager> {
         
         this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
-    
 
-    private void showAlert(AlertType alertType, String title, String message) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    /**
+     * Generates a random password based on selected criteria.
+     * @param event the action event triggered by the generate button.
+     */
+    @FXML
+    public void generatePassword(ActionEvent event) {
+        int length = lengthChoiceBox.getValue();
+        boolean lowercase = lowercaseCheck.isSelected();
+        boolean uppercase = uppercaseCheck.isSelected();
+        boolean digits = digitsCheck.isSelected();
+        boolean special = specialCheck.isSelected();
+
+        char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
+        passwordField.setVisible(true);
+        passwordField.setText(new String(password));
     }
 }

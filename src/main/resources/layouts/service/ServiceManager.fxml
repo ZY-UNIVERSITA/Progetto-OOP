@@ -16,7 +16,7 @@
 
 <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@../../css/service/Service.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.service.ServiceManagerController">
   <content>
-      <VBox fx:id="serviceVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="5.0">
+      <VBox fx:id="serviceVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="600.0" spacing="5.0">
          <children>
             <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
                <children>
@@ -108,12 +108,12 @@
             </HBox>
             <VBox fx:id="passwordGeneratorVBox" prefHeight="200.0" prefWidth="600.0" spacing="10.0">
                <VBox.margin>
-                  <Insets top="15.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
                <children>
                   <Label fx:id="passwordGeneratorLabel" alignment="CENTER" prefWidth="600.0" text="Password Generator">
                      <font>
-                        <Font size="16.0" />
+                        <Font size="18.0" />
                      </font>
                   </Label>
                   <ChoiceBox fx:id="lengthChoiceBox" prefWidth="150.0">
@@ -141,12 +141,7 @@
                         <Insets left="10.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <TextField fx:id="passwordGeneratedField">
-                     <VBox.margin>
-                        <Insets left="10.0" />
-                     </VBox.margin>
-                  </TextField>
-                  <Button fx:id="generateButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#generatePassword" text="Generate">
+                  <Button fx:id="generateButton" alignment="CENTER" mnemonicParsing="false" onAction="#generatePassword" text="Generate">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
