@@ -207,10 +207,9 @@ classDiagram
 
 ## Design dettagliato
 
-<u>Parte di Nataliia Skybun.</u>
+#### Parte di Nataliia Skybun.
 
 **1. Creazione dei Servizi**  
-Rappresentazione UML del pattern Builder per i vari servizi
 ```mermaid
 
 classDiagram
@@ -288,6 +287,8 @@ classDiagram
         + generatePassword(length: int, useSpecialChar: boolean, useNumbers: boolean, useUpperCase: boolean,  useLowerCase: boolean): char[]
     }
 
+    ServiceManager --> PasswordGenerator : usa
+
 ```
 **Problema**  
 Era necessario uno strumento che generi password complesse, sicure e conformi a specifici parametri (lunghezza, presenza di caratteri speciali, numeri e lettere maiuscole / minuscole) per evitare password banali ed evitare una vulnerabilità.  
@@ -304,6 +305,10 @@ classDiagram
         + restoreBackup(backupFile: File, accountManager: AccountManager, password: char[], salt: byte[]): void
     }
 
+    BackupManager --> FileManager : usa
+    BackupManager --> UserAccount : backup/restore
+    BackupManager --> Service : backup/restore
+
 ```
 **Problema**  
 Il sistema deve essere in grado di creare e ripristinare backup criptati di dati sensibili associati ai servizi e alle informazioni utente.  
@@ -312,7 +317,7 @@ Creazione di una classe _BackupManager_ che gestisce centralmente la creazione e
 
 
 
-<u>Parte di Yuhang Zhu.</u>  
+#### Parte di Yuhang Zhu.   
 ...
 
 # Sviluppo
@@ -328,6 +333,9 @@ L’_interfaccia grafica_ non è stata testata per la complessità aggiuntiva e 
 Per l'implementazione dei test si è utilizzato **JUnit 5**, sfruttando le annotazioni @Test per definire i casi di test e @BeforeEach per la preparazione del contesto di esecuzione. Inoltre, **Mockito 5.12.0** usato per creare mock e simulare il comportamento di dipendenze esterne, evitando effetti collaterali nei test.
 
 ## Note di sviluppo
+
+#### Parte di Nataliia Skybun.
+
 
 # Commenti finali
 
