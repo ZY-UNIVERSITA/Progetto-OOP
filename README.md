@@ -318,7 +318,62 @@ Creazione di una classe _BackupManager_ che gestisce centralmente la creazione e
 
 
 #### Parte di Yuhang Zhu.   
-...
+**1. Account utente e authentication data**
+```mermaid
+
+classDiagram
+
+%% Interface
+class MustBeDestroyed {
+  <<interface>>
+  +destroy() void
+}
+
+%% Abstract classes
+class UserAccountAbstract {
+  <<abstract>>
+  - username : String
+  + getUsername() String
+  + setUsername(username: String) void
+}
+
+%% Concrete classes
+class UserAccount {
+  - masterKey : byte[]
+}
+
+class UserAuthInfo {
+  - passwordDerivedKeyConfig : AlgorithmConfig
+  - keyStoreEncryptionConfig : AlgorithmConfig
+  - keyStoreConfigEncryptedData : byte[]
+  - serviceConfigEncryptedData : byte[]
+  - enabled2FA : boolean
+}
+
+class UserAuthKey {
+  - password : byte[]
+  - passwordDerivedKey : byte[]
+  - totpEncryptionKey : byte[]
+  - totpKey : byte[]
+  - serviceConfigKey : byte[]
+}
+
+%% Relationships
+MustBeDestroyed <|.. UserAccountAbstract : implements
+UserAccountAbstract <|-- UserAccount : extends
+UserAccountAbstract <|-- UserAuthInfo : extends
+MustBeDestroyed <|.. UserAuthKey : implements
+
+```
+
+**Problema**  
+Il sistema gestisce in modo sicuro i dati di autentication e i dati di sessione dell'utente correntemente loggato.
+**Soluzione**  
+Tutti i dati utenti implementano direttamente oppure indirettamente tramite ereditarietà, un interfaccia comune che richiede l'implementazione di un metodo che permetta di eliminare i dati di sessione e i dati di autenticazione.
+La presenza di almeno 2 classi che richiedano dei dati comuni, ha portato all'utilizzo di una classe astratta che ponga le basi per tutte le classi che richiedano una porzione di proprietà comuni.
+La classe **UserAuthKey** contiene temporaneamente le chiavi intermedie dalle quali verranno generate la master key che verrà usata per cifrare e decifrare le password utenti.
+La classe **UserAccount** conttiene le 2 informazioni di base essenziali: username e master key.
+La clase **UserAuthInfo** contiene le informazioni riguardanti il singolo utente e che permettono di ottenere la master key e la lista delle chiavi dell'utente.
 
 # Sviluppo
 
