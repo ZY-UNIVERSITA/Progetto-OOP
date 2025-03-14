@@ -61,4 +61,10 @@ class UserAuthKey {
   + setServiceConfigKey(key: byte[]) void
 }
 
+%% Relationships
+MustBeDestroyed <|.. UserAccountAbstract : implements
+UserAccountAbstract <|-- UserAccount : extends
+UserAccountAbstract <|-- UserAuthInfo : extends
+MustBeDestroyed <|.. UserAuthKey : implements
+
 ```

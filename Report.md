@@ -378,6 +378,7 @@ MustBeDestroyed <|.. UserAuthKey : implements
 
 **Problema**  
 Il sistema gestisce in modo sicuro i dati di autentication e i dati di sessione dell'utente correntemente loggato.
+
 **Soluzione**  
 Tutti i dati utenti implementano direttamente oppure indirettamente tramite ereditarietà, un interfaccia comune che richiede l'implementazione di un metodo che permetta di eliminare i dati di sessione e i dati di autenticazione.
 La presenza di almeno 2 classi che richiedano dei dati comuni, ha portato all'utilizzo di una classe astratta che ponga le basi per tutte le classi che richiedano una porzione di proprietà comuni.
