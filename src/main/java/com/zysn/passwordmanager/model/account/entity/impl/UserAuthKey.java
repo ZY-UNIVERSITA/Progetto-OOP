@@ -42,7 +42,7 @@ public class UserAuthKey implements MustBeDestroyed {
         return password;
     }
 
-    public void setPassword(byte[] password) {
+    public void setPassword(final byte[] password) {
         this.password = password;
     }
 
@@ -54,7 +54,7 @@ public class UserAuthKey implements MustBeDestroyed {
         return EncodingUtils.byteToBase64(this.getPasswordDerivedKey());
     }
 
-    public void setPasswordDerivedKey(byte[] passwordDerivedKey) {
+    public void setPasswordDerivedKey(final byte[] passwordDerivedKey) {
         this.passwordDerivedKey = passwordDerivedKey;
     }
 
@@ -66,7 +66,7 @@ public class UserAuthKey implements MustBeDestroyed {
         return EncodingUtils.byteToCharConverter(this.getTotpEncryptionKey());
     }
 
-    public void setTotpEncryptionKey(byte[] totpEncryptionKey) {
+    public void setTotpEncryptionKey(final byte[] totpEncryptionKey) {
         this.totpEncryptionKey = totpEncryptionKey;
     }
 
@@ -74,7 +74,7 @@ public class UserAuthKey implements MustBeDestroyed {
         return totpKey;
     }
 
-    public void setTotpKey(byte[] totpKey) {
+    public void setTotpKey(final byte[] totpKey) {
         this.totpKey = totpKey;
     }
 
@@ -82,7 +82,7 @@ public class UserAuthKey implements MustBeDestroyed {
         return serviceConfigKey;
     }
 
-    public void setServiceConfigKey(byte[] serviceConfigKey) {
+    public void setServiceConfigKey(final byte[] serviceConfigKey) {
         this.serviceConfigKey = serviceConfigKey;
     }
 }
