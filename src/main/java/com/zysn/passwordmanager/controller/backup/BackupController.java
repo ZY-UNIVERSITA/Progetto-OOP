@@ -65,8 +65,8 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
     public void saveBackup(ActionEvent event) {
         byte[] passwordAndSalt = backupManager.createBackup(serviceManager.getServices());
 
-        char[] password = EncodingUtils.byteToCharConverter(Arrays.copyOf(passwordAndSalt, passwordAndSalt.length - 12));
-        char[] salt = EncodingUtils.byteToBase64(Arrays.copyOfRange(passwordAndSalt, passwordAndSalt.length - 12, passwordAndSalt.length));
+        char[] password = EncodingUtils.byteToCharConverter(Arrays.copyOf(passwordAndSalt, passwordAndSalt.length - 16));
+        char[] salt = EncodingUtils.byteToBase64(Arrays.copyOfRange(passwordAndSalt, passwordAndSalt.length - 16, passwordAndSalt.length));
         String passwordText = new String(password);
         String saltText = new String(salt);
         
@@ -85,11 +85,12 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
     @FXML
     public void loadBackup(ActionEvent event) {
         char[] password = passwordField.getText().toCharArray();
-        byte[] salt = saltField.getText().getBytes();
+        char[] salt = saltField.getText().toCharArray();
+        byte[] saltBytes = EncodingUtils.base64ToByte(salt);
 
         File selectedFile = fileChooser.showOpenDialog(super.getNavigator().getView());
 
-        backupManager.restoreBackup(selectedFile, getData(), password, salt);
+        backupManager.restoreBackup(selectedFile, getData(), password, saltBytes);
 
         super.getData().logout();
 
