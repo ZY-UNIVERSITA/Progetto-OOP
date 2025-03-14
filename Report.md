@@ -323,7 +323,7 @@ Creazione di una classe _BackupManager_ che gestisce centralmente la creazione e
 
 classDiagram
 
-%% Interface
+%% Interfaces
 class MustBeDestroyed {
   <<interface>>
   +destroy() void
@@ -368,11 +368,27 @@ class UserAuthKey {
   + setServiceConfigKey(key: byte[]) void
 }
 
+class CollectedUserData {
+    +byte[] getPassword()
+    +void setPassword(byte[] password)
+    +byte[] getConfirmPassword()
+    +void setConfirmPassword(byte[] confirmPassword)
+    +AlgorithmConfig getPasswordDerivationConfig()
+    +void setPasswordDerivationConfig(AlgorithmConfig passwordDerivationConfig)
+    +AlgorithmConfig getKeyStoreConfigEncryptionConfig()
+    +void setKeyStoreConfigEncryptionConfig(AlgorithmConfig keyStoreConfigEncryptionConfig)
+    +boolean isEnabled2FA()
+    +void setEnabled2FA(boolean enabled2fa)
+    +byte[] getTotpKey()
+    +void setTotpKey(byte[] totpKey)
+}
+
 %% Relationships
 MustBeDestroyed <|.. UserAccountAbstract : implements
+MustBeDestroyed <|.. UserAuthKey : implements
+MustBeDestroyed <|.. CollectedUserData: implements
 UserAccountAbstract <|-- UserAccount : extends
 UserAccountAbstract <|-- UserAuthInfo : extends
-MustBeDestroyed <|.. UserAuthKey : implements
 
 ```
 
@@ -385,6 +401,124 @@ La presenza di almeno 2 classi che richiedano dei dati comuni, ha portato all'ut
 La classe **UserAuthKey** contiene temporaneamente le chiavi intermedie dalle quali verranno generate la master key che verrà usata per cifrare e decifrare le password utenti.
 La classe **UserAccount** conttiene le 2 informazioni di base essenziali: username e master key.
 La clase **UserAuthInfo** contiene le informazioni riguardanti il singolo utente e che permettono di ottenere la master key e la lista delle chiavi dell'utente.
+Queste classi vengono usati come DTO per trasferire dati da una classe all'altra.
+
+**2. Account manager**
+```mermaid
+
+
+classDiagram
+    %% Interfaces
+    class AccountManager {
+        <<interface>>
+        +register(CollectedUserData data)
+        +login(CollectedUserData data)
+        +logout()
+        +getSessionManager() SessionManager
+        +getServiceManager() ServiceManager
+    }
+
+    class SessionManager {
+        <<interface>>
+        +getUserAuthInfo() UserAuthInfo
+        +setUserAuthInfo(UserAuthInfo info)
+        +getUserAuthKey() UserAuthKey
+        +setUserAuthKey(UserAuthKey key)
+        +getKeyStoreConfig() KeyStoreConfig
+        +setKeyStoreConfig(KeyStoreConfig config)
+        +getServiceConfig() ServiceCryptoConfig
+        +setServiceConfig(ServiceCryptoConfig config)
+        +getUserAccount() UserAccount
+        +setUserAccount(UserAccount account)
+    }
+
+    class MustBeDestroyed {
+        <<interface>>
+        +destroy()
+    }
+
+    class RegistrationService {
+        <<interface>>
+        +register(CollectedUserData collectedUserData)
+    }
+
+    class LoginService {
+        <<interface>>
+        +login(CollectedUserData collectedUserData)
+    }
+
+    %% Concrete classes
+    class DefaultAccountManager {
+        +setSessionManager(SessionManager sessionManager)
+        +setServiceManager(ServiceManager serviceManager)
+    }
+
+    class DefaultSessionManager {
+    }
+
+    class ServiceManager {
+        
+    }
+
+    class KeyStoreConfig {
+        +byte[] getKeyStoreEncryptionKey()
+        +char[] getKeyStoreEncryptionKeyChar()
+        +byte[] getSaltWithPasswordDerived()
+        +char[] getSaltWithPasswordDerivedChar() 
+        +byte[] getSaltWithTotpEncryptionKey()
+        +char[] getSaltWithTotpEncryptionKeyChar()
+        +byte[] getServiceDecryptionSalt()
+        +void setKeyStoreEncryptionKey(byte[] keyStoreEncryptionKey)
+        +void setSaltWithPasswordDerived(byte[] saltWithPasswordDerived)
+        +void setSaltWithTotpEncryptionKey(byte[] saltWithTotpEncryptionKey)
+        +void setServiceDecryptionSalt(byte[] serviceDecryptionSalt)
+        +byte[] getSaltForHKDF()
+        +void setSaltForHKDF(byte[] saltForHKDF)
+    }
+
+    class ServiceCryptoConfig {
+        +char[] getFileName()
+        +void setFileName(char[] fileName)
+        +byte[] getSaltForHKDF()
+        +void setSaltForHKDF(byte[] saltForHKDF)
+        +byte[] getSaltForServiceEncryption()
+        +void setSaltForServiceEncryption(byte[] serviceSalt)
+    }
+
+    class CollectedUserData {
+
+    }
+
+    %% Relationships
+    AccountManager <|-- DefaultAccountManager : implements
+    SessionManager <|-- DefaultSessionManager : implements
+    MustBeDestroyed <|-- DefaultSessionManager : implements
+    MustBeDestroyed <|-- KeyStoreConfig : implements
+    MustBeDestroyed <|-- ServiceCryptoConfig : implements
+
+    DefaultAccountManager --o SessionManager : uses
+    DefaultAccountManager --o ServiceManager : uses
+    DefaultAccountManager --o RegistrationService : uses
+    DefaultAccountManager --o LoginService : uses
+    DefaultSessionManager --o KeyStoreConfig : uses
+    DefaultSessionManager --o ServiceCryptoConfig : uses
+
+    CollectedUserData <.. AccountManager : uses
+    CollectedUserData <.. RegistrationService: uses
+    CollectedUserData <.. LoginService : uses 
+
+```
+
+**Problema**
+Il sistema di autenticazione deve gestire le fasi autenticazione dell'utente che comprendono login, registration e logout con relativa eliminazione dei dati sessione.
+
+**Soluzione**
+La soluzione adottata è la suddivisione delle classi in classi con responsabilità comuni e correlate, con ognuna delle quali che cerca di implementare i principi SOLID. Per rendere le classi più indipendenti, le classi dialogano tra di loro utilizzando delle interfacce.
+L'interfaccia **AccountManager** richiede di implementare 3 metodi collegati all'autenticazione e alla gestione dell'utente: login, logout e registration utilizzando i dati collezionati dalla view. 
+Esso viene implementato dalla classe concreta **DefaultAccountManager** che utilizza tramite aggregazione 4 classi sotto forma di interfacce: registrationService per gestire la fase di registrazione, loginService per gestire la fase di login, ServiceManager per gestire le password del singolo utente e SessionManager per gestire i dati personali di crittografia dell'account corrente.
+La classe **DefaultSessionManager** implementa l'interfaccia **SessionManager** e viene usata per gestire tutti i dati di sicurezza dell'utente come la sua password oppure la master key usata per decifrare le password utente oppure le password intermedie che vengono usate per derivare la master key finale. Utilizza inoltre 2 classi con funzionalità di DTO perchè vengono usati solo contenere dati da trasferire tra classi.
+
+
 
 # Sviluppo
 
