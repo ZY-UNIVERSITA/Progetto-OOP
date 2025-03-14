@@ -53,7 +53,7 @@ public abstract class AbstractFileManager implements FileManager {
             }
             return inputStream.readAllBytes();
         } catch (final IOException e) {
-            System.err.println("Error trying to read the file: ");
+            System.err.println("Error trying to read the file.");
         }
         return null;
     }

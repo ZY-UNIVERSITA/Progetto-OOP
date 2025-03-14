@@ -57,7 +57,9 @@ public class ResourcesFileManager extends AbstractFileManager {
      */
     @Override
     protected InputStream openInputStream(final Path path) throws IOException {
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream(path.toString());
+
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream(path.toString().replace('\\', '/'));
+
         if (inputStream == null) {
             throw new IOException("Resource not found: " + path);
         }
