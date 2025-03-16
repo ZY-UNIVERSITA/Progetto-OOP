@@ -7,6 +7,8 @@ import com.zysn.passwordmanager.model.service.Service;
 import com.zysn.passwordmanager.model.service.ServiceManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
@@ -17,7 +19,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.stage.Stage;
 
-
+/**
+ * Controller for managing services in the password manager.
+ */
 public class ServiceManagerController extends ControllerAbstract<Stage, AccountManager> {
     
     @FXML
@@ -75,19 +79,23 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
     private CheckBox specialCheck;
 
     @FXML
-    private TextField passwordGeneratedField;
-
-    @FXML
     private Button generateButton;
 
     private Service service;
     private ServiceManager serviceManager = ServiceManager.getInstance();
 
+    /**
+     * Initializes the controller after the FXML fields are loaded.
+     */
     @FXML
     public void initialize() {
         
     }
 
+    /**
+     * Handles the save action to update a service entry.
+     * @param event the action event triggered by the save button.
+     */
     @FXML
     public void handleSaveAction(ActionEvent event) {
         String newName = serviceNameField.getText();
@@ -105,6 +113,10 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         super.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
     }
 
+    /**
+     * Toggles password visibility between plain text and masked format.
+     * @param event The triggered action event.
+     */
     @FXML
     public void togglePassword(ActionEvent event) {
         if (visibilityButton.isSelected()) {
@@ -118,6 +130,10 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         }
     }
 
+    /**
+     * Generates a random password based on selected criteria.
+     * @param event the action event triggered by the generate button.
+     */
     @FXML
     public void generatePassword(ActionEvent event) {
         int length = lengthChoiceBox.getValue();
@@ -127,14 +143,36 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         boolean special = specialCheck.isSelected();
 
         char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
+        passwordField.setVisible(true);
         passwordField.setText(new String(password));
     }
 
+    /**
+     * Handles the deletion of a service.
+     * @param event the action event triggered by the delete button.
+     */
     @FXML
     public void handleDeleteService(ActionEvent event) {
-        serviceManager.removeService(this.service.getName());
+        if (serviceManager.removeService(this.service.getName())) {
+            showAlert(AlertType.INFORMATION, "Success", "The service has been successfully deleted!");
+            this.getNavigator().navigateTo("/layouts/main/Main.fxml", "Main");
+        }
+        else {
+            showAlert(AlertType.ERROR, "Failed","Failed to delete the service.");
+        }
     }
 
+    private void showAlert(AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    /**
+     * Initializes the controller with the provided service data.
+     */
     @Override
     public <U> void initializeData(U optionalData) {
         if (optionalData instanceof Service) {
@@ -154,7 +192,5 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
 
             lengthChoiceBox.getItems().addAll(12, 16, 20, 24, 28, 32);
         }
-
-    }
-    
+    } 
 }

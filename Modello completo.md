@@ -186,9 +186,8 @@ classDiagram
     %% =====================
 
     class BackupManager {
-        + BackupManager(FileManager fileManager)
-        + createBackup(UserAccount userAccount, List~Service~ services) void
-        + restoreBackup(file backupFile, AccountManager accountManager) void
+        + createBackup(List~Service~: services): byte[]
+        + restoreBackup(backupFile: File, accountManager: AccountManager, password: char[], salt: byte[]): void
     }
 
     %% =====================

@@ -10,11 +10,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.zysn.passwordmanager.controller.backup.BackupController">
+<AnchorPane stylesheets="@../../css/backup/Backup.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.zysn.passwordmanager.controller.backup.BackupController">
     <VBox alignment="CENTER" prefHeight="300" prefWidth="400" spacing="15">
       <HBox fx:id="labelHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="50.0">
          <children>
-            <Button fx:id="backButton" mnemonicParsing="false" onMouseClicked="#returnToMain" text="Back" textAlignment="CENTER" />
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#returnToMain" text="Back" textAlignment="CENTER" />
               <Label fx:id="backupManagerLabel" alignment="TOP_CENTER" text="Backup Manager" textAlignment="CENTER">
                <font>
                   <Font name="System Bold" size="24.0" />
@@ -23,7 +23,7 @@
          </children>
       </HBox>
 
-        <Button fx:id="createButton" onMouseClicked="#saveBackup" text="Create">
+        <Button fx:id="createButton" onAction="#saveBackup" text="Create">
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
          </VBox.margin></Button>
@@ -32,7 +32,7 @@
          <PasswordField fx:id="passwordField" promptText="Insert password" />
             <TextField fx:id="saltField" alignment="CENTER_RIGHT" prefWidth="100.0" promptText="Insert salt" />
    
-           <Button fx:id="restoreButton" onMouseClicked="#loadBackup" text="Restore" />
+           <Button fx:id="restoreButton" onAction="#loadBackup" text="Restore" />
         </HBox>
 
         <VBox.margin>

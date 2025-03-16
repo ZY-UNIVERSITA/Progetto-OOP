@@ -1,8 +1,5 @@
 package com.zysn.passwordmanager.model.account.manager.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.zysn.passwordmanager.model.account.entity.impl.CollectedUserData;
 import com.zysn.passwordmanager.model.account.manager.api.AccountManager;
 import com.zysn.passwordmanager.model.account.manager.api.SessionManager;
@@ -64,16 +61,10 @@ public class DefaultAccountManager implements AccountManager {
      * Logs out the currently logged-in user.
      */
     public void logout() {
-        List<MustBeDestroyed> destroyElements = new ArrayList<>();
-        destroyElements.add(this.sessionManager.getKeyStoreConfig());
-        destroyElements.add(this.sessionManager.getServiceConfig());
-        destroyElements.add(this.sessionManager.getUserAccount());
-        destroyElements.add(this.sessionManager.getUserAuthInfo());
-        destroyElements.add(this.sessionManager.getUserAuthKey());
-        destroyElements.add(this.serviceManager);
-
-        destroyElements.forEach(MustBeDestroyed::destroy);
-
+        if (this.sessionManager instanceof MustBeDestroyed) {
+            MustBeDestroyed logout = (MustBeDestroyed) this.sessionManager;
+            logout.destroy();
+        }
     }
 
     public SessionManager getSessionManager() {

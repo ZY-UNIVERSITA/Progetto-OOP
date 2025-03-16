@@ -12,12 +12,12 @@
    <children>
       <HBox fx:id="buttonsHBox" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="150.0">
          <children>
-            <Button fx:id="backupButton" alignment="TOP_LEFT" mnemonicParsing="false" onMouseClicked="#handleBackup" text="Backup" textAlignment="CENTER">
+            <Button fx:id="backupButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#handleBackup" text="Backup" textAlignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onMouseClicked="#handleLogout" text="Logout" textAlignment="CENTER">
+            <Button fx:id="logoutButton" alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#handleLogout" text="Logout" textAlignment="CENTER">
                <font>
                   <Font size="14.0" />
                </font>
