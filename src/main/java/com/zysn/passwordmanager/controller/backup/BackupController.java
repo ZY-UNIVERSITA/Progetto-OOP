@@ -13,6 +13,9 @@ import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -21,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -75,8 +79,8 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
     public void saveBackup(ActionEvent event) {
         byte[] passwordAndSalt = backupManager.createBackup(serviceManager.getServices());
 
-        char[] password = EncodingUtils.byteToCharConverter(Arrays.copyOf(passwordAndSalt, passwordAndSalt.length - 12));
-        char[] salt = EncodingUtils.byteToBase64(Arrays.copyOfRange(passwordAndSalt, passwordAndSalt.length - 12, passwordAndSalt.length));
+        char[] password = EncodingUtils.byteToCharConverter(Arrays.copyOf(passwordAndSalt, passwordAndSalt.length - 16));
+        char[] salt = EncodingUtils.byteToBase64(Arrays.copyOfRange(passwordAndSalt, passwordAndSalt.length - 16, passwordAndSalt.length));
         String passwordText = new String(password);
         String saltText = new String(salt);
         
@@ -84,7 +88,23 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
         alert.setTitle("Backup Created");
         alert.setHeaderText("Password and salt that have been generated.");
         alert.setContentText("Password: " + passwordText + "\nSalt: " + saltText);
+
+        Button copyButton = new Button("Copy");
+        copyButton.setOnAction(e -> {
+            copyToClipboard("Password: " + passwordText + "\nSalt: " + saltText);
+            alert.setHeaderText("Copied to clipboard!");
+        });
+
+        VBox dialogPane = new VBox();
+        dialogPane.getChildren().addAll(new Label("Password: " + passwordText + "\nSalt: " + saltText), copyButton);
+        alert.getDialogPane().setContent(dialogPane);
+
         alert.showAndWait();
+    }
+
+    private void copyToClipboard(String text) {
+        StringSelection selection = new StringSelection(text);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
     }
 
     /**
@@ -103,11 +123,12 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
     @FXML
     public void loadBackup(ActionEvent event) {
         char[] password = passwordField.getText().toCharArray();
-        byte[] salt = saltField.getText().getBytes();
+        char[] salt = saltField.getText().toCharArray();
+        byte[] saltBytes = EncodingUtils.base64ToByte(salt);
 
         File selectedFile = fileChooser.showOpenDialog(super.getNavigator().getView());
 
-        backupManager.restoreBackup(selectedFile, getData(), password, salt);
+        backupManager.restoreBackup(selectedFile, getData(), password, saltBytes);
 
         super.getData().logout();
 
