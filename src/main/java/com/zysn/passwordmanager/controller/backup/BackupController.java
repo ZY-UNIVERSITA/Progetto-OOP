@@ -13,6 +13,9 @@ import com.zysn.passwordmanager.model.utils.encoding.EncodingUtils;
 import com.zysn.passwordmanager.model.utils.file.api.FileManager;
 import com.zysn.passwordmanager.model.utils.file.impl.DefaultFileManager;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -21,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -84,7 +88,23 @@ public class BackupController extends ControllerAbstract<Stage, AccountManager> 
         alert.setTitle("Backup Created");
         alert.setHeaderText("Password and salt that have been generated.");
         alert.setContentText("Password: " + passwordText + "\nSalt: " + saltText);
+
+        Button copyButton = new Button("Copy");
+        copyButton.setOnAction(e -> {
+            copyToClipboard("Password: " + passwordText + "\nSalt: " + saltText);
+            alert.setHeaderText("Copied to clipboard!");
+        });
+
+        VBox dialogPane = new VBox();
+        dialogPane.getChildren().addAll(new Label("Password: " + passwordText + "\nSalt: " + saltText), copyButton);
+        alert.getDialogPane().setContent(dialogPane);
+
         alert.showAndWait();
+    }
+
+    private void copyToClipboard(String text) {
+        StringSelection selection = new StringSelection(text);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
     }
 
     /**
