@@ -15,13 +15,10 @@ public class PasswordGeneratorTest {
 
     @Test
     void testGeneratePassword() {
-        /* None of categories selected */
         assertThrows(IllegalArgumentException.class, () -> {generator.generatePassword(12, false, false, false, false);});
 
-        /* Password length selected is less then 11 */
         assertThrows(IllegalArgumentException.class, () -> {generator.generatePassword(9, true, true, true, true);});
 
-        /* Return value */
         char[] password = generator.generatePassword(16, true, true, true, true);
         assertNotNull(password);
         assertEquals(16, password.length);

@@ -1,9 +1,11 @@
 package com.zysn.passwordmanager.model.utils.security.impl;
 
+import org.passay.CharacterRule;
+import org.passay.EnglishCharacterData;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import com.zysn.passwordmanager.model.enums.CryptoLength;
 
@@ -13,11 +15,6 @@ import com.zysn.passwordmanager.model.enums.CryptoLength;
  * The password length must be greater than 11 characters.
  */
 public class PasswordGenerator {
-    
-    private static final String UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final String LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
-    private static final String DIGITS = "0123456789";
-    private static final String SPECIAL_CHAR = "!@#$%^&*()-_=+<>?/[]{}";
 
     public PasswordGenerator () {
 
@@ -41,48 +38,21 @@ public class PasswordGenerator {
             throw new IllegalArgumentException("Password length must be greater than 11.");
         }
 
-        SecureRandom random = new SecureRandom();
-        StringBuilder chars = new StringBuilder();
-        List<Character> passwordChars = new ArrayList<>();
-        int category = 0;
+        List<CharacterRule> rules = new ArrayList<>();
+        if (useUpperCase) rules.add(new CharacterRule(EnglishCharacterData.UpperCase, 1));
+        if (useLowerCase) rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
+        if (useNumbers) rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
+        if (useSpecialChar) rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
 
-        if (useSpecialChar) {
-            category++;
-            chars.append(SPECIAL_CHAR);
-            passwordChars.add(SPECIAL_CHAR.charAt(random.nextInt(SPECIAL_CHAR.length())));
-        }
-        if (useNumbers) {
-            category++;
-            chars.append(DIGITS);
-            passwordChars.add(DIGITS.charAt(random.nextInt(DIGITS.length())));
-        }
-        if (useUpperCase) {
-            category++;
-            chars.append(UPPERCASE);
-            passwordChars.add(UPPERCASE.charAt(random.nextInt(UPPERCASE.length())));
-        }
-        if (useLowerCase) {
-            category++;
-            chars.append(LOWERCASE);
-            passwordChars.add(LOWERCASE.charAt(random.nextInt(LOWERCASE.length())));
-        }
 
-        if (category <= 1) {
+        if (rules.size() < 2) {
             throw new IllegalArgumentException("You must select at least two character categories.");
         }
-
-        for (int i = passwordChars.size(); i < length; i++) {
-            passwordChars.add(chars.charAt(random.nextInt(chars.length())));
-        }
-
-        Collections.shuffle(passwordChars, random);
-
-        char[] password = new char[length];
-        for (int i = 0; i < length; i++) {
-            password[i] = passwordChars.get(i);
-        }
-
-        return password;
+        
+        org.passay.PasswordGenerator passayGenerator = new org.passay.PasswordGenerator();
+        String password = passayGenerator.generatePassword(length, rules);
+        
+        return password.toCharArray();
     }
 
     /**

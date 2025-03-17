@@ -142,6 +142,13 @@ public class ServiceManagerController extends ControllerAbstract<Stage, AccountM
         boolean digits = digitsCheck.isSelected();
         boolean special = specialCheck.isSelected();
 
+        int count = (lowercase ? 1 : 0) + (uppercase ? 1 : 0) + (digits ? 1 : 0) + (special ? 1 : 0);
+        
+        if (count < 2) {
+            showAlert(AlertType.WARNING, "Warning", "You must select at least two character categories!");
+            return;
+        }
+        
         char[] password = serviceManager.generatePassword(length, special, digits, uppercase, lowercase);
         passwordField.setVisible(true);
         passwordField.setText(new String(password));
