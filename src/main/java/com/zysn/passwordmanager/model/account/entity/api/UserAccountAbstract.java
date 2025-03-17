@@ -21,7 +21,6 @@ public abstract class UserAccountAbstract implements MustBeDestroyed {
 
     /**
      * Default constructor.
-     * Optional initialization logic can be placed here.
      */
     public UserAccountAbstract() {
         // Optional initialization logic can be placed here
