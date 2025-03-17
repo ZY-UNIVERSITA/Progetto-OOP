@@ -70,6 +70,9 @@ dependencies {
     implementation("com.google.zxing:core:3.5.3")
     // https://mvnrepository.com/artifact/com.google.zxing/javase
     implementation("com.google.zxing:javase:3.5.3")
+
+    // Passay - Password Generator
+    implementation("org.passay:passay:1.6.6")
 }
 
 tasks.withType<Test> {
