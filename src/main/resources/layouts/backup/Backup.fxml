@@ -30,7 +30,7 @@
 
         <HBox fx:id="fileHBox" alignment="CENTER" spacing="10" VBox.vgrow="ALWAYS">
          <PasswordField fx:id="passwordField" promptText="Insert password" />
-            <TextField fx:id="saltField" alignment="CENTER_RIGHT" editable="false" prefWidth="100.0" promptText="Insert salt" />
+            <TextField fx:id="saltField" alignment="CENTER_RIGHT" prefWidth="100.0" promptText="Insert salt" />
    
            <Button fx:id="restoreButton" onAction="#loadBackup" text="Restore" />
         </HBox>
