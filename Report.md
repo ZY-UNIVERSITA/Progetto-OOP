@@ -317,7 +317,7 @@ Creazione di una classe _BackupManager_ che gestisce centralmente la creazione e
 
 
 
-#### Parte di Yuhang Zhu.   
+#### Parte di Yuhang Zhu.  
 **1. Account utente e authentication data**
 ```mermaid
 
@@ -535,6 +535,67 @@ Per l'implementazione dei test si è utilizzato **JUnit 5**, sfruttando le annot
 ## Note di sviluppo
 
 #### Parte di Nataliia Skybun.
+#### 1. Utilizzo di libreria Passay
+**Dove:** `com.zysn.passwordmanager.model.utils.security.impl.PasswordGenerator`  
+**Snippet:**
+```java
+public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
+
+
+        if (length < 12) {
+            throw new IllegalArgumentException("Password length must be greater than 11.");
+        }
+
+
+        List<CharacterRule> rules = new ArrayList<>();
+        if (useUpperCase) rules.add(new CharacterRule(EnglishCharacterData.UpperCase, 1));
+        if (useLowerCase) rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
+        if (useNumbers) rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
+        if (useSpecialChar) rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
+
+
+
+
+        if (rules.size() < 2) {
+            throw new IllegalArgumentException("You must select at least two character categories.");
+        }
+       
+        org.passay.PasswordGenerator passayGenerator = new org.passay.PasswordGenerator();
+        String password = passayGenerator.generatePassword(length, rules);
+       
+        return password.toCharArray();
+    }
+```
+
+#### 2. Utilizzo di lambda expressions
+**Dove:** `com.zysn.passwordmanager.model.service.ServiceManager`  
+**Snippet:**
+```java
+public boolean removeService(String serviceName) {
+        return services.removeIf(service -> service.getName().equals(serviceName));
+    }
+```
+
+#### 3. Utilizzo di Clipboard di Java (AWT)
+**Dove:** `com.zysn.passwordmanager.controller.backup.BackupController.java`  
+**Snippet:**
+```java
+private void copyToClipboard(String text) {
+         StringSelection selection = new StringSelection(text);
+         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+     }
+…
+
+Button copyButton = new Button("Copy");
+         copyButton.setOnAction(e -> {
+             copyToClipboard("Password: " + passwordText + "\nSalt: " + saltText);
+             alert.setHeaderText("Copied to clipboard!");
+         });
+```
+
+
+
+#### Parte di Yuhang Zhu.  
 
 
 # Commenti finali
