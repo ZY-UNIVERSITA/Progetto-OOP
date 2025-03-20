@@ -406,7 +406,6 @@ Queste classi vengono usati come DTO per trasferire dati da una classe all'altra
 **2. Account manager**
 ```mermaid
 
-
 classDiagram
     %% Interfaces
     class AccountManager {
@@ -490,11 +489,11 @@ classDiagram
     }
 
     %% Relationships
-    AccountManager <|-- DefaultAccountManager : implements
-    SessionManager <|-- DefaultSessionManager : implements
-    MustBeDestroyed <|-- DefaultSessionManager : implements
-    MustBeDestroyed <|-- KeyStoreConfig : implements
-    MustBeDestroyed <|-- ServiceCryptoConfig : implements
+    AccountManager <|.. DefaultAccountManager : implements
+    SessionManager <|.. DefaultSessionManager : implements
+    MustBeDestroyed <|.. DefaultSessionManager : implements
+    MustBeDestroyed <|.. KeyStoreConfig : implements
+    MustBeDestroyed <|.. ServiceCryptoConfig : implements
 
     DefaultAccountManager --o SessionManager : uses
     DefaultAccountManager --o ServiceManager : uses
@@ -518,7 +517,117 @@ L'interfaccia **AccountManager** richiede di implementare 3 metodi collegati all
 Esso viene implementato dalla classe concreta **DefaultAccountManager** che utilizza tramite aggregazione 4 classi sotto forma di interfacce: registrationService per gestire la fase di registrazione, loginService per gestire la fase di login, ServiceManager per gestire le password del singolo utente e SessionManager per gestire i dati personali di crittografia dell'account corrente.
 La classe **DefaultSessionManager** implementa l'interfaccia **SessionManager** e viene usata per gestire tutti i dati di sicurezza dell'utente come la sua password oppure la master key usata per decifrare le password utente oppure le password intermedie che vengono usate per derivare la master key finale. Utilizza inoltre 2 classi con funzionalità di DTO perchè vengono usati solo contenere dati da trasferire tra classi.
 
+**3. Login e registrazione**
+```mermaid
 
+classDiagram
+    class LoginService {
+        <<interface>>
+        +login(CollectedUserData collectedUserData)
+    }
+
+    class DefaultLoginService {
+        -loadUserPersonalData()
+        -deriveKeyFromPassword()
+        -loadKeyStore()
+        -decryptServiceConfig()
+        -deriveMasterKey()
+        -loadUserPassword()
+    }
+
+    class RegistrationService {
+        <<interface>>
+        +register(CollectedUserData collectedUserData)
+    }
+
+    class DefaultRegistrationService {
+        -insertingData()
+        -getKeyFromPassword()
+        -createKeyStore()
+        -createServiceConfig()
+        -encryptConfigData()
+        -saveData()
+        -createMasterKey()
+        -loadUserPassword()
+        +register(CollectedUserData)
+    }
+
+
+    class AuthenticationStep {
+        <<interface>>
+        +executeStep()
+    }
+
+    class AuthenticationStepAbstract {
+        <<abstract>>
+        +executeStep()*
+        +getSessionManager()
+        +setSessionManager(SessionManager sessionManager)
+    }
+
+    class AuthenticationCollectingStepAbstract {
+        <<abstract>>
+        +getCollectedUserData()
+        +setCollectedUserData(CollectedUserData collectedUserData)
+    }
+
+    class InsertUserData
+    class LoadUserData
+    class DeriveKeyFromPassword
+    class DecryptKeyStoreConfig
+    class LoadKeyStore
+    class GetKeyFromKeyStore
+    class DeriveServiceConfigKey
+    class DecryptServiceConfig
+    class DeriveMasterKey
+    class LoadUserPassword
+    class InsertUserConfig
+    class CreateKeyStore
+    class CreateServiceConfig
+    class EncryptKeyStoreConfig
+    class EncryptServiceConfig
+    class SaveKeyStore
+    class SaveUserData
+    class CloseKeyStore
+
+    LoginService <|.. DefaultLoginService : implements
+    RegistrationService <|.. DefaultRegistrationService : implements
+    AuthenticationStep <|.. AuthenticationStepAbstract : implements
+
+    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract
+
+    AuthenticationCollectingStepAbstract <|-- InsertUserData
+    AuthenticationCollectingStepAbstract <|-- InsertUserConfig
+
+    AuthenticationStepAbstract <|-- LoadUserData : extends
+    AuthenticationStepAbstract <|-- DeriveKeyFromPassword : extends
+    AuthenticationStepAbstract <|-- DecryptKeyStoreConfig : extends
+    AuthenticationStepAbstract <|-- LoadKeyStore : extends
+    AuthenticationStepAbstract <|-- GetKeyFromKeyStore : extends
+    AuthenticationStepAbstract <|-- DeriveServiceConfigKey : extends
+    AuthenticationStepAbstract <|-- DecryptServiceConfig : extends
+    AuthenticationStepAbstract <|-- DeriveMasterKey : extends
+    AuthenticationStepAbstract <|-- LoadUserPassword : extends
+    AuthenticationStepAbstract <|-- CreateKeyStore : extends
+    AuthenticationStepAbstract <|-- CreateServiceConfig : extends
+    AuthenticationStepAbstract <|-- EncryptKeyStoreConfig : extends
+    AuthenticationStepAbstract <|-- EncryptServiceConfig : extends
+    AuthenticationStepAbstract <|-- SaveKeyStore : extends
+    AuthenticationStepAbstract <|-- SaveUserData : extends
+    AuthenticationStepAbstract <|-- CloseKeyStore : extends
+
+    DefaultLoginService --* AuthenticationStep : uses
+    DefaultRegistrationService --* AuthenticationStep : uses
+
+```
+
+**Problema**  
+L'applicazione richiede di implementare la fase di login e la fase di registrazione.
+**Soluzione**  
+La soluzione è realizzata attraverso il pattern della **Chain of Responsibility**, implementato mediante un'interfaccia generica AuthenticationStep, la quale definisce il metodo executeStep(). 
+La classe concreta DefaultLoginService realizza l’interfaccia LoginService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento del login, come ad esempio il caricamento dei dati utente, derivazione di chiavi crittografiche, apertura e decrittazione del keystore, configurazione dei servizi e derivazione della master key.
+La classe concreta DefaultRegistrationService realizza l’interfaccia RegistrationService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento della registrazione, occupandosi dell’inserimento e salvataggio dei dati utenti, derivazione di chiavi dalla password, creazione e cifratura del keystore e della configurazione del servizio, e generazione della master key.
+Questo permette il riutilizzo di alcuni step tra login e registration andando a semplificare e modularizzare il lavoro.
 
 # Sviluppo
 

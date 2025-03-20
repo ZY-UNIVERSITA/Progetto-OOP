@@ -212,3 +212,116 @@ classDiagram
     CollectedUserData <.. AccountManager : uses
     CollectedUserData <.. RegistrationService: uses
     CollectedUserData <.. LoginService : uses 
+
+# Login e registrazione
+classDiagram
+    class LoginService {
+        <<interface>>
+        +login(CollectedUserData collectedUserData)
+    }
+
+    class DefaultLoginService {
+        -List~AuthenticationStep~ authenticationStep
+        -KeyStoreManager keyStoreManager
+        -ServiceCryptoConfigManager passwordListConfigManager
+        -CryptoManager cryptoManager
+        -SessionManager sessionManager
+        +login(CollectedUserData collectedUserData)
+        -loadUserPersonalData()
+        -deriveKeyFromPassword()
+        -loadKeyStore()
+        -decryptServiceConfig()
+        -deriveMasterKey()
+        -loadUserPassword()
+    }
+
+    class RegistrationService {
+        <<interface>>
+        +register(CollectedUserData collectedUserData)
+    }
+
+    class DefaultRegistrationService {
+        -List<AuthenticationStep> authenticationStep
+        -KeyStoreManager keyStoreManager
+        -ServiceCryptoConfigManager serviceCryptoConfigManager
+        -CryptoManager cryptoManager
+        -SessionManager sessionManager
+        +register(CollectedUserData)
+    }
+
+    class AuthenticationStep {
+        <<interface>>
+        +executeStep()
+    }
+
+    class AuthenticationStepAbstract {
+        <<abstract>>
+        -SessionManager sessionManager
+        +executeStep()*
+        +getSessionManager()
+        +setSessionManager(SessionManager sessionManager)
+    }
+
+    class AuthenticationCollectingStepAbstract {
+        <<abstract>>
+        -CollectedUserData collectedUserData
+        +getCollectedUserData()
+        +setCollectedUserData(CollectedUserData collectedUserData)
+    }
+
+    class InsertUserData {
+        
+    }
+
+    class LoadUserData {
+        
+    }
+
+    class DeriveKeyFromPassword {
+        
+    }
+
+    class DecryptKeyStoreConfig {
+        
+    }
+
+    class LoadKeyStore {
+        
+    }
+
+    class GetKeyFromKeyStore {
+        
+    }
+
+    class DeriveServiceConfigKey {
+        
+    }
+
+    class DecryptServiceConfig {
+        
+    }
+
+    class DeriveMasterKey {
+        
+    }
+
+    class LoadUserPassword {
+        
+    }
+
+    LoginService <|.. DefaultLoginService : implements
+    AuthenticationStep <|.. AuthenticationStepAbstract : implements
+
+    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract : extends
+    AuthenticationCollectingStepAbstract <|-- InsertUserData : extends
+    AuthenticationStepAbstract <|-- LoadUserData : extends
+    AuthenticationStepAbstract <|-- DeriveKeyFromPassword : extends
+    AuthenticationStepAbstract <|-- DecryptKeyStoreConfig : extends
+    AuthenticationStepAbstract <|-- LoadKeyStore : extends
+    AuthenticationStepAbstract <|-- GetKeyFromKeyStore : extends
+    AuthenticationStepAbstract <|-- DeriveServiceConfigKey : extends
+    AuthenticationStepAbstract <|-- DecryptServiceConfig : extends
+    AuthenticationStepAbstract <|-- DeriveMasterKey : extends
+    AuthenticationStepAbstract <|-- LoadUserPassword : extends
+
+    DefaultLoginService --* AuthenticationStep : uses

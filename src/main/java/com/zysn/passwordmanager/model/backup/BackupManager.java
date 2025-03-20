@@ -52,6 +52,7 @@ public class BackupManager {
         char[] password = serviceManager.generatePassword(32, true, true, true, true);
     
         byte[] passwordBytes = EncodingUtils.charToByteConverter(password);
+
         byte[] source = DataUtils.concatArray(passwordBytes, salt);
     
         AlgorithmConfig config = AlgorithmConfigFactory.createAlgorithmConfig("AES", salt, null);
