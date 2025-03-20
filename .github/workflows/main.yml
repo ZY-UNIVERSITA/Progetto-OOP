@@ -6,32 +6,40 @@ on:
     tags: ['v*']
   pull_request:
     branches: [ main, develop ]
-  workflow_dispatch:
 
 jobs:
   # crea la build e testalo
   build-and-test:
+    # la build e il test viene eseguito in un ambiente windows
     runs-on: windows-latest
     steps:
+      #utilizza la repository action
       - uses: actions/checkout@v4
 
+      # crea l'ambiente per java
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
 
+      # esegue la build di gradle
       - name: Build with Gradle
         run: ./gradlew.bat build
 
+      # esegue il test
       - name: Run tests
         run: ./gradlew.bat test
 
   # Crea il fatty jar per il release
   create-release:
     needs: build-and-test
-    #if: startsWith(github.ref, 'refs/tags/v')
+
+    # viene eseguito solo se viene creato un tag
+    if: startsWith(github.ref, 'refs/tags/v')
+    # viene eseguito in un ambiente windows
     runs-on: windows-latest
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -41,11 +49,13 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      # build del fatty jar usando il framework spring boot
       - name: Build Spring Boot fat jar
         run: ./gradlew.bat bootJar
 
+      # salva il fatty jar creato nell'ambiente virtuale in modo tale da porterlo scaricare
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: spring-boot-fat-jar
+          name: password-manager-jar
           path: build/libs/*.jar
