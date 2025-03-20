@@ -325,3 +325,127 @@ classDiagram
     AuthenticationStepAbstract <|-- LoadUserPassword : extends
 
     DefaultLoginService --* AuthenticationStep : uses
+
+# Key store
+classDiagram
+    class KeyStoreManager {
+        <<interface>>
+        +createNewKeyStore()
+        +loadKeyStore()
+        +createKeyStoreConfig()
+        +createKeyStoreEntry()
+        +populateNewKeyStore()
+        +saveKeyStore()
+        +closeKeyStore()
+        +encryptConfig()
+        +decryptConfig()
+        +getKeyStoreKeys()
+    }
+
+    class DefaultKeyStoreManager {
+        -FileManager fileManager
+        -SessionManager sessionManager
+        -KeyStore keyStore
+        -KeyStoreConfigService keyStoreService
+        -KeyStoreCreator keyStoreCreator
+        -KeyStoreStorageService keyStoreStorage
+        -KeyStoreEntryService keyStoreEntryManager
+        +createNewKeyStore()
+        +loadKeyStore()
+        +createKeyStoreConfig()
+        +createKeyStoreEntry()
+        +populateNewKeyStore()
+        +saveKeyStore()
+        +closeKeyStore()
+        +encryptConfig()
+        +decryptConfig()
+        +getKeyStoreKeys()
+        +getKeyStore() KeyStore
+    }
+
+    class KeyStoreConfigService {
+        <<interface>>
+        +generateKeyStoreConfigKey(KeyStoreConfig)
+        +generateKeyStoreConfigSalt(KeyStoreConfig)
+        +generateKeyStoreEntry(UserAuthKey)
+        +encryptConfig(byte[], byte[], AlgorithmConfig) byte[]
+        +decryptConfig(byte[], byte[], AlgorithmConfig) KeyStoreConfig
+    }
+
+    class DefaultKeyStoreConfigService {
+        -int keyLength
+        -PasswordGenerator passwordGenerator
+        -CryptoManager cryptoManager
+        +generateKeyStoreConfigKey(KeyStoreConfig)
+        +generateKeyStoreConfigSalt(KeyStoreConfig)
+        +generateKeyStoreEntry(UserAuthKey)
+        +encryptConfig(byte[], byte[], AlgorithmConfig) byte[]
+        +decryptConfig(byte[], byte[], AlgorithmConfig) KeyStoreConfig
+        -generateAndSetKey(int, Consumer<byte[]>)
+        -generateTotpEncryptionKey(Consumer<byte[]>)
+        -generateTotpKey(Consumer<byte[]>)
+    }
+
+    class KeyStoreCreator {
+        <<interface>>
+        +createKeyStore(char[]) KeyStore
+    }
+
+    class DefaultKeyStoreCreator {
+        +createKeyStore(char[]) KeyStore
+    }
+
+    class KeyStoreEntryService {
+        <<interface>>
+        +retrieveKey(KeyStore, String, char[]) byte[]
+        +insertKey(KeyStore, String, byte[], char[])
+    }
+
+    class DefaultKeyStoreEntryService {
+        +retrieveKey(KeyStore, String, char[]) byte[]
+        +insertKey(KeyStore, String, byte[], char[])
+    }
+
+    class KeyStoreStorageService {
+        <<interface>>
+        +loadKeyStore(byte[], char[]) KeyStore
+        +saveKeyStore(Path, KeyStore, char[])
+        +closeKeyStore(KeyStore)
+    }
+
+    class DefaultKeyStoreStorageService {
+        +loadKeyStore(byte[], char[]) KeyStore
+        +saveKeyStore(Path, KeyStore, char[])
+        +closeKeyStore(KeyStore)
+    }
+
+    class KeyStoreConfig {
+        -byte[] keyStoreEncryptionKey
+        -byte[] saltWithPasswordDerived
+        -byte[] saltWithTotpEncryptionKey
+        -byte[] saltForHKDF
+        -byte[] serviceDecryptionSalt
+        +serialize() byte[]
+        +destroy()
+        +getters/setters()
+    }
+
+    %% Relations
+    KeyStoreManager <|.. DefaultKeyStoreManager: implements
+    KeyStoreConfigService <|.. DefaultKeyStoreConfigService: implements
+    KeyStoreCreator <|.. DefaultKeyStoreCreator: implements
+    KeyStoreEntryService <|.. DefaultKeyStoreEntryService: implements
+    KeyStoreStorageService <|.. DefaultKeyStoreStorageService: implements
+
+    DefaultKeyStoreManager --* KeyStoreConfigService : composition
+    DefaultKeyStoreManager --* KeyStoreCreator : composition
+    DefaultKeyStoreManager --* KeyStoreStorageService : composition
+    DefaultKeyStoreManager --* KeyStoreEntryService : composition
+    DefaultKeyStoreManager --* SessionManager : composition
+
+    DefaultKeyStoreManager --o FileManager : uses
+
+    DefaultKeyStoreConfigService .. KeyStoreConfig
+    DefaultKeyStoreCreator .. KeyStoreConfig
+    DefaultKeyStoreEntryService .. KeyStoreConfig
+    DefaultKeyStoreStorageService .. KeyStoreConfig

@@ -623,11 +623,112 @@ classDiagram
 
 **Problema**  
 L'applicazione richiede di implementare la fase di login e la fase di registrazione.
+
 **Soluzione**  
 La soluzione è realizzata attraverso il pattern della **Chain of Responsibility**, implementato mediante un'interfaccia generica AuthenticationStep, la quale definisce il metodo executeStep(). 
 La classe concreta DefaultLoginService realizza l’interfaccia LoginService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento del login, come ad esempio il caricamento dei dati utente, derivazione di chiavi crittografiche, apertura e decrittazione del keystore, configurazione dei servizi e derivazione della master key.
 La classe concreta DefaultRegistrationService realizza l’interfaccia RegistrationService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento della registrazione, occupandosi dell’inserimento e salvataggio dei dati utenti, derivazione di chiavi dalla password, creazione e cifratura del keystore e della configurazione del servizio, e generazione della master key.
 Questo permette il riutilizzo di alcuni step tra login e registration andando a semplificare e modularizzare il lavoro.
+
+**4. Gestione del key store**
+```mermaid
+
+classDiagram
+    class KeyStoreManager {
+        <<interface>>
+        +createNewKeyStore()
+        +loadKeyStore()
+        +createKeyStoreConfig()
+        +createKeyStoreEntry()
+        +populateNewKeyStore()
+        +saveKeyStore()
+        +closeKeyStore()
+        +encryptConfig()
+        +decryptConfig()
+        +getKeyStoreKeys()
+    }
+
+    class DefaultKeyStoreManager {
+        +getKeyStore() KeyStore
+    }
+
+    class KeyStoreConfigService {
+        <<interface>>
+        +generateKeyStoreConfigKey(KeyStoreConfig)
+        +generateKeyStoreConfigSalt(KeyStoreConfig)
+        +generateKeyStoreEntry(UserAuthKey)
+        +encryptConfig(byte[], byte[], AlgorithmConfig) byte[]
+        +decryptConfig(byte[], byte[], AlgorithmConfig) KeyStoreConfig
+    }
+
+    class DefaultKeyStoreConfigService {
+        -generateAndSetKey(int, Consumer~byte[]~)
+        -generateTotpEncryptionKey(Consumer~byte[]~)
+        -generateTotpKey(Consumer~byte[]~)
+    }
+
+    class KeyStoreCreator {
+        <<interface>>
+        +createKeyStore(char[]) KeyStore
+    }
+
+    class DefaultKeyStoreCreator {
+    }
+
+    class KeyStoreEntryService {
+        <<interface>>
+        +retrieveKey(KeyStore, String, char[]) byte[]
+        +insertKey(KeyStore, String, byte[], char[])
+    }
+
+    class DefaultKeyStoreEntryService {
+    }
+
+    class KeyStoreStorageService {
+        <<interface>>
+        +loadKeyStore(byte[], char[]) KeyStore
+        +saveKeyStore(Path, KeyStore, char[])
+        +closeKeyStore(KeyStore)
+    }
+
+    class DefaultKeyStoreStorageService {
+    }
+
+    class KeyStoreConfig {
+        +serialize() byte[]
+        +destroy()
+        +getters/setters()
+    }
+
+    %% Relations
+    KeyStoreManager <|.. DefaultKeyStoreManager: implements
+    KeyStoreConfigService <|.. DefaultKeyStoreConfigService: implements
+    KeyStoreCreator <|.. DefaultKeyStoreCreator: implements
+    KeyStoreEntryService <|.. DefaultKeyStoreEntryService: implements
+    KeyStoreStorageService <|.. DefaultKeyStoreStorageService: implements
+
+    DefaultKeyStoreManager --* KeyStoreConfigService : composition
+    DefaultKeyStoreManager --* KeyStoreCreator : composition
+    DefaultKeyStoreManager --* KeyStoreStorageService : composition
+    DefaultKeyStoreManager --* KeyStoreEntryService : composition
+    DefaultKeyStoreManager --* SessionManager : composition
+
+    DefaultKeyStoreManager --o FileManager : uses
+
+    DefaultKeyStoreConfigService .. KeyStoreConfig
+    DefaultKeyStoreCreator .. KeyStoreConfig
+    DefaultKeyStoreEntryService .. KeyStoreConfig
+    DefaultKeyStoreStorageService .. KeyStoreConfig
+
+```
+
+**Problema**
+Il key store contiene le chiavi simmetriche dell'utente. Queste chiavi verrano usate per decriptare i file contenenti le password del singolo utente, quando vengono combinate insieme alla password utente. Quindi è necessario la gestione del keystore a partire dalla sua creazione, all'inserimento delle chiavi e alla possibilità di richiedere le chiavi.
+
+**Soluzione**
+La classe DefaultKeyStoreManager agisce come Facade, offrendo un'interfaccia semplice e unificata verso una serie di operazioni complesse. Questo pattern nasconde la complessità sottostante delle operazioni del KeyStore dietro metodi chiari e semplificati, richiamando le classi che si occupano delle operazioni a basso livello.
+Ogni operazione sul key store è stato spezzato in classi separate ognuno dei quali implementa una interfaccia in modo tale da avere una flessibilità futura nel caso si volessero implementare diverse versioni del keystore. Quindi c'è la classe che si occupa di creare il keystore, una classe che si occupa di gestire la configurazione del keystore, chi si occupa di inserire e ottenere le chiavi e chi si occupa di salvare e fare il caricamento di essi.
+
 
 # Sviluppo
 
