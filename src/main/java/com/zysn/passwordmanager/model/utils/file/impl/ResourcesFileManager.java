@@ -57,8 +57,11 @@ public class ResourcesFileManager extends AbstractFileManager {
      */
     @Override
     protected InputStream openInputStream(final Path path) throws IOException {
+        // final InputStream inputStream = ClassLoader.getSystemResourceAsStream(path.toString().replace('\\', '/'));
 
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream(path.toString().replace('\\', '/'));
+        // Usando sprint boot per creare un nested jar, ClassLoader non è in grado di trovare le risorse direttamente nel file resources
+        // questa è una soluzione trovata su stack overflow
+        final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(path.toString().replace('\\', '/'));
 
         if (inputStream == null) {
             throw new IOException("Resource not found: " + path);

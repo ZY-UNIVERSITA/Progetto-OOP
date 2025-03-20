@@ -12,6 +12,14 @@ plugins {
     * The runnable jar will be found in build/libs/projectname-all.jar
     */
     id("com.github.johnrengelman.shadow") version "8.1.1"
+
+    /*
+    * Create a nested jar to contain all dependencies.
+    * Java needs all the security provider jar dependencies to be digitally signed otherwise it won't load them.
+    * Spring framework is only used to created a nested jar that contain all the jar without compressing them and deleting their digital signature.
+     */
+    id("org.springframework.boot") version "3.4.3"
+    id("io.spring.dependency-management") version "1.1.7"
 }
 
 repositories {
