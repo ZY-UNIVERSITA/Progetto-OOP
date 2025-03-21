@@ -881,6 +881,7 @@ classDiagram
     DefaultAlgorithmConfigBuilder --> AlgorithmConfig : build
 
 ```
+
 **Problema**
 Questo è il cuore del sistema. L’applicazione richiede un sistema robusto, modulare e flessibile per la gestione della crittografia e dell’hashing dei dati sensibili. L'applicazione deve supportare molteplici algoritmi di derivazione di chiavi e cifratura/decifratura, frnire configurazioni personalizzabili tramite parametri specifici per ogni algoritmo e creare una modularitàp er usi futuri.
 
@@ -889,6 +890,54 @@ Le soluzioni adotatte soo:
 Factory Method Pattern: viene utilizzato per creare istanze specifiche degli algoritmi crittografici e di derivazione chiavi, senza esporre le logiche concrete di creazione.
 Strategy Pattern: permette di definire famiglie intercambiabili tramite la definizione delle interfacce di algoritmi crittografici, facilitando la selezione dinamica dell'algoritmo appropriato in fase di esecuzione permettendo di creare grandissima flessibilità nella scelta degli algoritmi.
 Builder Pattern: vien utilizzato per creare configurazioni di algoritmi crittografici personalizzat facilitando la gestione delle configurazioni.
+
+**7. File manager**
+```mermaid
+
+classDiagram
+    class FileManager {
+        <<interface>>
+        +loadData(fileName: String) byte[]
+        +saveData(fileName: String, data: byte[])
+        +deleteData(fileName: String)
+        +createPath(fileName: String) Path
+    }
+
+    class AbstractFileManager {
+        +createPath(fileName: String)* 
+        #InputStream openInputStream(path: Path)* 
+    }
+
+    class DefaultFileManager {
+    }
+
+    class GenericFileManager {
+    }
+
+    class ResourcesFileManager {
+        +void saveData(fileName: String, data: byte[])
+        +void deleteData(fileName: String)
+    }
+
+    FileManager <|.. AbstractFileManager : implements
+    
+    AbstractFileManager <|-- DefaultFileManager : extends
+    AbstractFileManager <|-- GenericFileManager : extends
+    AbstractFileManager <|-- ResourcesFileManager : extends 
+
+```
+
+**Problema**
+Nel progetto esiste la necessità di gestire operazioni  file, quali caricamento e salvataggio. Tuttavia, queste operazioni possono variare a seconda del contesto applicativo (file di risorse, file generici, file nel sistema operativo). 
+
+**Soluzione**
+Per risolvere questi problemi è stato utilizzato il pattern Template Method combinato con l'astrazione tramite l'interfaccia.
+FileManager (Interfaccia) definisce il contratto comune per operazioni sui file (leggere, salvare, cancellare, creare percorso).
+AbstractFileManager (Classe astratta) implementa parzialmente il contratto, definendo un comportamento comune per alcune operazioni (come caricamento e salvataggio dati) e lasciando astratte altre operazioni specifiche (come la creazione del percorso e il recupero di input sorgente dei dati).
+DefaultFileManager, GenericFileManager, ResourcesFileManager (Implementazioni concrete) estendono AbstractFileManager e implementano la logica specifica per ciascun contesto:
+    DefaultFileManager: gestisce file del file system in una directory utente.
+    GenericFileManager: implementazione generica senza vincoli specifici su percorso o estensioni.
+    ResourcesFileManager: gestisce file accessibili tramite classpath (cartella resources). Non supporta l'operazione di salvataggio ed eliminazione in quanto sono risorse di sole lettura.
 
 
 # Sviluppo

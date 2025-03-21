@@ -593,3 +593,39 @@ AlgorithmConfigBuilder <|.. DefaultAlgorithmConfigBuilder : implements
 AlgorithmConfig ..|> MustBeDestroyed : implements
 
 DefaultAlgorithmConfigBuilder --> AlgorithmConfig : build
+
+# File manager
+classDiagram
+    class FileManager {
+        <<interface>>
+        +loadData(fileName: String) byte[]
+        +saveData(fileName: String, data: byte[])
+        +deleteData(fileName: String)
+        +createPath(fileName: String) Path
+    }
+
+    class AbstractFileManager {
+        #PathsConstant mainFolder
+        #ExtensionsConstant extension
+
+        +createPath(fileName: String)* 
+        #InputStream openInputStream(path: Path)* 
+    }
+
+    class DefaultFileManager {
+        -String userDir
+    }
+
+    class GenericFileManager {
+    }
+
+    class ResourcesFileManager {
+        +void saveData(fileName: String, data: byte[])
+        +void deleteData(fileName: String)
+    }
+
+    FileManager <|.. AbstractFileManager : implements
+    
+    AbstractFileManager <|-- DefaultFileManager : extends
+    AbstractFileManager <|-- GenericFileManager : extends
+    AbstractFileManager <|-- ResourcesFileManager : extends
