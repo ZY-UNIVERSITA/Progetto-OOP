@@ -657,19 +657,19 @@ classDiagram
         +generateKeyStoreConfigKey(KeyStoreConfig)
         +generateKeyStoreConfigSalt(KeyStoreConfig)
         +generateKeyStoreEntry(UserAuthKey)
-        +encryptConfig(byte[], byte[], AlgorithmConfig) byte[]
-        +decryptConfig(byte[], byte[], AlgorithmConfig) KeyStoreConfig
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) KeyStoreConfig
     }
 
     class DefaultKeyStoreConfigService {
-        -generateAndSetKey(int, Consumer~byte[]~)
-        -generateTotpEncryptionKey(Consumer~byte[]~)
-        -generateTotpKey(Consumer~byte[]~)
+        -generateAndSetKey(int passwordLength,  setterFunction: Consumer~byte[]~)
+        -generateTotpEncryptionKey(setterFunction: Consumer~byte[]~)
+        -generateTotpKey(setterFunction: Consumer~byte[]~)
     }
 
     class KeyStoreCreator {
         <<interface>>
-        +createKeyStore(char[]) KeyStore
+        +createKeyStore(keyStorePassword: char[]) KeyStore
     }
 
     class DefaultKeyStoreCreator {
@@ -677,8 +677,8 @@ classDiagram
 
     class KeyStoreEntryService {
         <<interface>>
-        +retrieveKey(KeyStore, String, char[]) byte[]
-        +insertKey(KeyStore, String, byte[], char[])
+        +retrieveKey(keyStore: KeyStore, alias: String, passwordToDecryptEntry: char[]) byte[]
+        +insertKey(keyStore: KeyStore, alias: String, keyToInsert: byte[], passwordToEncryptEntry: char[])
     }
 
     class DefaultKeyStoreEntryService {
@@ -686,9 +686,9 @@ classDiagram
 
     class KeyStoreStorageService {
         <<interface>>
-        +loadKeyStore(byte[], char[]) KeyStore
-        +saveKeyStore(Path, KeyStore, char[])
-        +closeKeyStore(KeyStore)
+        +loadKeyStore(input: byte[], keyStorePassword: char[]) KeyStore
+        +saveKeyStore(filePath: Path, keyStore: KeyStore, keyStorePassword: char[])
+        +closeKeyStore(keystore: KeyStore)
     }
 
     class DefaultKeyStoreStorageService {
@@ -728,6 +728,60 @@ Il key store contiene le chiavi simmetriche dell'utente. Queste chiavi verrano u
 **Soluzione**
 La classe DefaultKeyStoreManager agisce come Facade, offrendo un'interfaccia semplice e unificata verso una serie di operazioni complesse. Questo pattern nasconde la complessità sottostante delle operazioni del KeyStore dietro metodi chiari e semplificati, richiamando le classi che si occupano delle operazioni a basso livello.
 Ogni operazione sul key store è stato spezzato in classi separate ognuno dei quali implementa una interfaccia in modo tale da avere una flessibilità futura nel caso si volessero implementare diverse versioni del keystore. Quindi c'è la classe che si occupa di creare il keystore, una classe che si occupa di gestire la configurazione del keystore, chi si occupa di inserire e ottenere le chiavi e chi si occupa di salvare e fare il caricamento di essi.
+
+
+**5. Gestione delle password utente**
+classDiagram
+    class ServiceCryptoConfigManager {
+        +createServiceConfig()
+        +encryptConfig()
+        +decryptConfig()
+    }
+    
+    class DefaultServiceCryptoConfigManager {
+    }
+    
+    class ServiceCryptoConfigService {
+        +createPasswordListConfig() : ServiceCryptoConfig
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+    }
+    
+    class DefaultServiceCryptoConfigService {
+        -generateFileName(setterFunction: Consumer)
+        -generateHkdfSalt(setterFunction: Consumer)
+        -generateEncryptionSalt(setterFunction: Consumer)
+    }
+    
+    class ServiceCryptoConfig {
+        +serialize() byte[]
+        +destroy()
+    }
+    
+    ServiceCryptoConfigManager <|.. DefaultServiceCryptoConfigManager : implements
+    ServiceCryptoConfigService <|.. DefaultServiceCryptoConfigService : implements
+    ServiceCryptoConfig ..|> MustBeDestroyed : implements
+
+    DefaultServiceCryptoConfigManager --* ServiceCryptoConfigService : uses
+
+    DefaultServiceCryptoConfigService --* CryptoManager : uses
+    DefaultServiceCryptoConfigManager --o SessionManager : uses
+    
+    ServiceCryptoConfigService .. ServiceCryptoConfig : uses
+    DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
+
+**Problema**
+L'applicazione richiede la gestione sicura delle configurazioni crittografiche che vengono utilizzate per criptare/decriptare file contenenti informazioni sensibili in particolare le password dei servizi del singoli utente. In particolare, è presente la generazione della configurazione: 
+Creare una configurazione che includa elementi di sicurezza quali un nome di file univoco e sali crittografici (uno per l’HKDF e uno per l’encryption).
+Crittografia e Decrittografia: Fornire operazioni che, a partire da una configurazione, permettano di criptarla per proteggerla e successivamente decriptarla per il corretto utilizzo.
+
+**Soluzione**
+La soluzione proposta prevede una suddivisione in due componenti principali, ognuna con il proprio insieme di responsabilità:
+ServiceCryptoConfigManager: implementa un pattern di tipo facade che permette di gestire operazioni ad alto livello: creare una nuova configurazione di servizio., criptare la configurazione attuale, decriptare la configurazione precedentemente criptata. Lasciando però le operazioni effettive ad un'altra componente che lavora a basso livello.
+
+ServiceCryptoConfigService: Responsabile delle operazioni di basso livello come criptazione, decriptazione, generazione dei dati di configurazione.
+
+
 
 
 # Sviluppo

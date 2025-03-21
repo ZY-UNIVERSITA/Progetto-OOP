@@ -449,3 +449,55 @@ classDiagram
     DefaultKeyStoreCreator .. KeyStoreConfig
     DefaultKeyStoreEntryService .. KeyStoreConfig
     DefaultKeyStoreStorageService .. KeyStoreConfig
+
+# service config
+classDiagram
+    class ServiceCryptoConfigManager {
+        +createServiceConfig()
+        +encryptConfig()
+        +decryptConfig()
+    }
+    
+    class DefaultServiceCryptoConfigManager {
+        -sessionManager : SessionManager
+        -passwordListConfigService : ServiceCryptoConfigService
+        +createServiceConfig()
+        +encryptConfig()
+        +decryptConfig()
+    }
+    
+    class ServiceCryptoConfigService {
+        +createPasswordListConfig() : ServiceCryptoConfig
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+    }
+    
+    class DefaultServiceCryptoConfigService {
+        -cryptoManager : CryptoManager
+        +createPasswordListConfig() : ServiceCryptoConfig
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        -generateFileName(setterFunction: Consumer)
+        -generateHkdfSalt(setterFunction: Consumer)
+        -generateEncryptionSalt(setterFunction: Consumer)
+    }
+    
+    class ServiceCryptoConfig {
+        -fileName: char[]
+        -saltForHKDF: byte[]
+        -saltForServiceEncryption: byte[]
+        +serialize() byte[]
+        +destroy()
+    }
+    
+    ServiceCryptoConfigManager <|.. DefaultServiceCryptoConfigManager : implements
+    ServiceCryptoConfigService <|.. DefaultServiceCryptoConfigService : implements
+    ServiceCryptoConfig ..|> MustBeDestroyed : implements
+
+    DefaultServiceCryptoConfigManager --* ServiceCryptoConfigService : uses
+
+    DefaultServiceCryptoConfigService --* CryptoManager : uses
+    DefaultServiceCryptoConfigManager --o SessionManager : uses
+    
+    ServiceCryptoConfigService .. ServiceCryptoConfig : uses
+    DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
