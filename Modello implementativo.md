@@ -501,3 +501,95 @@ classDiagram
     
     ServiceCryptoConfigService .. ServiceCryptoConfig : uses
     DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
+
+# algorithm
+classDiagram
+
+class CryptoManager {
+    +deriveMasterKey(password: byte[], algorithmConfig: AlgorithmConfig) byte[]
+    +encrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+    +decrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+}
+
+class KeyDerivationAlgorithm {
+    <<Interface>>
+    +deriveKey(source: byte[], config: AlgorithmConfig) byte[]
+}
+
+class KeyDerivationFactory {
+    +createAlgorithm(name: String) KeyDerivationAlgorithm$
+}
+
+class Argon2
+class bcrypt
+class hkdf
+class scrypt
+
+class EncryptionAlgorithm {
+    <<Interface>>
+    +encrypt(source: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+    +decrypt(source: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+}
+
+class EncryptionAlgorithmFactory {
+    +createAlgorithm(name: String) EncryptionAlgorithm$
+}
+
+class AES
+
+class MustBeDestroyed {
+    <<Interface>>
+}
+
+class AlgorithmConfigBuilder {
+    <<Interface>>
+    +setAlgorithmName(algorithmName: String) AlgorithmConfigBuilder
+    +setAlgorithmType(algorithmType: String) AlgorithmConfigBuilder
+    +setSalt(salt: byte[]) AlgorithmConfigBuilder
+    +setParameters(parameters: Map<String,String>) AlgorithmConfigBuilder
+    +addParameter(key: String, value: String) AlgorithmConfigBuilder
+    +build() AlgorithmConfig
+}
+
+class DefaultAlgorithmConfigBuilder {
+    -algorithmName: String
+    -algorithmType: String
+    -salt: byte[]
+    -parameters: Map<String,String>
+}
+
+class AlgorithmConfigFactory {
+    +createAlgorithmConfig(algorithmName: String, salt: byte[], params: Map<String,String>) AlgorithmConfig$
+    -mergeParams(userParams: Map<String, String>, defaultParams: Map<String, String>) Map<String, String>$
+    -buildConfig(name: String, type: String, salt byte[], params: Map<String, String>) AlgorithmConfig$
+}
+
+class AlgorithmConfig {
+    -algorithmName: String
+    -algorithmType: String
+    -salt: byte[]
+    -parameters: Map<String,String>
+    +addNewParameter(key: String, value: String) void
+    +removeParameterByName(key String) void
+    +updateParameter(key: String, value: String) void
+    +getParameterValueByName(key: String) String
+    +destroy() void
+}
+
+CryptoManager --> KeyDerivationFactory : uses
+CryptoManager --> EncryptionAlgorithmFactory : uses
+CryptoManager --> AlgorithmConfig : uses
+AlgorithmConfigFactory --> AlgorithmConfigBuilder : uses
+
+KeyDerivationFactory --> KeyDerivationAlgorithm : create
+EncryptionAlgorithmFactory --> EncryptionAlgorithm : create
+
+KeyDerivationAlgorithm <|.. Argon2 : implements
+KeyDerivationAlgorithm <|.. bcrypt : implements
+KeyDerivationAlgorithm <|.. hkdf : implements
+KeyDerivationAlgorithm <|.. scrypt : implements
+EncryptionAlgorithm <|.. AES : implements
+AlgorithmConfigBuilder <|.. DefaultAlgorithmConfigBuilder : implements
+AlgorithmConfig ..|> MustBeDestroyed : implements
+
+DefaultAlgorithmConfigBuilder --> AlgorithmConfig : build
