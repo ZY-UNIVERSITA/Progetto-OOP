@@ -73,6 +73,7 @@ Gli elementi principali sono:
 6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
     Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
 
+### Eliminare o aggiornare
 Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
 ```mermaid
@@ -939,6 +940,47 @@ DefaultFileManager, GenericFileManager, ResourcesFileManager (Implementazioni co
     GenericFileManager: implementazione generica senza vincoli specifici su percorso o estensioni.
     ResourcesFileManager: gestisce file accessibili tramite classpath (cartella resources). Non supporta l'operazione di salvataggio ed eliminazione in quanto sono risorse di sole lettura.
 
+**8. Classi di utilità**
+
+```mermaid
+
+classDiagram
+    class CryptoUtils {
+      +generateSalt(int length) byte[]
+      +cleanMemory(char[] source)
+      +cleanMemory(byte[] source)
+      +destroy(Supplier~T~ getterFunction, Consumer~T~ setterFunction)
+      -CryptoUtils()
+    }
+
+    class DataUtils {
+      +concatArray(char[] firstData, char[] secondData) char[]
+      +concatArray(byte[] firstData, byte[] secondData) byte[]
+      -DataUtils()
+    }
+
+    class EncodingUtils {
+      +charToByteConverter(char[] source) byte[]
+      +charToByteConverter(char[] source, String charsetName) byte[]
+      +byteToCharConverter(byte[] source) char[]
+      +byteToCharConverter(byte[] source, String charsetName) char[]
+      +byteToBase64(byte[] source) char[]
+      +base64ToByte(char[] source) byte[]
+      +byteToBase32Byte(byte[] source) byte[]
+      +deserializeData(byte[] data, TypeReference~T~ classTypeReference) ~T~ T
+      +serializeData(T data) byte[]
+    }
+
+```
+
+**Problema**
+Alcune funzionalità sono considerate di base e vengono utilizzate di frequente. Non hanno bisogno di avere dati associati direttamente ma vengono frequentemente richiamati in piu parti del codice.
+
+**Soluzione**
+La gestione di queste funzionalità viene gestita utilizzando delle classi di utilità ovvero classi che raccolgono dei metodi statici che si occupano di specifiche aree, senza la necessità ogni volta di istanziare l'oggetto:
+CryptoUtils si occupa di operazioni si sicurezza crittografiche e di sicurezza della memoria.
+DataUtils gestisce la manipolazione e concatenazione dei dati.
+EncodingUtils centralizza le operazioni di conversione e codifica.
 
 # Sviluppo
 
@@ -1012,8 +1054,6 @@ Button copyButton = new Button("Copy");
              alert.setHeaderText("Copied to clipboard!");
          });
 ```
-
-
 
 #### Parte di Yuhang Zhu.  
 
