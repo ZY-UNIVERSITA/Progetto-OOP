@@ -157,6 +157,11 @@ classDiagram
         + initialize() void
     }
 
+    class RegistrationView {
+        <<Concept>>
+        + initialize() void
+    }
+
     class MainView {
         <<Concept>>
         + initialize() void
@@ -170,6 +175,15 @@ classDiagram
     %% Controller
     class LoginController {
         + handleLogin() void
+        + HandleRegister() void
+    }
+
+    class Login2FAController {
+        + handleLogin() void
+    }
+
+    class RegisterController {
+        + handleRegister() void
     }
 
     class MainController {
@@ -182,14 +196,12 @@ classDiagram
         + handleModifyService() void
     }
 
-    class ViewNavigator {
-        + showLoginView() void
-        + showMainView() void
-        + showRegisterView() void
-        + showServiceManagerView() void
+    class GenericNavigator {
+        + navigateT() void
     }
 
     LoginView --> LoginController : controller
+    RegistrationView --> RegisterController: controller
     MainView --> MainController : controller
     ServiceManagerView --> ServiceManagerController : controller
 
@@ -197,12 +209,20 @@ classDiagram
     MainController ..> SessionManager : usa
     ServiceManagerController ..> ServiceManager : usa
 
-    ViewNavigator --> LoginView
-    ViewNavigator --> MainView
-    ViewNavigator --> ServiceManagerView
-    LoginController ..> ViewNavigator : usa
-    MainController ..> ViewNavigator : usa
-    ServiceManagerController ..> ViewNavigator : usa
+    GenericNavigator --> LoginView
+    GenericNavigator --> MainView
+    GenericNavigator --> ServiceManagerView
+    GenericNavigator --> RegistrationView
+
+    LoginController --> Login2FAController : 2FA
+
+    LoginController ..> GenericNavigator : change view
+    Login2FAController --> GenericNavigator : change view
+    RegisterController --> GenericNavigator: change view
+    MainController ..> GenericNavigator : change view
+    ServiceManagerController ..> GenericNavigator : change view
+
+
 
 ```
 
@@ -231,6 +251,7 @@ classDiagram
     ServiceBuilder -- Service : constructs
 
 ```
+
 **Problema**  
 Gestore di password deve gestire vari tipi di servizi con un numero di campi. Inoltre, la password deve essere criptata prima di essere memorizzata, per evitare che vengano archiviati dati sensibili in chiaro.  
 **Soluzione**  
