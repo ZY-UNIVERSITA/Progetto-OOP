@@ -197,7 +197,7 @@ classDiagram
     }
 
     class GenericNavigator {
-        + navigateT() void
+        + navigateTo() void
     }
 
     LoginView --> LoginController : controller
@@ -1002,6 +1002,67 @@ La gestione di queste funzionalità viene gestita utilizzando delle classi di ut
 CryptoUtils si occupa di operazioni si sicurezza crittografiche e di sicurezza della memoria.
 DataUtils gestisce la manipolazione e concatenazione dei dati.
 EncodingUtils centralizza le operazioni di conversione e codifica.
+
+**9. Navigation e Controller**
+
+```mermaid
+
+classDiagram    
+
+    class GenericNavigator~S, T~ {
+        <<interface>>
+        +navigateTo(pathToFile: String, sceneTitle: String) GenericController~S, T~ 
+        +~U~ navigateTo(pathToFile: String, sceneTitle: String, optionalData: U) GenericController~S, T~ 
+        +getView() S
+    }
+
+    class GenericNavigatorAbstract~S, T~  {
+        <<abstract>>
+        + getData() T
+        # setView(Parent, String)*
+    }
+
+    class SceneNavigator {
+    }
+
+    class StepNavigator {
+    }
+
+    class GenericController~S, T~ {
+        <<interface>>
+        + setNavigator(navigator: GenericNavigator~S, T~)
+        + setData(data: T)
+        + initializeData()
+        + initializeData(optionalData: U)
+    }
+
+    class ControllerAbstract {
+        <<abstract>>
+        + getNavigator() : GenericNavigator~S, T~
+        + getData() : T
+    }
+
+    GenericNavigator <|.. GenericNavigatorAbstract : implements
+    GenericController <|.. ControllerAbstract : implements
+
+    GenericNavigatorAbstract <|-- SceneNavigator : extends
+    GenericNavigatorAbstract <|-- StepNavigator : extends
+
+    GenericNavigator ..> GenericController : return
+
+    ControllerAbstract <|-- MainRegistrationController : extends
+    ControllerAbstract <|-- LoginController : extends
+
+```
+**Problema**
+Nell'applicaozione la gestione della navigazione tra scene oppure all'interno della stessa scenadell'interfaccia utente può diventare complessa e difficile da mantenere. La presenza di un sistema di navigazione ben riutilizzabile permette di garantire una transizione fluida tra le diverse viste e il corretto passaggio dei dati tra controller.
+
+Inoltre, molte volte, le view hanno bisogno di metodi e campi comuni quindi anche qui è possibile gestirlo tramite dei moduli riutilizzabili.
+
+**Soluzione**
+Il progetto implementa un sistema di navigazione generico basato su un'interfaccia GenericNavigator<S, T>, che definisce le operazioni di navigazione per passare tra scene o tra componenti UI. Il sistema utilizza un'architettura basata su classi astratte NavigatorAbstract<S, T> e implementazioni concrete per gestire la navigazione in diversi contesti, come finestre (Stage) o pannelli (Pane). Questa implementazione segue il pattern Template method pattern in cui le classi che estendono la classe astratta devono implementare dei metodi dichiarati nella classe genitore.
+Similmente, la gestione dei controller si basa sull'interfaccia GenericController<S, T> e sulla sua implementazione astratta ControllerAbstract<S, T>, sempre basato sul Template Method PATTERN che permette di settare eventuali dati per il controller (in particolare la classe AccountManager) e di settargli il navigator che permette di gestire lo stage in cui si trova e di cambiare la scene.
+
 
 # Sviluppo
 

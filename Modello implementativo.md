@@ -629,3 +629,57 @@ classDiagram
     AbstractFileManager <|-- DefaultFileManager : extends
     AbstractFileManager <|-- GenericFileManager : extends
     AbstractFileManager <|-- ResourcesFileManager : extends
+
+# Controller and navigator
+classDiagram    
+
+    class GenericNavigator~S, T~ {
+        <<interface>>
+        +navigateTo(pathToFile: String, sceneTitle: String) GenericController~S, T~ 
+        +~U~ navigateTo(pathToFile: String, sceneTitle: String, optionalData: U) GenericController~S, T~ 
+        +getView() S
+    }
+
+    class GenericNavigatorAbstract~S, T~  {
+        <<abstract>>
+        - S view
+        - T data
+        
+        + getData() T
+        # setView(Parent, String)*
+    }
+
+    class SceneNavigator {
+    }
+
+    class StepNavigator {
+    }
+
+    class GenericController~S, T~ {
+        <<interface>>
+        + setNavigator(navigator: GenericNavigator~S, T~)
+        + setData(data: T)
+        + initializeData()
+        + initializeData(optionalData: U)
+    }
+
+    class ControllerAbstract {
+        <<abstract>>
+        - GenericNavigator~S, T~ navigator
+        - T data
+        
+        + getNavigator() : GenericNavigator~S, T~
+        + getData() : T
+    }
+
+    GenericNavigator <|.. GenericNavigatorAbstract : implements
+    GenericController <|.. ControllerAbstract : implements
+
+    GenericNavigatorAbstract <|-- SceneNavigator : extends
+    GenericNavigatorAbstract <|-- StepNavigator : extends
+
+    GenericNavigator ..> GenericController : return
+
+    ControllerAbstract <|-- MainRegistrationController : extends
+    ControllerAbstract <|-- LoginController : extends
+
