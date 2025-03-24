@@ -17,7 +17,7 @@ import javafx.scene.layout.GridPane;
  * <p>
  * This class utilizes {@link GridPane}, {@link AlgorithmConfigListParameters},
  * {@link Label}, {@link Spinner},
- * {@link ComboBox}, and other relevant classes.
+ * {@link ComboBox} to create a view for choosing algorithm configurations.
  * </p>
  */
 public class CreateCryptoChoosingPane {
