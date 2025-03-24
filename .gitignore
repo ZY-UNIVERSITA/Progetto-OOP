@@ -12,6 +12,10 @@ bin/
 
 esempio
 Analisi e progettazione
+.keystore
+.services
+.users
+.backup
 
 # Compiled class file
 *.class
@@ -37,3 +41,9 @@ Analisi e progettazione
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
+
+# Escludere il jar di gradle-wrapper
+!gradle/wrapper/gradle-wrapper.jar
+
+# VSCode
+.vscode

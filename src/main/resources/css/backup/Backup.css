@@ -1,0 +1,75 @@
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #2b2b2b;
+    -fx-text-fill: #e0e0e0;
+}
+
+#mainVBox {
+    -fx-alignment: center;
+    -fx-padding: 20;
+    -fx-spacing: 10;
+}
+
+#backupManagerLabel {
+    -fx-text-fill: #e0e0e0;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.label {
+    -fx-text-fill: #e0e0e0;
+}
+
+#backButton {
+    -fx-background-color: #b52d2d;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+#backButton:hover {
+    -fx-text-fill: #ffffff;
+}
+
+.text-field, 
+.password-field {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #505050;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-focus-color: #6a6a6a;
+    -fx-faint-focus-color: transparent;
+}
+
+#saltField {
+    -fx-opacity: 0.7;
+}
+
+.button {
+    -fx-background-color: #5a5a5a;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+#restoreButton {
+    -fx-background-color: #3a8edb;
+}
+
+#restoreButton:hover {
+    -fx-background-color: #1f7acb;
+}
+
+#createButton {
+    -fx-background-color: #4f9d4f;
+}
+
+#createButton:hover {
+    -fx-background-color: #62be62;
+}

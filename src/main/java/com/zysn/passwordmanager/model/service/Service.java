@@ -1,104 +1,137 @@
 package com.zysn.passwordmanager.model.service;
 
+import com.zysn.passwordmanager.model.security.algorithm.config.impl.AlgorithmConfig;
+import com.zysn.passwordmanager.model.utils.crypto.CryptoUtils;
+import com.zysn.passwordmanager.model.utils.security.api.MustBeDestroyed;
+
 /**
- * Represents a Service with credentials and additional information.
+ * Represents a single Service.
+ * Stores details about a particular service (e.g., Facebook, Gmail) along with
+ * its credentials.
  */
-public class Service {
+public class Service implements MustBeDestroyed {
 
     private String name;
     private String username;
     private String email;
-    private byte[] encryptedPassword;
+    private byte[] password;
     private AlgorithmConfig encryptionConfig;
     private String info;
 
-    public Service (String name, String username, String email, byte[] password, AlgorithmConfig encrypConf, String info) {
+    public Service(final String name, final String username, final String email, final byte[] password,
+            final AlgorithmConfig encryptionConfig,
+            final String info) {
         this.name = name;
         this.username = username;
         this.email = email;
-        this.encryptedPassword = password;
-        this.encryptionConfig = encrypConf;
+        this.password = password;
+        this.encryptionConfig = encryptionConfig;
         this.info = info;
     }
 
-    /**
-     * Gets the name of Service.
-     * @return the name
-     */
-    public String getName () {
+    public Service() {
+        
+    }
+
+    @Override
+    public void destroy() {
+        CryptoUtils.destroy(this::getName, this::setName);
+        CryptoUtils.destroy(this::getUsername, this::setUsername);
+        CryptoUtils.destroy(this::getEmail, this::setEmail);
+        CryptoUtils.destroy(this::getPassword, this::setPassword);
+        CryptoUtils.destroy(this::getEncryptionConfig, this::setEncryptionConfig);
+        CryptoUtils.destroy(this::getInfo, this::setInfo);
+    }
+
+    /* GETTER */
+    public String getName() {
         return this.name;
     }
 
-    /**
-     * Sets a name to Service.
-     * @param name the name of service
-     */
-    public void setName (String name) {
-        this.name = name;
-    }
-
-    /**
-     * Gets the username of Service.
-     * @return the username
-     */
     public String getUsername() {
         return this.username;
     }
 
-    /**
-     * Sets a username to Service.
-     * @param username the username of service
-     */
-    public void setUsername (String username) {
-        this.username = username;
-    }
-
-    /**
-     * Gets the email of Service.
-     * @return the email
-     */
     public String getEmail() {
         return this.email;
     }
 
-    /**
-     * Sets an email to Service.
-     * @param email the email of service
-     */
-    public void setEmail (String email) {
-        this.email = email;
+    public byte[] getPassword() {
+        return this.password;
     }
 
-    /**
-     * Gets the encrypted password of Service.
-     * @return the password
-     */
-    public byte[] getPassword () {
-        return this.encryptedPassword;
-    }
-
-    /**
-     * Sets an encrypted password to Service.
-     * @param password the encrypted password of service
-     */
-    public void setPassword (byte[] password) {
-        this.encryptedPassword = password;
-    }
-
-    /**
-     *  Gets the encryption algorithm configuration of Service.
-     * @return the encryption algorithm configuration
-     */
-    public AlgorithmConfig getEncryptionConfig () {
+    public AlgorithmConfig getEncryptionConfig() {
         return this.encryptionConfig;
     }
 
-    /**
-     *  Sets an encryption algorithm configuration of Service.
-     * @param algorithm the encryption algorithm configuration
-     */
-    public void setEncryptionConfig (AlgorithmConfig algorConf) {
-        this.encryptionConfig = algorConf;
+    public String getInfo() {
+        return this.info;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Service [name=" + name + ", username=" + username + ", email=" + email + ", info=" + info + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Service other = (Service) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        return true;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setUsername(final String username) {
+        this.username = username;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public void setPassword(final byte[] password) {
+        this.password = password;
+    }
+
+    public void setEncryptionConfig(final AlgorithmConfig encryptionConfig) {
+        this.encryptionConfig = encryptionConfig;
+    }
+
+    public void setInfo(final String info) {
+        this.info = info;
+    }
+
 }

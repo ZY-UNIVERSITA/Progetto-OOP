@@ -1,0 +1,26 @@
+[
+    {
+        "algorithmName": "AES",
+        "algorithmType": "Encryption Algorithm",
+        "parameters": {
+            "key_size": {
+                "name": "Key Size",
+                "type": "multiple_choose",
+                "options": ["128", "192", "256"],
+                "default_value": "256"
+            },
+            "mode": {
+                "name": "Mode",
+                "type": "multiple_choose",
+                "options": ["GCM", "CBC", "CFB", "OFB"],
+                "default_value": "GCM"
+            },
+            "padding": {
+                "name": "Padding",
+                "type": "multiple_choose",
+                "options": ["NoPadding", "PKCS5Padding", "PKCS7Padding"],
+                "default_value": "NoPadding"
+            }
+        }
+    }
+]
