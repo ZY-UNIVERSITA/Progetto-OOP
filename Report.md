@@ -1149,9 +1149,6 @@ classDiagram
 
 ```
 
-**11. TOTP authentication**
-
-
 **Problema**
 La registrazione è divisa in step, ognuno dei quali richiede di essere completato. Da ogni step, è possibile andare avanti e indietro tra gli step di registrazione.
 
@@ -1159,6 +1156,42 @@ La registrazione è divisa in step, ognuno dei quali richiede di essere completa
 La soluzione adottata è quella di organizzarla in una serie di step sequenziali, con la possibilità di navigare avanti e indietro, garantendo un flusso guidato all’utente, questo è attuato tramite un pattern Wizard o multi step.
 Ogni classe estende una classe di base che offre delle funzionalità di navigazione e di settaggio di dati (Template method pattern) con la possibilità di modificare i metodi per renderli personalizzabili.
 La presenza dell'interfaccia StepHandler implementata da ogni step (Strategy pattern), permette di gestire ogni step a partire del main controller senza conoscere la classe effettiva dello step che si sta eseguendo in quel momento.
+
+**11. TOTP authentication**
+
+```mermaid
+
+classDiagram
+    class TOTPAuthentication {
+        <<interface>>
+        generateCode() char[]
+        remainingTime() double
+        validateCode(code: char[]) boolean
+        generateOtpAuthURL(account: String) char[]
+        generateQRCodeForJavaFX(account: String, width: int, height: int) WritableImage
+    }
+
+    class DefaultTotpAuthentication {
+        - verifySeedLength(seed: byte[]) byte[]
+        - createTOTPGenerator() TOTPGenerator
+        - generateQrMatrix(account: String, width: int, height: int) BitMatrix
+    }
+
+    class MustBeDestroyed {
+        <<interface>>
+        destroy() void
+    }
+
+    TOTPAuthentication <|.. DefaultTotpAuthentication : implements
+    MustBeDestroyed <|.. DefaultTotpAuthentication : implements
+
+```
+
+**Problema**
+L'obiettivo è implementare un sistema di generazione e validazione di codici temporanei (TOTP ovvero Time-Based One-Time Password) per garantire un ulteriore livello di sicurezza rispetto all'utilizzo delle sole tradizionali password.
+
+**Soluzione**
+La soluzione proposta implementa il pattern Strategy definita stata definita un'interfaccia comune (TOTPAuthentication) per garantire modularità e intercambiabilità delle implementazioni. Una iimplementazione concreta (DefaultTotpAuthentication) realizza le funzionalità richieste utilizzando una libreria esterna per l'effettiva generazione dei codici OTP. In questo modo è posisible supportare diverse librerie o diverse implementazione per un generatore di codici TOTP.
 
 
 # Sviluppo
@@ -1235,7 +1268,81 @@ Button copyButton = new Button("Copy");
 ```
 
 #### Parte di Yuhang Zhu.  
+#### 1. Utilizzo della libreria Bouncy Castle
+**Dove:** `com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt`  
+**Snippet:**
+```java
+@Override
+    public byte[] deriveKey(byte[] source, AlgorithmConfig algorithmConfig) {
+        // Configurations of the algorithm
+        int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST_FACTOR.getParameter()));
+        int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.BLOCK_SIZE.getParameter()));
+        int parallelism = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.PARALLELISM.getParameter()));
+        int keySize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.KEY_SIZE.getParameter())) / 8;
 
+        byte[] salt = algorithmConfig.getSalt();
+
+        byte[] keyBytes = SCrypt.generate(source, salt, costFactor, blockSize, parallelism, keySize);
+
+        return keyBytes;
+    }
+```
+
+#### 2. Utilizzo della libreria Jackson
+**Dove:** `com.zysn.passwordmanager.model.utils.encoding.EncodingUtils`  
+**Snippet:**
+```java
+public static <T> byte[] serializeData(final T data) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        byte[] serializedData = null;
+
+        try {
+            serializedData = objectMapper.writeValueAsBytes(data);
+        } catch (final JsonProcessingException e) {
+            System.err.println(
+                    "Error during data serialization: ensure the data structure is compatible with JSON format.");
+        }
+
+        return serializedData;
+    }
+```
+
+#### 3. Utilizzo della libreria OTP-Java
+**Dove:** `com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication`  
+**Snippet:**
+```java
+@Override
+    public char[] generateCode() {
+        return this.totpGenerator.now().toCharArray();
+    }
+```
+
+#### 4. Utilizzo della libreria ZXing
+**Dove:** `com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication`  
+**Snippet:**
+```java
+@Override
+public WritableImage generateQRCodeForJavaFX(final String account, final int width, final int height) {
+    final BitMatrix bitMatrix = this.generateQrMatrix(account, width, height);
+
+    final WritableImage image = new WritableImage(width, height);
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            // Trasforma i bit 0 e 1 in neri e bianchi
+            image.getPixelWriter().setColor(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+        }
+    }
+
+    return image;
+}
+```
+
+#### 5. Utilizzo del framework Spring Boot
+**Dove:** Nella creazione del fatty jar usando il comando `.\gradlew  bootJar`. Questo perchè la JVM richiede che i provider di sicurezza siano firmati digitalmente. Quando si creare un fat jar è possibile che le firme, che servono per garantire autenticità e integrità dei provider di sicurezza siano validi, vengano cancellate o modificate. Con il framework Spring Boot i pacchetti e le dipendenze non compromette queste firme. 
+
+In assenza di bootJar bisognere usare un'altra libreria, includere BC come dipendeza esterna e configurare la classPath per poterla utilizzare oppure modificare le impostazioni di Java e della JVM per bypassare questo check di sicurezza. Le opzioni 2 e 3 possono risultare complicate per utente normale oppure ridurre il livello di sicurezza del sistema.
 
 # Commenti finali
 
