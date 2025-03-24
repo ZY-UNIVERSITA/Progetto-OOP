@@ -73,6 +73,7 @@ Gli elementi principali sono:
 6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
     Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
 
+### Eliminare o aggiornare
 Gli elementi costitutivi sono sintetizzati nella seguente figura.
 
 ```mermaid
@@ -156,6 +157,11 @@ classDiagram
         + initialize() void
     }
 
+    class RegistrationView {
+        <<Concept>>
+        + initialize() void
+    }
+
     class MainView {
         <<Concept>>
         + initialize() void
@@ -169,6 +175,15 @@ classDiagram
     %% Controller
     class LoginController {
         + handleLogin() void
+        + HandleRegister() void
+    }
+
+    class Login2FAController {
+        + handleLogin() void
+    }
+
+    class RegisterController {
+        + handleRegister() void
     }
 
     class MainController {
@@ -181,14 +196,12 @@ classDiagram
         + handleModifyService() void
     }
 
-    class ViewNavigator {
-        + showLoginView() void
-        + showMainView() void
-        + showRegisterView() void
-        + showServiceManagerView() void
+    class GenericNavigator {
+        + navigateTo() void
     }
 
     LoginView --> LoginController : controller
+    RegistrationView --> RegisterController: controller
     MainView --> MainController : controller
     ServiceManagerView --> ServiceManagerController : controller
 
@@ -196,12 +209,20 @@ classDiagram
     MainController ..> SessionManager : usa
     ServiceManagerController ..> ServiceManager : usa
 
-    ViewNavigator --> LoginView
-    ViewNavigator --> MainView
-    ViewNavigator --> ServiceManagerView
-    LoginController ..> ViewNavigator : usa
-    MainController ..> ViewNavigator : usa
-    ServiceManagerController ..> ViewNavigator : usa
+    GenericNavigator --> LoginView
+    GenericNavigator --> MainView
+    GenericNavigator --> ServiceManagerView
+    GenericNavigator --> RegistrationView
+
+    LoginController --> Login2FAController : 2FA
+
+    LoginController ..> GenericNavigator : change view
+    Login2FAController --> GenericNavigator : change view
+    RegisterController --> GenericNavigator: change view
+    MainController ..> GenericNavigator : change view
+    ServiceManagerController ..> GenericNavigator : change view
+
+
 
 ```
 
@@ -230,6 +251,7 @@ classDiagram
     ServiceBuilder -- Service : constructs
 
 ```
+
 **Problema**  
 Gestore di password deve gestire vari tipi di servizi con un numero di campi. Inoltre, la password deve essere criptata prima di essere memorizzata, per evitare che vengano archiviati dati sensibili in chiaro.  
 **Soluzione**  
@@ -406,7 +428,6 @@ Queste classi vengono usati come DTO per trasferire dati da una classe all'altra
 **2. Account manager**
 ```mermaid
 
-
 classDiagram
     %% Interfaces
     class AccountManager {
@@ -490,11 +511,11 @@ classDiagram
     }
 
     %% Relationships
-    AccountManager <|-- DefaultAccountManager : implements
-    SessionManager <|-- DefaultSessionManager : implements
-    MustBeDestroyed <|-- DefaultSessionManager : implements
-    MustBeDestroyed <|-- KeyStoreConfig : implements
-    MustBeDestroyed <|-- ServiceCryptoConfig : implements
+    AccountManager <|.. DefaultAccountManager : implements
+    SessionManager <|.. DefaultSessionManager : implements
+    MustBeDestroyed <|.. DefaultSessionManager : implements
+    MustBeDestroyed <|.. KeyStoreConfig : implements
+    MustBeDestroyed <|.. ServiceCryptoConfig : implements
 
     DefaultAccountManager --o SessionManager : uses
     DefaultAccountManager --o ServiceManager : uses
@@ -518,6 +539,659 @@ L'interfaccia **AccountManager** richiede di implementare 3 metodi collegati all
 Esso viene implementato dalla classe concreta **DefaultAccountManager** che utilizza tramite aggregazione 4 classi sotto forma di interfacce: registrationService per gestire la fase di registrazione, loginService per gestire la fase di login, ServiceManager per gestire le password del singolo utente e SessionManager per gestire i dati personali di crittografia dell'account corrente.
 La classe **DefaultSessionManager** implementa l'interfaccia **SessionManager** e viene usata per gestire tutti i dati di sicurezza dell'utente come la sua password oppure la master key usata per decifrare le password utente oppure le password intermedie che vengono usate per derivare la master key finale. Utilizza inoltre 2 classi con funzionalità di DTO perchè vengono usati solo contenere dati da trasferire tra classi.
 
+**3. Login e registrazione**
+```mermaid
+
+classDiagram
+    class LoginService {
+        <<interface>>
+        +login(CollectedUserData collectedUserData)
+    }
+
+    class DefaultLoginService {
+        -loadUserPersonalData()
+        -deriveKeyFromPassword()
+        -loadKeyStore()
+        -decryptServiceConfig()
+        -deriveMasterKey()
+        -loadUserPassword()
+    }
+
+    class RegistrationService {
+        <<interface>>
+        +register(CollectedUserData collectedUserData)
+    }
+
+    class DefaultRegistrationService {
+        -insertingData()
+        -getKeyFromPassword()
+        -createKeyStore()
+        -createServiceConfig()
+        -encryptConfigData()
+        -saveData()
+        -createMasterKey()
+        -loadUserPassword()
+        +register(CollectedUserData)
+    }
+
+
+    class AuthenticationStep {
+        <<interface>>
+        +executeStep()
+    }
+
+    class AuthenticationStepAbstract {
+        <<abstract>>
+        +executeStep()*
+        +getSessionManager()
+        +setSessionManager(SessionManager sessionManager)
+    }
+
+    class AuthenticationCollectingStepAbstract {
+        <<abstract>>
+        +getCollectedUserData()
+        +setCollectedUserData(CollectedUserData collectedUserData)
+    }
+
+    class InsertUserData
+    class LoadUserData
+    class DeriveKeyFromPassword
+    class DecryptKeyStoreConfig
+    class LoadKeyStore
+    class GetKeyFromKeyStore
+    class DeriveServiceConfigKey
+    class DecryptServiceConfig
+    class DeriveMasterKey
+    class LoadUserPassword
+    class InsertUserConfig
+    class CreateKeyStore
+    class CreateServiceConfig
+    class EncryptKeyStoreConfig
+    class EncryptServiceConfig
+    class SaveKeyStore
+    class SaveUserData
+    class CloseKeyStore
+
+    LoginService <|.. DefaultLoginService : implements
+    RegistrationService <|.. DefaultRegistrationService : implements
+    AuthenticationStep <|.. AuthenticationStepAbstract : implements
+
+    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract
+
+    AuthenticationCollectingStepAbstract <|-- InsertUserData
+    AuthenticationCollectingStepAbstract <|-- InsertUserConfig
+
+    AuthenticationStepAbstract <|-- LoadUserData : extends
+    AuthenticationStepAbstract <|-- DeriveKeyFromPassword : extends
+    AuthenticationStepAbstract <|-- DecryptKeyStoreConfig : extends
+    AuthenticationStepAbstract <|-- LoadKeyStore : extends
+    AuthenticationStepAbstract <|-- GetKeyFromKeyStore : extends
+    AuthenticationStepAbstract <|-- DeriveServiceConfigKey : extends
+    AuthenticationStepAbstract <|-- DecryptServiceConfig : extends
+    AuthenticationStepAbstract <|-- DeriveMasterKey : extends
+    AuthenticationStepAbstract <|-- LoadUserPassword : extends
+    AuthenticationStepAbstract <|-- CreateKeyStore : extends
+    AuthenticationStepAbstract <|-- CreateServiceConfig : extends
+    AuthenticationStepAbstract <|-- EncryptKeyStoreConfig : extends
+    AuthenticationStepAbstract <|-- EncryptServiceConfig : extends
+    AuthenticationStepAbstract <|-- SaveKeyStore : extends
+    AuthenticationStepAbstract <|-- SaveUserData : extends
+    AuthenticationStepAbstract <|-- CloseKeyStore : extends
+
+    DefaultLoginService --* AuthenticationStep : uses
+    DefaultRegistrationService --* AuthenticationStep : uses
+
+```
+
+**Problema**  
+L'applicazione richiede di implementare la fase di login e la fase di registrazione.
+
+**Soluzione**  
+La soluzione è realizzata attraverso il pattern della **Chain of Responsibility**, implementato mediante un'interfaccia generica AuthenticationStep, la quale definisce il metodo executeStep(). 
+La classe concreta DefaultLoginService realizza l’interfaccia LoginService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento del login, come ad esempio il caricamento dei dati utente, derivazione di chiavi crittografiche, apertura e decrittazione del keystore, configurazione dei servizi e derivazione della master key.
+La classe concreta DefaultRegistrationService realizza l’interfaccia RegistrationService e raccoglie in una lista ordinata gli step di autenticazione, eseguendoli in sequenza al momento della registrazione, occupandosi dell’inserimento e salvataggio dei dati utenti, derivazione di chiavi dalla password, creazione e cifratura del keystore e della configurazione del servizio, e generazione della master key.
+Questo permette il riutilizzo di alcuni step tra login e registration andando a semplificare e modularizzare il lavoro.
+
+**4. Gestione del key store**
+```mermaid
+
+classDiagram
+    class KeyStoreManager {
+        <<interface>>
+        +createNewKeyStore()
+        +loadKeyStore()
+        +createKeyStoreConfig()
+        +createKeyStoreEntry()
+        +populateNewKeyStore()
+        +saveKeyStore()
+        +closeKeyStore()
+        +encryptConfig()
+        +decryptConfig()
+        +getKeyStoreKeys()
+    }
+
+    class DefaultKeyStoreManager {
+        +getKeyStore() KeyStore
+    }
+
+    class KeyStoreConfigService {
+        <<interface>>
+        +generateKeyStoreConfigKey(KeyStoreConfig)
+        +generateKeyStoreConfigSalt(KeyStoreConfig)
+        +generateKeyStoreEntry(UserAuthKey)
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) KeyStoreConfig
+    }
+
+    class DefaultKeyStoreConfigService {
+        -generateAndSetKey(int passwordLength,  setterFunction: Consumer~byte[]~)
+        -generateTotpEncryptionKey(setterFunction: Consumer~byte[]~)
+        -generateTotpKey(setterFunction: Consumer~byte[]~)
+    }
+
+    class KeyStoreCreator {
+        <<interface>>
+        +createKeyStore(keyStorePassword: char[]) KeyStore
+    }
+
+    class DefaultKeyStoreCreator {
+    }
+
+    class KeyStoreEntryService {
+        <<interface>>
+        +retrieveKey(keyStore: KeyStore, alias: String, passwordToDecryptEntry: char[]) byte[]
+        +insertKey(keyStore: KeyStore, alias: String, keyToInsert: byte[], passwordToEncryptEntry: char[])
+    }
+
+    class DefaultKeyStoreEntryService {
+    }
+
+    class KeyStoreStorageService {
+        <<interface>>
+        +loadKeyStore(input: byte[], keyStorePassword: char[]) KeyStore
+        +saveKeyStore(filePath: Path, keyStore: KeyStore, keyStorePassword: char[])
+        +closeKeyStore(keystore: KeyStore)
+    }
+
+    class DefaultKeyStoreStorageService {
+    }
+
+    class KeyStoreConfig {
+        +serialize() byte[]
+        +destroy()
+        +getters/setters()
+    }
+
+    %% Relations
+    KeyStoreManager <|.. DefaultKeyStoreManager: implements
+    KeyStoreConfigService <|.. DefaultKeyStoreConfigService: implements
+    KeyStoreCreator <|.. DefaultKeyStoreCreator: implements
+    KeyStoreEntryService <|.. DefaultKeyStoreEntryService: implements
+    KeyStoreStorageService <|.. DefaultKeyStoreStorageService: implements
+
+    DefaultKeyStoreManager --* KeyStoreConfigService : composition
+    DefaultKeyStoreManager --* KeyStoreCreator : composition
+    DefaultKeyStoreManager --* KeyStoreStorageService : composition
+    DefaultKeyStoreManager --* KeyStoreEntryService : composition
+    DefaultKeyStoreManager --* SessionManager : composition
+
+    DefaultKeyStoreManager --o FileManager : uses
+
+    DefaultKeyStoreConfigService .. KeyStoreConfig
+    DefaultKeyStoreCreator .. KeyStoreConfig
+    DefaultKeyStoreEntryService .. KeyStoreConfig
+    DefaultKeyStoreStorageService .. KeyStoreConfig
+
+```
+
+**Problema**
+Il key store contiene le chiavi simmetriche dell'utente. Queste chiavi verrano usate per decriptare i file contenenti le password del singolo utente, quando vengono combinate insieme alla password utente. Quindi è necessario la gestione del keystore a partire dalla sua creazione, all'inserimento delle chiavi e alla possibilità di richiedere le chiavi.
+
+**Soluzione**
+La classe DefaultKeyStoreManager agisce come Facade, offrendo un'interfaccia semplice e unificata verso una serie di operazioni complesse. Questo pattern nasconde la complessità sottostante delle operazioni del KeyStore dietro metodi chiari e semplificati, richiamando le classi che si occupano delle operazioni a basso livello.
+Ogni operazione sul key store è stato spezzato in classi separate ognuno dei quali implementa una interfaccia in modo tale da avere una flessibilità futura nel caso si volessero implementare diverse versioni del keystore. Quindi c'è la classe che si occupa di creare il keystore, una classe che si occupa di gestire la configurazione del keystore, chi si occupa di inserire e ottenere le chiavi e chi si occupa di salvare e fare il caricamento di essi.
+
+
+**5. Gestione delle password utente**
+```mermaid
+
+classDiagram
+    class ServiceCryptoConfigManager {
+        +createServiceConfig()
+        +encryptConfig()
+        +decryptConfig()
+    }
+    
+    class DefaultServiceCryptoConfigManager {
+    }
+    
+    class ServiceCryptoConfigService {
+        +createPasswordListConfig() : ServiceCryptoConfig
+        +encryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +decryptConfig(data: byte[], key: byte[], algorithmConfig: AlgorithmConfig) byte[]
+    }
+    
+    class DefaultServiceCryptoConfigService {
+        -generateFileName(setterFunction: Consumer)
+        -generateHkdfSalt(setterFunction: Consumer)
+        -generateEncryptionSalt(setterFunction: Consumer)
+    }
+    
+    class ServiceCryptoConfig {
+        +serialize() byte[]
+        +destroy()
+    }
+    
+    ServiceCryptoConfigManager <|.. DefaultServiceCryptoConfigManager : implements
+    ServiceCryptoConfigService <|.. DefaultServiceCryptoConfigService : implements
+    ServiceCryptoConfig ..|> MustBeDestroyed : implements
+
+    DefaultServiceCryptoConfigManager --* ServiceCryptoConfigService : uses
+
+    DefaultServiceCryptoConfigService --* CryptoManager : uses
+    DefaultServiceCryptoConfigManager --o SessionManager : uses
+    
+    ServiceCryptoConfigService .. ServiceCryptoConfig : uses
+    DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
+
+```
+
+**Problema**
+L'applicazione richiede la gestione sicura delle configurazioni crittografiche che vengono utilizzate per criptare/decriptare file contenenti informazioni sensibili in particolare le password dei servizi del singoli utente. In particolare, è presente la generazione della configurazione: 
+Creare una configurazione che includa elementi di sicurezza quali un nome di file univoco e sali crittografici (uno per l’HKDF e uno per l’encryption).
+Crittografia e Decrittografia: Fornire operazioni che, a partire da una configurazione, permettano di criptarla per proteggerla e successivamente decriptarla per il corretto utilizzo.
+
+**Soluzione**
+La soluzione proposta prevede una suddivisione in due componenti principali, ognuna con il proprio insieme di responsabilità:
+ServiceCryptoConfigManager: implementa un pattern di tipo facade che permette di gestire operazioni ad alto livello: creare una nuova configurazione di servizio., criptare la configurazione attuale, decriptare la configurazione precedentemente criptata. Lasciando però le operazioni effettive ad un'altra componente che lavora a basso livello.
+
+ServiceCryptoConfigService: Responsabile delle operazioni di basso livello come criptazione, decriptazione, generazione dei dati di configurazione.
+
+**6. Algoritmi**
+
+```mermaid 
+
+classDiagram
+
+    class CryptoManager {
+        +deriveMasterKey(password: byte[], algorithmConfig: AlgorithmConfig) byte[]
+        +encrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+        +decrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+    }
+
+    class KeyDerivationAlgorithm {
+        <<Interface>>
+        +deriveKey(source: byte[], config: AlgorithmConfig) byte[]
+    }
+
+    class KeyDerivationFactory {
+        +createAlgorithm(name: String) KeyDerivationAlgorithm$
+    }
+
+    class Argon2
+    class bcrypt
+    class hkdf
+    class scrypt
+
+    class EncryptionAlgorithm {
+        <<Interface>>
+        +encrypt(source: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+        +decrypt(source: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig) byte[]
+    }
+
+    class EncryptionAlgorithmFactory {
+        +createAlgorithm(name: String) EncryptionAlgorithm$
+    }
+
+    class AES
+
+    class MustBeDestroyed {
+        <<Interface>>
+    }
+
+    class AlgorithmConfigBuilder {
+        <<Interface>>
+        +setAlgorithmName(algorithmName: String) AlgorithmConfigBuilder
+        +setAlgorithmType(algorithmType: String) AlgorithmConfigBuilder
+        +setSalt(salt: byte[]) AlgorithmConfigBuilder
+        +setParameters(parameters: Map<String,String>) AlgorithmConfigBuilder
+        +addParameter(key: String, value: String) AlgorithmConfigBuilder
+        +build() AlgorithmConfig
+    }
+
+    class DefaultAlgorithmConfigBuilder {
+        -algorithmName: String
+        -algorithmType: String
+        -salt: byte[]
+        -parameters: Map<String,String>
+    }
+
+    class AlgorithmConfigFactory {
+        +createAlgorithmConfig(algorithmName: String, salt: byte[], params: Map<String,String>) AlgorithmConfig$
+        -mergeParams(userParams: Map<String, String>, defaultParams: Map<String, String>) Map<String, String>$
+        -buildConfig(name: String, type: String, salt byte[], params: Map<String, String>) AlgorithmConfig$
+    }
+
+    class AlgorithmConfig {
+        -algorithmName: String
+        -algorithmType: String
+        -salt: byte[]
+        -parameters: Map<String,String>
+        +addNewParameter(key: String, value: String) void
+        +removeParameterByName(key String) void
+        +updateParameter(key: String, value: String) void
+        +getParameterValueByName(key: String) String
+        +destroy() void
+    }
+
+    CryptoManager --> KeyDerivationFactory : uses
+    CryptoManager --> EncryptionAlgorithmFactory : uses
+    CryptoManager --> AlgorithmConfig : uses
+    AlgorithmConfigFactory --> AlgorithmConfigBuilder : uses
+
+    KeyDerivationFactory --> KeyDerivationAlgorithm : create
+    EncryptionAlgorithmFactory --> EncryptionAlgorithm : create
+
+    KeyDerivationAlgorithm <|.. Argon2 : implements
+    KeyDerivationAlgorithm <|.. bcrypt : implements
+    KeyDerivationAlgorithm <|.. hkdf : implements
+    KeyDerivationAlgorithm <|.. scrypt : implements
+    EncryptionAlgorithm <|.. AES : implements
+    AlgorithmConfigBuilder <|.. DefaultAlgorithmConfigBuilder : implements
+    AlgorithmConfig ..|> MustBeDestroyed : implements
+
+    DefaultAlgorithmConfigBuilder --> AlgorithmConfig : build
+
+```
+
+**Problema**
+Questo è il cuore del sistema. L’applicazione richiede un sistema robusto, modulare e flessibile per la gestione della crittografia e dell’hashing dei dati sensibili. L'applicazione deve supportare molteplici algoritmi di derivazione di chiavi e cifratura/decifratura, frnire configurazioni personalizzabili tramite parametri specifici per ogni algoritmo e creare una modularitàp er usi futuri.
+
+**Soluzione**
+Le soluzioni adotatte soo:
+Factory Method Pattern: viene utilizzato per creare istanze specifiche degli algoritmi crittografici e di derivazione chiavi, senza esporre le logiche concrete di creazione.
+Strategy Pattern: permette di definire famiglie intercambiabili tramite la definizione delle interfacce di algoritmi crittografici, facilitando la selezione dinamica dell'algoritmo appropriato in fase di esecuzione permettendo di creare grandissima flessibilità nella scelta degli algoritmi.
+Builder Pattern: vien utilizzato per creare configurazioni di algoritmi crittografici personalizzat facilitando la gestione delle configurazioni.
+
+**7. File manager**
+```mermaid
+
+classDiagram
+    class FileManager {
+        <<interface>>
+        +loadData(fileName: String) byte[]
+        +saveData(fileName: String, data: byte[])
+        +deleteData(fileName: String)
+        +createPath(fileName: String) Path
+    }
+
+    class AbstractFileManager {
+        +createPath(fileName: String)* 
+        #InputStream openInputStream(path: Path)* 
+    }
+
+    class DefaultFileManager {
+    }
+
+    class GenericFileManager {
+    }
+
+    class ResourcesFileManager {
+        +void saveData(fileName: String, data: byte[])
+        +void deleteData(fileName: String)
+    }
+
+    FileManager <|.. AbstractFileManager : implements
+    
+    AbstractFileManager <|-- DefaultFileManager : extends
+    AbstractFileManager <|-- GenericFileManager : extends
+    AbstractFileManager <|-- ResourcesFileManager : extends 
+
+```
+
+**Problema**
+Nel progetto esiste la necessità di gestire operazioni  file, quali caricamento e salvataggio. Tuttavia, queste operazioni possono variare a seconda del contesto applicativo (file di risorse, file generici, file nel sistema operativo). 
+
+**Soluzione**
+Per risolvere questi problemi è stato utilizzato il pattern Template Method combinato con l'astrazione tramite l'interfaccia.
+FileManager (Interfaccia) definisce il contratto comune per operazioni sui file (leggere, salvare, cancellare, creare percorso).
+AbstractFileManager (Classe astratta) implementa parzialmente il contratto, definendo un comportamento comune per alcune operazioni (come caricamento e salvataggio dati) e lasciando astratte altre operazioni specifiche (come la creazione del percorso e il recupero di input sorgente dei dati).
+DefaultFileManager, GenericFileManager, ResourcesFileManager (Implementazioni concrete) estendono AbstractFileManager e implementano la logica specifica per ciascun contesto:
+    DefaultFileManager: gestisce file del file system in una directory utente.
+    GenericFileManager: implementazione generica senza vincoli specifici su percorso o estensioni.
+    ResourcesFileManager: gestisce file accessibili tramite classpath (cartella resources). Non supporta l'operazione di salvataggio ed eliminazione in quanto sono risorse di sole lettura.
+
+**8. Classi di utilità**
+
+```mermaid
+
+classDiagram
+    class CryptoUtils {
+      +generateSalt(int length) byte[]
+      +cleanMemory(char[] source)
+      +cleanMemory(byte[] source)
+      +destroy(Supplier~T~ getterFunction, Consumer~T~ setterFunction)
+      -CryptoUtils()
+    }
+
+    class DataUtils {
+      +concatArray(char[] firstData, char[] secondData) char[]
+      +concatArray(byte[] firstData, byte[] secondData) byte[]
+      -DataUtils()
+    }
+
+    class EncodingUtils {
+      +charToByteConverter(char[] source) byte[]
+      +charToByteConverter(char[] source, String charsetName) byte[]
+      +byteToCharConverter(byte[] source) char[]
+      +byteToCharConverter(byte[] source, String charsetName) char[]
+      +byteToBase64(byte[] source) char[]
+      +base64ToByte(char[] source) byte[]
+      +byteToBase32Byte(byte[] source) byte[]
+      +deserializeData(byte[] data, TypeReference~T~ classTypeReference) ~T~ T
+      +serializeData(T data) byte[]
+    }
+
+```
+
+**Problema**
+Alcune funzionalità sono considerate di base e vengono utilizzate di frequente. Non hanno bisogno di avere dati associati direttamente ma vengono frequentemente richiamati in piu parti del codice.
+
+**Soluzione**
+La gestione di queste funzionalità viene gestita utilizzando delle classi di utilità ovvero classi che raccolgono dei metodi statici che si occupano di specifiche aree, senza la necessità ogni volta di istanziare l'oggetto:
+CryptoUtils si occupa di operazioni si sicurezza crittografiche e di sicurezza della memoria.
+DataUtils gestisce la manipolazione e concatenazione dei dati.
+EncodingUtils centralizza le operazioni di conversione e codifica.
+
+**9. Navigation e Controller**
+
+```mermaid
+
+classDiagram    
+
+    class GenericNavigator~S, T~ {
+        <<interface>>
+        +navigateTo(pathToFile: String, sceneTitle: String) GenericController~S, T~ 
+        +~U~ navigateTo(pathToFile: String, sceneTitle: String, optionalData: U) GenericController~S, T~ 
+        +getView() S
+    }
+
+    class GenericNavigatorAbstract~S, T~  {
+        <<abstract>>
+        + getData() T
+        # setView(Parent, String)*
+    }
+
+    class SceneNavigator {
+    }
+
+    class StepNavigator {
+    }
+
+    class GenericController~S, T~ {
+        <<interface>>
+        + setNavigator(navigator: GenericNavigator~S, T~)
+        + setData(data: T)
+        + initializeData()
+        + initializeData(optionalData: U)
+    }
+
+    class ControllerAbstract~S, T~ {
+        <<abstract>>
+        + getNavigator() GenericNavigator~S, T~
+        + getData() T
+    }
+
+    GenericNavigator <|.. GenericNavigatorAbstract : implements
+    GenericController <|.. ControllerAbstract : implements
+
+    GenericNavigatorAbstract <|-- SceneNavigator : extends
+    GenericNavigatorAbstract <|-- StepNavigator : extends
+
+    GenericNavigator ..> GenericController : return
+
+    ControllerAbstract <|-- MainRegistrationController : extends
+    ControllerAbstract <|-- LoginController : extends
+
+```
+
+**Problema**
+Nell'applicaozione la gestione della navigazione tra scene oppure all'interno della stessa scenadell'interfaccia utente può diventare complessa e difficile da mantenere. La presenza di un sistema di navigazione ben riutilizzabile permette di garantire una transizione fluida tra le diverse viste e il corretto passaggio dei dati tra controller.
+
+Inoltre, molte volte, le view hanno bisogno di metodi e campi comuni quindi anche qui è possibile gestirlo tramite dei moduli riutilizzabili.
+
+**Soluzione**
+Il progetto implementa un sistema di navigazione generico basato su un'interfaccia GenericNavigator<S, T>, che definisce le operazioni di navigazione per passare tra scene o tra componenti UI. Il sistema utilizza un'architettura basata su classi astratte NavigatorAbstract<S, T> e implementazioni concrete per gestire la navigazione in diversi contesti, come finestre (Stage) o pannelli (Pane). Questa implementazione segue il pattern Template method pattern in cui le classi che estendono la classe astratta devono implementare dei metodi dichiarati nella classe genitore.
+Similmente, la gestione dei controller si basa sull'interfaccia GenericController<S, T> e sulla sua implementazione astratta ControllerAbstract<S, T>, sempre basato sul Template Method PATTERN che permette di settare eventuali dati per il controller (in particolare la classe AccountManager) e di settargli il navigator che permette di gestire lo stage in cui si trova e di cambiare la scene.
+
+**10. Registration**
+
+```mermaid
+
+classDiagram
+    class GenericController~S, T~ {
+        <<interface>>
+        + setNavigator(navigator: GenericNavigator~S, T~)
+        + setData(data: T)
+        + initializeData()
+        + initializeData(optionalData: U)
+    }
+
+    class ControllerAbstract~S, T~ {
+        <<abstract>>
+        + getNavigator() GenericNavigator~S, T~
+        + getData() T
+    }
+    
+    class MainRegistrationController {
+      +handleBack()
+      +handleNext()
+      +updateStepView()
+      +navigateToMain()
+    }
+    
+    class RegistrationConfigCreationController {
+      <<abstract>>
+      +createAlgorithmConfig()
+      +loadAlgorithmList()
+      +populateComboBox()
+    }
+    
+    class RegistrationStep1Controller {
+      -collectData()
+      -validateInput()
+    }
+    
+    class RegistrationStep2Controller {
+    }
+    
+    class RegistrationStep3Controller {
+    }
+    
+    class RegistrationStep4Controller {
+      +add2FA()
+      +dontAdd2FA()
+    }
+    
+    class RegistrationStep5Controller {
+      -load2FAImage()
+      -update2FACode()
+      -setTimer()
+    }
+
+    class StepHandler {
+      <<interface>>
+      +handleStep() boolean
+    }
+
+    class GenericNavigator {
+      +navigateTo(path: String, title: String)
+    }
+    
+    ControllerAbstract ..|> GenericController : implements
+
+    ControllerAbstract <|-- MainRegistrationController : extends
+    ControllerAbstract <|-- RegistrationConfigCreationController : extends
+    ControllerAbstract <|-- RegistrationStep1Controller : extends
+    ControllerAbstract <|-- RegistrationStep4Controller : extends
+    ControllerAbstract <|-- RegistrationStep5Controller : extends
+    RegistrationConfigCreationController <|-- RegistrationStep2Controller : extends
+    RegistrationConfigCreationController <|-- RegistrationStep3Controller : extends
+    
+    RegistrationStep1Controller ..|> StepHandler : implements
+    RegistrationStep4Controller ..|> StepHandler : implements
+    RegistrationStep5Controller ..|> StepHandler : implements
+    RegistrationConfigCreationController ..|> StepHandler  : implements
+
+    MainRegistrationController --* GenericNavigator : create
+    
+    GenericNavigator --> StepHandler : uses
+
+```
+
+**Problema**
+La registrazione è divisa in step, ognuno dei quali richiede di essere completato. Da ogni step, è possibile andare avanti e indietro tra gli step di registrazione.
+
+**Soluzione**
+La soluzione adottata è quella di organizzarla in una serie di step sequenziali, con la possibilità di navigare avanti e indietro, garantendo un flusso guidato all’utente, questo è attuato tramite un pattern Wizard o multi step.
+Ogni classe estende una classe di base che offre delle funzionalità di navigazione e di settaggio di dati (Template method pattern) con la possibilità di modificare i metodi per renderli personalizzabili.
+La presenza dell'interfaccia StepHandler implementata da ogni step (Strategy pattern), permette di gestire ogni step a partire del main controller senza conoscere la classe effettiva dello step che si sta eseguendo in quel momento.
+
+**11. TOTP authentication**
+
+```mermaid
+
+classDiagram
+    class TOTPAuthentication {
+        <<interface>>
+        generateCode() char[]
+        remainingTime() double
+        validateCode(code: char[]) boolean
+        generateOtpAuthURL(account: String) char[]
+        generateQRCodeForJavaFX(account: String, width: int, height: int) WritableImage
+    }
+
+    class DefaultTotpAuthentication {
+        - verifySeedLength(seed: byte[]) byte[]
+        - createTOTPGenerator() TOTPGenerator
+        - generateQrMatrix(account: String, width: int, height: int) BitMatrix
+    }
+
+    class MustBeDestroyed {
+        <<interface>>
+        destroy() void
+    }
+
+    TOTPAuthentication <|.. DefaultTotpAuthentication : implements
+    MustBeDestroyed <|.. DefaultTotpAuthentication : implements
+
+```
+
+**Problema**
+L'obiettivo è implementare un sistema di generazione e validazione di codici temporanei (TOTP ovvero Time-Based One-Time Password) per garantire un ulteriore livello di sicurezza rispetto all'utilizzo delle sole tradizionali password.
+
+**Soluzione**
+La soluzione proposta implementa il pattern Strategy definita stata definita un'interfaccia comune (TOTPAuthentication) per garantire modularità e intercambiabilità delle implementazioni. Una iimplementazione concreta (DefaultTotpAuthentication) realizza le funzionalità richieste utilizzando una libreria esterna per l'effettiva generazione dei codici OTP. In questo modo è posisible supportare diverse librerie o diverse implementazione per un generatore di codici TOTP.
 
 
 # Sviluppo
@@ -593,10 +1267,82 @@ Button copyButton = new Button("Copy");
          });
 ```
 
-
-
 #### Parte di Yuhang Zhu.  
+#### 1. Utilizzo della libreria Bouncy Castle
+**Dove:** `com.zysn.passwordmanager.model.security.algorithm.derivation.impl.Scrypt`  
+**Snippet:**
+```java
+@Override
+    public byte[] deriveKey(byte[] source, AlgorithmConfig algorithmConfig) {
+        // Configurations of the algorithm
+        int costFactor = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.COST_FACTOR.getParameter()));
+        int blockSize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.BLOCK_SIZE.getParameter()));
+        int parallelism = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.PARALLELISM.getParameter()));
+        int keySize = Integer.valueOf(algorithmConfig.getParameterValueByName(AlgorithmParameters.KEY_SIZE.getParameter())) / 8;
 
+        byte[] salt = algorithmConfig.getSalt();
+
+        byte[] keyBytes = SCrypt.generate(source, salt, costFactor, blockSize, parallelism, keySize);
+
+        return keyBytes;
+    }
+```
+
+#### 2. Utilizzo della libreria Jackson
+**Dove:** `com.zysn.passwordmanager.model.utils.encoding.EncodingUtils`  
+**Snippet:**
+```java
+public static <T> byte[] serializeData(final T data) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        byte[] serializedData = null;
+
+        try {
+            serializedData = objectMapper.writeValueAsBytes(data);
+        } catch (final JsonProcessingException e) {
+            System.err.println(
+                    "Error during data serialization: ensure the data structure is compatible with JSON format.");
+        }
+
+        return serializedData;
+    }
+```
+
+#### 3. Utilizzo della libreria OTP-Java
+**Dove:** `com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication`  
+**Snippet:**
+```java
+@Override
+    public char[] generateCode() {
+        return this.totpGenerator.now().toCharArray();
+    }
+```
+
+#### 4. Utilizzo della libreria ZXing
+**Dove:** `com.zysn.passwordmanager.model.security.totp.impl.DefaultTotpAuthentication`  
+**Snippet:**
+```java
+@Override
+public WritableImage generateQRCodeForJavaFX(final String account, final int width, final int height) {
+    final BitMatrix bitMatrix = this.generateQrMatrix(account, width, height);
+
+    final WritableImage image = new WritableImage(width, height);
+
+    for (int x = 0; x < width; x++) {
+        for (int y = 0; y < height; y++) {
+            // Trasforma i bit 0 e 1 in neri e bianchi
+            image.getPixelWriter().setColor(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+        }
+    }
+
+    return image;
+}
+```
+
+#### 5. Utilizzo del framework Spring Boot
+**Dove:** Nella creazione del fatty jar usando il comando `.\gradlew  bootJar`. Questo perchè la JVM richiede che i provider di sicurezza siano firmati digitalmente. Quando si creare un fat jar è possibile che le firme, che servono per garantire autenticità e integrità dei provider di sicurezza siano validi, vengano cancellate o modificate. Con il framework Spring Boot i pacchetti e le dipendenze non compromette queste firme. 
+
+In assenza di bootJar bisognere usare un'altra libreria, includere BC come dipendeza esterna e configurare la classPath per poterla utilizzare oppure modificare le impostazioni di Java e della JVM per bypassare questo check di sicurezza. Le opzioni 2 e 3 possono risultare complicate per utente normale oppure ridurre il livello di sicurezza del sistema.
 
 # Commenti finali
 

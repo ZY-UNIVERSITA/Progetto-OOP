@@ -49,6 +49,17 @@ public class ResourcesFileManager extends AbstractFileManager {
     }
 
     /**
+     * Throws an UnsupportedOperationException as deleting data is not supported for resources.
+     *
+     * @param fileName the name of the file
+     * @throws UnsupportedOperationException always thrown as this operation is not supported
+     */
+    @Override
+    public void deleteData(final String fileName) {
+        throw new UnsupportedOperationException("Deleting data is not supported for resources.");
+    }
+
+    /**
      * Opens an InputStream for the specified file path from the classpath resources.
      *
      * @param path the file path

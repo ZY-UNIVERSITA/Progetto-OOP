@@ -90,11 +90,11 @@ public class CryptoUtils {
                 CryptoUtils.cleanMemory((byte[]) value);
             } else if (value instanceof char[]) {
                 CryptoUtils.cleanMemory((char[]) value);
-            } else if (value instanceof MustBeDestroyed){
+            } else if (value instanceof MustBeDestroyed) {  
                 final MustBeDestroyed mustBeDestroyed = (MustBeDestroyed) value;
                 mustBeDestroyed.destroy();
             }
-            
+
             setterFunction.accept(null);
         });
     }
