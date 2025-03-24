@@ -616,10 +616,10 @@ classDiagram
     RegistrationService <|.. DefaultRegistrationService : implements
     AuthenticationStep <|.. AuthenticationStepAbstract : implements
 
-    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract
+    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract : extends
 
-    AuthenticationCollectingStepAbstract <|-- InsertUserData
-    AuthenticationCollectingStepAbstract <|-- InsertUserConfig
+    AuthenticationCollectingStepAbstract <|-- InsertUserData : extends
+    AuthenticationCollectingStepAbstract <|-- InsertUserConfig : extends
 
     AuthenticationStepAbstract <|-- LoadUserData : extends
     AuthenticationStepAbstract <|-- DeriveKeyFromPassword : extends
@@ -638,8 +638,8 @@ classDiagram
     AuthenticationStepAbstract <|-- SaveUserData : extends
     AuthenticationStepAbstract <|-- CloseKeyStore : extends
 
-    DefaultLoginService --* AuthenticationStep : uses
-    DefaultRegistrationService --* AuthenticationStep : uses
+    DefaultLoginService --* AuthenticationStep : composition
+    DefaultRegistrationService --* AuthenticationStep : composition
 
 ```
 
@@ -737,10 +737,10 @@ classDiagram
 
     DefaultKeyStoreManager --o FileManager : uses
 
-    DefaultKeyStoreConfigService .. KeyStoreConfig
-    DefaultKeyStoreCreator .. KeyStoreConfig
-    DefaultKeyStoreEntryService .. KeyStoreConfig
-    DefaultKeyStoreStorageService .. KeyStoreConfig
+    DefaultKeyStoreConfigService ..> KeyStoreConfig : uses
+    DefaultKeyStoreCreator ..> KeyStoreConfig : uses
+    DefaultKeyStoreEntryService ..> KeyStoreConfig : uses
+    DefaultKeyStoreStorageService ..> KeyStoreConfig : uses
 
 ```
 
@@ -788,11 +788,11 @@ classDiagram
 
     DefaultServiceCryptoConfigManager --* ServiceCryptoConfigService : uses
 
-    DefaultServiceCryptoConfigService --* CryptoManager : uses
+    DefaultServiceCryptoConfigService --* CryptoManager : composition
     DefaultServiceCryptoConfigManager --o SessionManager : uses
     
-    ServiceCryptoConfigService .. ServiceCryptoConfig : uses
-    DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
+    ServiceCryptoConfigService ..> ServiceCryptoConfig : uses
+    DefaultServiceCryptoConfigManager ..> ServiceCryptoConfig : uses
 
 ```
 
