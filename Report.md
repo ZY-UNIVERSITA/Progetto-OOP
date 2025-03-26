@@ -53,10 +53,10 @@ L'applicazione mira a garantire una protezione avanzata dei credenziali degli ut
 Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
 Gli elementi principali sono:
 1. **Utente (UserAccount)**  
-    E' un'entità caratterizzata da un identificativo univoco (come nome utente o email), una password (utilizzata per derivare una chiave segreta), e un insieme di servizi a cui accede.
+    E' un'entità principale che possiede un identificativo univoco (come nome utente o email) e una chiave segreta derivata dalla password principale.
 
 2. **Servizio (Service)**  
-    Ogni utente gestisce uno o più servizi, che hanno un nome e memorizzano username e password cifrata.
+    Ogni utente gestisce uno o più servizi, caratterizzati da un nome, uno username, un'email, informazioni aggiuntive e una password cifrata.
 
 3. **Autenticazione (AccountManager)**  
     Parte responsabile dell'accesso al sistema che avvenire tramite inserimento di un username e una password.
@@ -221,9 +221,6 @@ classDiagram
     RegisterController --> GenericNavigator: change view
     MainController ..> GenericNavigator : change view
     ServiceManagerController ..> GenericNavigator : change view
-
-
-
 ```
 
 ## Design dettagliato
@@ -1215,20 +1212,15 @@ Per l'implementazione dei test si è utilizzato **JUnit 5**, sfruttando le annot
 ```java
 public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
 
-
         if (length < 12) {
             throw new IllegalArgumentException("Password length must be greater than 11.");
         }
-
 
         List<CharacterRule> rules = new ArrayList<>();
         if (useUpperCase) rules.add(new CharacterRule(EnglishCharacterData.UpperCase, 1));
         if (useLowerCase) rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
         if (useNumbers) rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
         if (useSpecialChar) rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
-
-
-
 
         if (rules.size() < 2) {
             throw new IllegalArgumentException("You must select at least two character categories.");
@@ -1345,8 +1337,16 @@ public WritableImage generateQRCodeForJavaFX(final String account, final int wid
 In assenza di bootJar bisognere usare un'altra libreria, includere BC come dipendeza esterna e configurare la classPath per poterla utilizzare oppure modificare le impostazioni di Java e della JVM per bypassare questo check di sicurezza. Le opzioni 2 e 3 possono risultare complicate per utente normale oppure ridurre il livello di sicurezza del sistema.
 
 # Commenti finali
-
 ## Autovalutazione e lavori futuri
 
-# Guida utente
+#### Parte di Nataliia Skybun.
+La mia parte del progetto si è concentrata sulla gestione dei servizi, la generazione di password sicure e l'implementazione del sistema di backup e ripristino.
+L'utilizzo del pattern Builder per la creazione dei servizi ha garantito una maggiore robustezza e sicurezza nella gestione delle password. L'implementazione del ServiceManager come singleton ha permesso una gestione centralizzata dei servizi. Utilizzo della libreria Passay per il generatore di password sicure ha assicurato un approccio migliore per la creazione delle password. Infine, il sistema di backup e ripristino garantisce la protezione dei dati sensibili in caso di necessità.
 
+Ci sono alcune aree che potrebbero essere migliorate in futuro.  
+_Miglioramento delle prestazioni del ServiceManager:_ Essendo un singleton, potrebbe diventare un collo di bottiglia in caso di un numero elevato di servizi. Si potrebbe valutare l'implementazione di un sistema di caching o di una gestione asincrona dei servizi per migliorare le prestazioni. _Implementazione di un sistema di backup incrementale:_ Quello attuale crea un backup completo dei dati ogni volta. Si potrebbe valutare l'implementazione di un sistema di backup incrementale per ridurre la dimensione dei backup e il tempo di creazione. _Test approfonditi:_ Implementare test unitari e di integrazione più completi per garantire la robustezza e l'affidabilità del codice.
+
+Ritengo di aver svolto per bene la mia parte, ma riconosco che un altro membro del gruppo ha avuto un carico di lavoro maggiore e ha fatto un ottimo lavoro. Questo mi ha dato modo di imparare e migliorare grazie al suo contributo. 
+
+
+#### Parte di Yuhang Zhu. 
