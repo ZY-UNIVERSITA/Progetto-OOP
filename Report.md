@@ -1344,9 +1344,87 @@ La mia parte del progetto si è concentrata sulla gestione dei servizi, la gener
 L'utilizzo del pattern Builder per la creazione dei servizi ha garantito una maggiore robustezza e sicurezza nella gestione delle password. L'implementazione del ServiceManager come singleton ha permesso una gestione centralizzata dei servizi. Utilizzo della libreria Passay per il generatore di password sicure ha assicurato un approccio migliore per la creazione delle password. Infine, il sistema di backup e ripristino garantisce la protezione dei dati sensibili in caso di necessità.
 
 Ci sono alcune aree che potrebbero essere migliorate in futuro.  
-_Miglioramento delle prestazioni del ServiceManager:_ Essendo un singleton, potrebbe diventare un collo di bottiglia in caso di un numero elevato di servizi. Si potrebbe valutare l'implementazione di un sistema di caching o di una gestione asincrona dei servizi per migliorare le prestazioni. _Implementazione di un sistema di backup incrementale:_ Quello attuale crea un backup completo dei dati ogni volta. Si potrebbe valutare l'implementazione di un sistema di backup incrementale per ridurre la dimensione dei backup e il tempo di creazione. _Test approfonditi:_ Implementare test unitari e di integrazione più completi per garantire la robustezza e l'affidabilità del codice.
+_Prestazioni del ServiceManager:_ Essendo un singleton, potrebbe diventare un collo di bottiglia in caso di un numero elevato di servizi. Si potrebbe valutare l'implementazione di un sistema di caching o di una gestione asincrona dei servizi. _Sistema di backup incrementale:_ Il sistema di backup attuale crea un backup completo dei dati ogni volta. Si potrebbe valutare l'implementazione di un sistema di backup incrementale per ridurre la dimensione e il tempo di creazione. _Test approfonditi:_ Implementare test unitari più completi per garantire la robustezza e l'affidabilità del codice. Anche per la parte GUI.
 
 Ritengo di aver svolto per bene la mia parte, ma riconosco che un altro membro del gruppo ha avuto un carico di lavoro maggiore e ha fatto un ottimo lavoro. Questo mi ha dato modo di imparare e migliorare grazie al suo contributo. 
 
 
 #### Parte di Yuhang Zhu. 
+
+
+# Guida Utente
+
+Questa guida ti aiuterà a navigare e utilizzare al meglio la nostra applicazione di gestione delle password.
+
+**1. Accesso all'Applicazione**
+
+Quando avvii l'applicazione, ti troverai di fronte alla schermata di Login, dove potrai:
+
+- Accedere inserendo il tuo Username e Password;
+
+- Registrarti se non hai ancora un account, cliccando su Register.
+
+**1.1 Creazione di un Nuovo Account**
+
+Cliccando su Register, dovrai completare 5 passaggi per creare il tuo account:
+
+- Scegli Username e Password per il tuo account;
+
+- Seleziona un algoritmo di hashing per la protezione della password principale e imposta i parametri richiesti;
+
+- Scegli un algoritmo di crittografia per la gestione delle credenziali salvate e configurane i parametri;
+
+- Decidi se abilitare l'Autenticazione a Due Fattori (2FA) per maggiore sicurezza.
+
+Completata la registrazione, verrai reindirizzato alla pagina principale dell'applicazione.
+
+**2. Pagina Principale (Main Page)**
+
+La schermata principale mostra:
+
+- Una lista dei servizi salvati (inizialmente vuota);
+
+- Una barra di ricerca per trovare rapidamente un servizio;
+
+- Tre pulsanti:
+
+	- _Add Service:_ per aggiungere un nuovo servizio.
+	- _Backup:_ per creare o ripristinare un backup.
+	- _Logout:_ per disconnettersi e tornare alla schermata di Login.
+
+**3. Aggiunta di un Nuovo Servizio**
+
+Cliccando su Add Service, potrai inserire i dettagli di un nuovo servizio:
+
+- Nome del servizio (es. "Gmail");
+- Username o email utilizzati per l'accesso;
+- Password del servizio;
+- Note aggiuntive (opzionale).
+
+Generatore di password: Puoi generare una password sicura scegliendo la lunghezza e i caratteri da includere. Premendo Generate, la password verrà automaticamente inserita nel campo.
+
+Per salvare, premi Save. Se vuoi annullare, premi Cancel.
+
+**4. Modifica o Eliminazione di un Servizio**
+
+Cliccando su un servizio nella lista, accedi alla sua pagina dedicata, dove potrai:
+
+- Modificare i dettagli e aggiornare i campi;
+
+- Eliminare il servizio definitivamente.
+
+Per motivi di sicurezza, la password è nascosta, ma può essere resa visibile cliccando sull'icona con tre puntini.
+
+**5. Backup e Ripristino**
+
+Cliccando su Backup, puoi:
+
+- _Creare un backup:_ Premi Create, e verranno generate una password e un salt. Salvali in un posto sicuro per un futuro ripristino.
+
+- _Ripristinare un backup:_ Inserisci la password, il salt e seleziona il file di backup da caricare.
+
+Tornare alla schermata principale premendo Back.
+
+**6. Disconnessione**
+
+Premendo il pulsante Logout, tornerai alla pagina iniziale di Login, chiudendo la sessione attiva.
