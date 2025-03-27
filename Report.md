@@ -53,10 +53,10 @@ L'applicazione mira a garantire una protezione avanzata dei credenziali degli ut
 Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'accesso a diversi servizi online.
 Gli elementi principali sono:
 1. **Utente (UserAccount)**  
-    E' un'entità caratterizzata da un identificativo univoco (come nome utente o email), una password (utilizzata per derivare una chiave segreta), e un insieme di servizi a cui accede.
+    E' un'entità principale che possiede un identificativo univoco (come nome utente o email) e una chiave segreta derivata dalla password principale.
 
 2. **Servizio (Service)**  
-    Ogni utente gestisce uno o più servizi, che hanno un nome e memorizzano username e password cifrata.
+    Ogni utente gestisce uno o più servizi, caratterizzati da un nome, uno username, un'email, informazioni aggiuntive e una password cifrata.
 
 3. **Autenticazione (AccountManager)**  
     Parte responsabile dell'accesso al sistema che avvenire tramite inserimento di un username e una password.
@@ -221,9 +221,6 @@ classDiagram
     RegisterController --> GenericNavigator: change view
     MainController ..> GenericNavigator : change view
     ServiceManagerController ..> GenericNavigator : change view
-
-
-
 ```
 
 ## Design dettagliato
@@ -616,10 +613,10 @@ classDiagram
     RegistrationService <|.. DefaultRegistrationService : implements
     AuthenticationStep <|.. AuthenticationStepAbstract : implements
 
-    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract
+    AuthenticationStepAbstract <|-- AuthenticationCollectingStepAbstract : extends
 
-    AuthenticationCollectingStepAbstract <|-- InsertUserData
-    AuthenticationCollectingStepAbstract <|-- InsertUserConfig
+    AuthenticationCollectingStepAbstract <|-- InsertUserData : extends
+    AuthenticationCollectingStepAbstract <|-- InsertUserConfig : extends
 
     AuthenticationStepAbstract <|-- LoadUserData : extends
     AuthenticationStepAbstract <|-- DeriveKeyFromPassword : extends
@@ -638,8 +635,8 @@ classDiagram
     AuthenticationStepAbstract <|-- SaveUserData : extends
     AuthenticationStepAbstract <|-- CloseKeyStore : extends
 
-    DefaultLoginService --* AuthenticationStep : uses
-    DefaultRegistrationService --* AuthenticationStep : uses
+    DefaultLoginService --* AuthenticationStep : composition
+    DefaultRegistrationService --* AuthenticationStep : composition
 
 ```
 
@@ -737,10 +734,10 @@ classDiagram
 
     DefaultKeyStoreManager --o FileManager : uses
 
-    DefaultKeyStoreConfigService .. KeyStoreConfig
-    DefaultKeyStoreCreator .. KeyStoreConfig
-    DefaultKeyStoreEntryService .. KeyStoreConfig
-    DefaultKeyStoreStorageService .. KeyStoreConfig
+    DefaultKeyStoreConfigService ..> KeyStoreConfig : uses
+    DefaultKeyStoreCreator ..> KeyStoreConfig : uses
+    DefaultKeyStoreEntryService ..> KeyStoreConfig : uses
+    DefaultKeyStoreStorageService ..> KeyStoreConfig : uses
 
 ```
 
@@ -788,11 +785,11 @@ classDiagram
 
     DefaultServiceCryptoConfigManager --* ServiceCryptoConfigService : uses
 
-    DefaultServiceCryptoConfigService --* CryptoManager : uses
+    DefaultServiceCryptoConfigService --* CryptoManager : composition
     DefaultServiceCryptoConfigManager --o SessionManager : uses
     
-    ServiceCryptoConfigService .. ServiceCryptoConfig : uses
-    DefaultServiceCryptoConfigManager .. ServiceCryptoConfig : uses
+    ServiceCryptoConfigService ..> ServiceCryptoConfig : uses
+    DefaultServiceCryptoConfigManager ..> ServiceCryptoConfig : uses
 
 ```
 
@@ -1215,20 +1212,15 @@ Per l'implementazione dei test si è utilizzato **JUnit 5**, sfruttando le annot
 ```java
 public char[] generatePassword(int length, boolean useSpecialChar, boolean useNumbers, boolean useUpperCase, boolean useLowerCase) {
 
-
         if (length < 12) {
             throw new IllegalArgumentException("Password length must be greater than 11.");
         }
-
 
         List<CharacterRule> rules = new ArrayList<>();
         if (useUpperCase) rules.add(new CharacterRule(EnglishCharacterData.UpperCase, 1));
         if (useLowerCase) rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
         if (useNumbers) rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
         if (useSpecialChar) rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
-
-
-
 
         if (rules.size() < 2) {
             throw new IllegalArgumentException("You must select at least two character categories.");
@@ -1345,8 +1337,94 @@ public WritableImage generateQRCodeForJavaFX(final String account, final int wid
 In assenza di bootJar bisognere usare un'altra libreria, includere BC come dipendeza esterna e configurare la classPath per poterla utilizzare oppure modificare le impostazioni di Java e della JVM per bypassare questo check di sicurezza. Le opzioni 2 e 3 possono risultare complicate per utente normale oppure ridurre il livello di sicurezza del sistema.
 
 # Commenti finali
-
 ## Autovalutazione e lavori futuri
 
-# Guida utente
+#### Parte di Nataliia Skybun.
+La mia parte del progetto si è concentrata sulla gestione dei servizi, la generazione di password sicure e l'implementazione del sistema di backup e ripristino.
+L'utilizzo del pattern Builder per la creazione dei servizi ha garantito una maggiore robustezza e sicurezza nella gestione delle password. L'implementazione del ServiceManager come singleton ha permesso una gestione centralizzata dei servizi. Utilizzo della libreria Passay per il generatore di password sicure ha assicurato un approccio migliore per la creazione delle password. Infine, il sistema di backup e ripristino garantisce la protezione dei dati sensibili in caso di necessità.
 
+Ci sono alcune aree che potrebbero essere migliorate in futuro.  
+_Prestazioni del ServiceManager:_ Essendo un singleton, potrebbe diventare un collo di bottiglia in caso di un numero elevato di servizi. Si potrebbe valutare l'implementazione di un sistema di caching o di una gestione asincrona dei servizi. _Sistema di backup incrementale:_ Il sistema di backup attuale crea un backup completo dei dati ogni volta. Si potrebbe valutare l'implementazione di un sistema di backup incrementale per ridurre la dimensione e il tempo di creazione. _Test approfonditi:_ Implementare test unitari più completi per garantire la robustezza e l'affidabilità del codice. Anche per la parte GUI.
+
+Ritengo di aver svolto per bene la mia parte, ma riconosco che un altro membro del gruppo ha avuto un carico di lavoro maggiore e ha fatto un ottimo lavoro. Questo mi ha dato modo di imparare e migliorare grazie al suo contributo. 
+
+
+#### Parte di Yuhang Zhu. 
+
+
+# Guida Utente
+
+Questa guida ti aiuterà a navigare e utilizzare al meglio la nostra applicazione di gestione delle password.
+
+**1. Accesso all'Applicazione**
+
+Quando avvii l'applicazione, ti troverai di fronte alla schermata di Login, dove potrai:
+
+- Accedere inserendo il tuo Username e Password;
+
+- Registrarti se non hai ancora un account, cliccando su Register.
+
+**1.1 Creazione di un Nuovo Account**
+
+Cliccando su Register, dovrai completare 5 passaggi per creare il tuo account:
+
+- Scegli Username e Password per il tuo account;
+
+- Seleziona un algoritmo di hashing per la protezione della password principale e imposta i parametri richiesti;
+
+- Scegli un algoritmo di crittografia per la gestione delle credenziali salvate e configurane i parametri;
+
+- Decidi se abilitare l'Autenticazione a Due Fattori (2FA) per maggiore sicurezza.
+
+Completata la registrazione, verrai reindirizzato alla pagina principale dell'applicazione.
+
+**2. Pagina Principale (Main Page)**
+
+La schermata principale mostra:
+
+- Una lista dei servizi salvati (inizialmente vuota);
+
+- Una barra di ricerca per trovare rapidamente un servizio;
+
+- Tre pulsanti:
+
+	- _Add Service:_ per aggiungere un nuovo servizio.
+	- _Backup:_ per creare o ripristinare un backup.
+	- _Logout:_ per disconnettersi e tornare alla schermata di Login.
+
+**3. Aggiunta di un Nuovo Servizio**
+
+Cliccando su Add Service, potrai inserire i dettagli di un nuovo servizio:
+
+- Nome del servizio (es. "Gmail");
+- Username o email utilizzati per l'accesso;
+- Password del servizio;
+- Note aggiuntive (opzionale).
+
+Generatore di password: Puoi generare una password sicura scegliendo la lunghezza e i caratteri da includere. Premendo Generate, la password verrà automaticamente inserita nel campo.
+
+Per salvare, premi Save. Se vuoi annullare, premi Cancel.
+
+**4. Modifica o Eliminazione di un Servizio**
+
+Cliccando su un servizio nella lista, accedi alla sua pagina dedicata, dove potrai:
+
+- Modificare i dettagli e aggiornare i campi;
+
+- Eliminare il servizio definitivamente.
+
+Per motivi di sicurezza, la password è nascosta, ma può essere resa visibile cliccando sull'icona con tre puntini.
+
+**5. Backup e Ripristino**
+
+Cliccando su Backup, puoi:
+
+- _Creare un backup:_ Premi Create, e verranno generate una password e un salt. Salvali in un posto sicuro per un futuro ripristino.
+
+- _Ripristinare un backup:_ Inserisci la password, il salt e seleziona il file di backup da caricare.
+
+Tornare alla schermata principale premendo Back.
+
+**6. Disconnessione**
+
+Premendo il pulsante Logout, tornerai alla pagina iniziale di Login, chiudendo la sessione attiva.
