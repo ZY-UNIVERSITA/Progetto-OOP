@@ -73,57 +73,6 @@ Gli elementi principali sono:
 6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
     Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
 
-### Eliminare o aggiornare
-Gli elementi costitutivi sono sintetizzati nella seguente figura.
-
-```mermaid
-
-classDiagram
-
-    class AccountManager {
-        + login(username: string, password: char[]): boolean
-        + logout(): boolean
-    }
-
-    class UserAccount {
-        + getUsername(): string
-        + getMasterKey(): KeySpec
-        + getSalt(): byte[]
-    }
-
-    class Service {
-        + getName(): string
-        + getUsername(): string
-        + getEncryptedPassword(): byte[]
-    }
-
-    class CryptoManager {
-        + deriveMasterKey(password: string, salt: byte[]): KeySpec
-        + encrypt(data: byte[], key: KeySpec): byte[]
-        + decrypt(data: byte[], key: KeySpec): byte[]
-    }
-    
-    class BackupManager {
-        + createBackup(userAccount: UserAccount, services: List~Service~): void
-        + restoreBackup(backupFile: File, userAccount: UserAccount): void
-    }
-
-    class TwoFactorAuthManager {
-        + sendOTP(username: string): string
-        + verifyOTP(username: string, otp: string): boolean
-    }
-
-    AccountManager "1" --> "1" UserAccount : manages
-    UserAccount "1..*" *-- "1" Service : manages
-    UserAccount "1" --> "1" CryptoManager : uses
-    UserAccount "0..*" --> "1" BackupManager : creates/restore backup
-    UserAccount "1" --> "1" TwoFactorAuthManager : uses
-    Service "1" --> "1" CryptoManager : encrypts/decrypts
-    BackupManager "1" --> "0..*" UserAccount : backups/restore
-    BackupManager "1" --> "0..*" Service : backups/restore
-
-```
-
 **Difficoltà Principali**  
 _Gestione sicura delle credenziali:_ Garantire che la memorizzazione e il recupero delle credenziali avvengano in modo sicuro.  
 _Derivazione sicura della chiave principale:_ È essenziale scegliere algoritmi di derivazione delle chiavi robusti per proteggere i dati.  
@@ -1197,7 +1146,8 @@ La soluzione proposta implementa il pattern Strategy definita stata definita un'
 Per garantire la correttezza delle funzionalità principali dell'applicazione sono stati implementati test automatici utilizzando **JUnit** e in alcuni casi **Mockito**.  
 Il testing si è concentrato sui componenti core della logica applicativa, in particolare:  
 - _Classe [Service]:_ verifica del corretto funzionamento dei metodi per la creazione dei vari servizi.  
-- _Classe [ServiceManager]:_ test per controllare certi metodi dedicati alla gestione dei servizi.  
+- _Classe [ServiceManager]:_ test per controllare certi metodi dedicati alla gestione dei servizi.    
+- _Package [Security]:_ test per controllare il funzionamento degli algoritmi di encryption/hashing, fulcro di tutta l'applicazione.  
 - _Gestione degli errori:_ test per garantire che eccezioni e condizioni di errore vengano gestite correttamente.  
 
 L’_interfaccia grafica_ non è stata testata per la complessità aggiuntiva e mancanza di tempo.  
@@ -1350,7 +1300,13 @@ Ritengo di aver svolto per bene la mia parte, ma riconosco che un altro membro d
 
 
 #### Parte di Yuhang Zhu. 
+La mia parte del progetto si è concentrata sulla parte di autenticazione (login e registrazione) e sulla parte di implementazione degli algoritmi di sicurezza. 
+L'utilizzo del pattern strategy permette di definire una interfaccia di base e di cambiare l'utilizzo degli algoritmi in base alle impostazioni utente. Gli algoritmi non sono stati implementati da zero ma sfrutta delle librerie di Java e di Bouncy Castle, utilzzando quindi soluzioni solide e comprovate piuttosto che reinventare la ruota. Molto similmente è stata implementata la parte di TOTP che sfrutta una libreria esterna creata e testata per queste funzionalità.
+La configurazione degli algoritmi è stata implementata usando le factory e i builder per offrire una configurazione di base ma al contempo, flessibilità.
+La parte di autenticazione è stata implementata usando un patter chain of responsibility che permette di modularizzare ogni parte dell'autenticazione e di richiamare ogni parte come fosse una catena. Inoltre, la modularizzazione, permette di sostituire eventuali passi con altri e di riutilizzarli in più parti dell'autenticazione (parti comuni per login e registrazione).
 
+Essendo un applicazione incentrata sulla gestione delle password, una qualsiasi vulnerabilità negli algoritmi implementati dalle librerie esterne creerebbe problemi di sicurezza nell'applicazione stessa. 
+Si potrebbe in futuro migliorare la parte di interfacccia utente e fornire ulteriori funzionalità come ad esempio generare codici TOTP a partire da una chiave personalizzata.
 
 # Guida Utente
 
