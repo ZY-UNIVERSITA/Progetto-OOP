@@ -54,30 +54,82 @@ Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'ac
 Gli elementi principali sono:
 1. **Utente (UserAccount)**  
     E' un'entità principale che possiede un identificativo univoco (come nome utente o email) e una chiave segreta derivata dalla password principale.
-
 2. **Servizio (Service)**  
     Ogni utente gestisce uno o più servizi, caratterizzati da un nome, uno username, un'email, informazioni aggiuntive e una password cifrata.
-
-3. **Autenticazione (AccountManager)**  
+3. **Gestore dei servizi (ServiceManager)**  
+    Entità responsabile della gestione dei servizi, come aggiunta, modifica o eliminazione.
+4. **Autenticazione (AccountManager)**  
     Parte responsabile dell'accesso al sistema che avvenire tramite inserimento di un username e una password.
     Può essere rafforzato con un sistema di autenticazione a due fattori (2FA).
-
-4. **Crittografia (CryptoManager)**  
+5. **Crittografia (CryptoManager)**  
     I dati devono essere protetti attraverso meccanismi di crittografia.
     Ogni servizio memorizza credenziali cifrate utilizzando una chiave derivata dalla password principale dell'utente.
+6. **File (FileManager)**  
+    Bisogna gestire correttamente la memorizzazione e lettura dei dati del utente.
 
-5. **Backup (BackupManager)**  
-    Entità per la creazione e ripristino dei backup delle credenziali salvate.
-    I dati devono essere cirfati per mantenere la sicurezza.
+Gli elementi costitutivi sono sintetizzati nella seguente figura.
+ 
+ ```mermaid
+ 
+ classDiagram
+ 
+    class UserAccount {
+        <<interface>>
+        + getUsername(): string
+        + getMasterKey(): KeySpec
+        + getSalt(): byte[]
+    }
 
-6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
-    Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
+    class AccountManager {
+        <<interface>>
+        +register(data: CollectedUserData)
+        +login(data: CollectedUserData)
+        +logout()
+    }
+ 
+    class Service {
+        <<interface>>
+        + getName(): string
+        + getUsername(): string
+        + getEncryptedPassword(): byte[]
+    }
+
+    class ServiceManager {
+        <<interface>>
+        + selectService(String serviceName): Service
+        + addService(Service service): boolean
+        + removeService(String serviceName): boolean
+        + modifyService(String serviceName, String serviceName, String newName, String newUsername, String newEmail, String newPassword, String newInfo): boolean
+    }
+ 
+    class CryptoManager {
+        <<interface>>
+        + deriveMasterKey(password: byte[], algorithmConfig: AlgorithmConfig): KeySpec
+        + encrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig): byte[]
+        + decrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig): byte[]
+    }
+
+    class FileManager {
+        <<interface>>
+        +loadData(fileName: String) byte[]
+        +saveData(fileName: String, data: byte[])
+        +deleteData(fileName: String)
+    }
+
+    AccountManager "1" --> "1" CryptoManager : composition
+    AccountManager "1" --> "1" FileManager : composition
+    AccountManager "1" --> "1" ServiceManager : composition
+    AccountManager "1" --> "1*" UserAccount : manages
+
+    ServiceManager "0..*" --> "1..*" Service : manages
+
+    CryptoManager "1..*" --> "1..*" Service : encrypts/decrypts
+    CryptoManager "1..*" --> "1..*" UserAccount : encrypts/decrypts
+ ```
 
 **Difficoltà Principali**  
 _Gestione sicura delle credenziali:_ Garantire che la memorizzazione e il recupero delle credenziali avvengano in modo sicuro.  
 _Derivazione sicura della chiave principale:_ È essenziale scegliere algoritmi di derivazione delle chiavi robusti per proteggere i dati.  
-_Sicurezza nei backup:_ Deve essere garantito che i backup non compromettano la sicurezza delle credenziali.  
-_Autenticazione a due fattori:_ L'integrazione con un sistema 2FA deve essere gestita in modo efficace senza compromettere l'usabilità.
 
 # Design
 
