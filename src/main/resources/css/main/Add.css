@@ -152,6 +152,10 @@
     -fx-padding: 8 10 8 10;
 }
 
+.text-area .content {
+    -fx-background-color: #3c3f41;
+}
+
 #passwordGeneratorVBox {
     -fx-background-color: #2b2b2b;
     -fx-spacing: 10;
@@ -168,11 +172,15 @@
 
 #lengthChoiceBox {
     -fx-background-color: #3c3f41;
-    -fx-text-fill: #000000;
     -fx-border-color: #505050;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
     -fx-padding: 8;
+}
+
+.choice-box .list-cell {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
 }
 
 .check-box {
