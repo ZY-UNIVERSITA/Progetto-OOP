@@ -145,6 +145,8 @@
 }
 
 #infoArea {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #e0e0e0;
     -fx-pref-width: 250px;
     -fx-pref-height: 120px;
     -fx-padding: 8 10 8 10;
@@ -166,7 +168,7 @@
 
 #lengthChoiceBox {
     -fx-background-color: #3c3f41;
-    -fx-text-fill: #e0e0e0;
+    -fx-text-fill: #000000;
     -fx-border-color: #505050;
     -fx-border-radius: 4;
     -fx-background-radius: 4;
