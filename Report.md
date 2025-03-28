@@ -54,81 +54,82 @@ Il dominio dell'applicazione riguarda la gestione sicura di credenziali per l'ac
 Gli elementi principali sono:
 1. **Utente (UserAccount)**  
     E' un'entità principale che possiede un identificativo univoco (come nome utente o email) e una chiave segreta derivata dalla password principale.
-
 2. **Servizio (Service)**  
     Ogni utente gestisce uno o più servizi, caratterizzati da un nome, uno username, un'email, informazioni aggiuntive e una password cifrata.
-
-3. **Autenticazione (AccountManager)**  
+3. **Gestore dei servizi (ServiceManager)**  
+    Entità responsabile della gestione dei servizi, come aggiunta, modifica o eliminazione.
+4. **Autenticazione (AccountManager)**  
     Parte responsabile dell'accesso al sistema che avvenire tramite inserimento di un username e una password.
     Può essere rafforzato con un sistema di autenticazione a due fattori (2FA).
-
-4. **Crittografia (CryptoManager)**  
+5. **Crittografia (CryptoManager)**  
     I dati devono essere protetti attraverso meccanismi di crittografia.
     Ogni servizio memorizza credenziali cifrate utilizzando una chiave derivata dalla password principale dell'utente.
+6. **File (FileManager)**  
+    Bisogna gestire correttamente la memorizzazione e lettura dei dati del utente.
 
-5. **Backup (BackupManager)**  
-    Entità per la creazione e ripristino dei backup delle credenziali salvate.
-    I dati devono essere cirfati per mantenere la sicurezza.
-
-6. **Autenticazione a Due Fattori (TwoFactorAuthManager)**  
-    Per aumentare la sicurezza, oltre alla password principale, potrebbe essere richiesto un codice OTP.
-
-### Eliminare o aggiornare
 Gli elementi costitutivi sono sintetizzati nella seguente figura.
-
-```mermaid
-
-classDiagram
-
-    class AccountManager {
-        + login(username: string, password: char[]): boolean
-        + logout(): boolean
-    }
-
+ 
+ ```mermaid
+ 
+ classDiagram
+ 
     class UserAccount {
+        <<interface>>
         + getUsername(): string
         + getMasterKey(): KeySpec
         + getSalt(): byte[]
     }
 
+    class AccountManager {
+        <<interface>>
+        +register(data: CollectedUserData)
+        +login(data: CollectedUserData)
+        +logout()
+    }
+ 
     class Service {
+        <<interface>>
         + getName(): string
         + getUsername(): string
         + getEncryptedPassword(): byte[]
     }
 
+    class ServiceManager {
+        <<interface>>
+        + selectService(String serviceName): Service
+        + addService(Service service): boolean
+        + removeService(String serviceName): boolean
+        + modifyService(String serviceName, String serviceName, String newName, String newUsername, String newEmail, String newPassword, String newInfo): boolean
+    }
+ 
     class CryptoManager {
-        + deriveMasterKey(password: string, salt: byte[]): KeySpec
-        + encrypt(data: byte[], key: KeySpec): byte[]
-        + decrypt(data: byte[], key: KeySpec): byte[]
-    }
-    
-    class BackupManager {
-        + createBackup(userAccount: UserAccount, services: List~Service~): void
-        + restoreBackup(backupFile: File, userAccount: UserAccount): void
+        <<interface>>
+        + deriveMasterKey(password: byte[], algorithmConfig: AlgorithmConfig): KeySpec
+        + encrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig): byte[]
+        + decrypt(data: byte[], key: SecretKeySpec, algorithmConfig: AlgorithmConfig): byte[]
     }
 
-    class TwoFactorAuthManager {
-        + sendOTP(username: string): string
-        + verifyOTP(username: string, otp: string): boolean
+    class FileManager {
+        <<interface>>
+        +loadData(fileName: String) byte[]
+        +saveData(fileName: String, data: byte[])
+        +deleteData(fileName: String)
     }
 
-    AccountManager "1" --> "1" UserAccount : manages
-    UserAccount "1..*" *-- "1" Service : manages
-    UserAccount "1" --> "1" CryptoManager : uses
-    UserAccount "0..*" --> "1" BackupManager : creates/restore backup
-    UserAccount "1" --> "1" TwoFactorAuthManager : uses
-    Service "1" --> "1" CryptoManager : encrypts/decrypts
-    BackupManager "1" --> "0..*" UserAccount : backups/restore
-    BackupManager "1" --> "0..*" Service : backups/restore
+    AccountManager "1" --> "1" CryptoManager : composition
+    AccountManager "1" --> "1" FileManager : composition
+    AccountManager "1" --> "1" ServiceManager : composition
+    AccountManager "1" --> "1*" UserAccount : manages
 
-```
+    ServiceManager "0..*" --> "1..*" Service : manages
+
+    CryptoManager "1..*" --> "1..*" Service : encrypts/decrypts
+    CryptoManager "1..*" --> "1..*" UserAccount : encrypts/decrypts
+ ```
 
 **Difficoltà Principali**  
 _Gestione sicura delle credenziali:_ Garantire che la memorizzazione e il recupero delle credenziali avvengano in modo sicuro.  
 _Derivazione sicura della chiave principale:_ È essenziale scegliere algoritmi di derivazione delle chiavi robusti per proteggere i dati.  
-_Sicurezza nei backup:_ Deve essere garantito che i backup non compromettano la sicurezza delle credenziali.  
-_Autenticazione a due fattori:_ L'integrazione con un sistema 2FA deve essere gestita in modo efficace senza compromettere l'usabilità.
 
 # Design
 
@@ -1197,7 +1198,8 @@ La soluzione proposta implementa il pattern Strategy definita stata definita un'
 Per garantire la correttezza delle funzionalità principali dell'applicazione sono stati implementati test automatici utilizzando **JUnit** e in alcuni casi **Mockito**.  
 Il testing si è concentrato sui componenti core della logica applicativa, in particolare:  
 - _Classe [Service]:_ verifica del corretto funzionamento dei metodi per la creazione dei vari servizi.  
-- _Classe [ServiceManager]:_ test per controllare certi metodi dedicati alla gestione dei servizi.  
+- _Classe [ServiceManager]:_ test per controllare certi metodi dedicati alla gestione dei servizi.    
+- _Package [Security]:_ test per controllare il funzionamento degli algoritmi di encryption/hashing, fulcro di tutta l'applicazione.  
 - _Gestione degli errori:_ test per garantire che eccezioni e condizioni di errore vengano gestite correttamente.  
 
 L’_interfaccia grafica_ non è stata testata per la complessità aggiuntiva e mancanza di tempo.  
@@ -1350,7 +1352,13 @@ Ritengo di aver svolto per bene la mia parte, ma riconosco che un altro membro d
 
 
 #### Parte di Yuhang Zhu. 
+La mia parte del progetto si è concentrata sulla parte di autenticazione (login e registrazione) e sulla parte di implementazione degli algoritmi di sicurezza. 
+L'utilizzo del pattern strategy permette di definire una interfaccia di base e di cambiare l'utilizzo degli algoritmi in base alle impostazioni utente. Gli algoritmi non sono stati implementati da zero ma sfrutta delle librerie di Java e di Bouncy Castle, utilzzando quindi soluzioni solide e comprovate piuttosto che reinventare la ruota. Molto similmente è stata implementata la parte di TOTP che sfrutta una libreria esterna creata e testata per queste funzionalità.
+La configurazione degli algoritmi è stata implementata usando le factory e i builder per offrire una configurazione di base ma al contempo, flessibilità.
+La parte di autenticazione è stata implementata usando un patter chain of responsibility che permette di modularizzare ogni parte dell'autenticazione e di richiamare ogni parte come fosse una catena. Inoltre, la modularizzazione, permette di sostituire eventuali passi con altri e di riutilizzarli in più parti dell'autenticazione (parti comuni per login e registrazione).
 
+Essendo un applicazione incentrata sulla gestione delle password, una qualsiasi vulnerabilità negli algoritmi implementati dalle librerie esterne creerebbe problemi di sicurezza nell'applicazione stessa. 
+Si potrebbe in futuro migliorare la parte di interfacccia utente e fornire ulteriori funzionalità come ad esempio generare codici TOTP a partire da una chiave personalizzata.
 
 # Guida Utente
 
