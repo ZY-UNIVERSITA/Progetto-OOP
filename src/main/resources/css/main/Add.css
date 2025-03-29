@@ -183,9 +183,20 @@
     -fx-padding: 8;
 }
 
-.choice-box .list-cell {
+.choice-box .context-menu {
     -fx-background-color: #3c3f41;
+}
+
+.choice-box .menu-item .label {
     -fx-text-fill: #e0e0e0;
+}
+
+.choice-box .menu-item {
+    -fx-background-color: #3c3f41;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #505050;
 }
 
 .check-box {
