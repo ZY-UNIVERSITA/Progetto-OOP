@@ -4,6 +4,11 @@
     -fx-text-fill: #e0e0e0;
 }
 
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
 #serviceVBox {
     -fx-alignment: top-center;
     -fx-padding: 20;
@@ -152,6 +157,10 @@
     -fx-padding: 8 10 8 10;
 }
 
+.text-area .content {
+    -fx-background-color: #3c3f41;
+}
+
 #passwordGeneratorVBox {
     -fx-background-color: #2b2b2b;
     -fx-spacing: 10;
@@ -173,6 +182,22 @@
     -fx-border-radius: 4;
     -fx-background-radius: 4;
     -fx-padding: 8;
+}
+
+.choice-box .context-menu {
+    -fx-background-color: #3c3f41;
+}
+
+.choice-box .menu-item .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+.choice-box .menu-item {
+    -fx-background-color: #3c3f41;
+}
+
+.choice-box .menu-item:focused {
+    -fx-background-color: #505050;
 }
 
 .check-box {
