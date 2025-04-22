@@ -86,11 +86,13 @@ public class LoginController extends ControllerAbstract<Stage, AccountManager> {
             this.chooseNextView();
 
         } catch (final IllegalArgumentException e) {
-            if (this.getData().getSessionManager().getUserAccount().getMasterKey() == null) {
-                errorHandler.showError("Errors", "Username or password are wrong.");
-            } else {
-                errorHandler.showError("Errors", e.getMessage());
-            }
+            errorHandler.showError("Errors", e.getMessage());
+
+            // if (this.getData().getSessionManager().getUserAccount().getMasterKey() == null) {
+            //     errorHandler.showError("Errors", "Username or password are wrong.");
+            // } else {
+            //     errorHandler.showError("Errors", e.getMessage());
+            // }
         }
     }
 
